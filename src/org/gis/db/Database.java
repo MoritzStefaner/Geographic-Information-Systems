@@ -23,12 +23,10 @@ public class Database {
 		}
 	}
 	
-	public ResultSet executeQuery(String query) {
-		ResultSet r = null;
-		
+	public void executeQuery(String query) {
 		try {
 			Statement s = this.conn.createStatement(); //create query statement
-			r = s.executeQuery(query); //get all polygons from polytest table
+			s.executeQuery(query); //get all polygons from polytest table
 			
 			s.close(); //close statement when finished
 		} catch(Exception ex) {
@@ -36,7 +34,6 @@ public class Database {
 			ex.printStackTrace();
 		}
 
-		return r;
 	}
 	
 	protected void finalize() throws Throwable {
