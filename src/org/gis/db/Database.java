@@ -26,7 +26,7 @@ public class Database {
 	public void executeQuery(String query) {
 		try {
 			Statement s = this.conn.createStatement(); //create query statement
-			s.executeQuery(query); //get all polygons from polytest table
+			s.executeUpdate(query);
 			
 			s.close(); //close statement when finished
 		} catch(Exception ex) {

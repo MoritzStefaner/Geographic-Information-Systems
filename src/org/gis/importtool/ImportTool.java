@@ -26,7 +26,7 @@ public class ImportTool {
 				"	locationLat double precision," +
 				"	locationLong double precision," +
 				"	altitude bigint," +
-				"	tagLocalIdentifier text)"
+				"	tagLocalIdentifier bigint)"
 				);
 		
 		String insert = new String("INSERT INTO storcks (id, timestamp, locationLat, locationLong, altitude, tagLocalIdentifier) VALUES ");
@@ -47,12 +47,12 @@ public class ImportTool {
 		//read each line of text file
 		try {
 			bufRdr.readLine();
-			while((line = bufRdr.readLine()) != null && i < 10) {	
+			while((line = bufRdr.readLine()) != null) {	
 				if (i != 0) {
 					insert = insert.concat(",");
 				}
 				token = line.split(",");
-				newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', " + token[2] + ", " + token[1] + ", " + token[4] + ", " + token[25] + ")");
+				newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', " + token[2] + ", " + token[1] + ", " + token[4] + ", " + token[25].replace("\"", "") + ")");
 				
 				insert = insert.concat(newInsert);
 				i++;
