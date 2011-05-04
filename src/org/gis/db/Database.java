@@ -36,6 +36,10 @@ public class Database {
 
 	}
 	
+	public Connection getConn(){
+		return conn;
+	}
+	
 	protected void finalize() throws Throwable {
 		if (this.conn != null) {
 			try {
