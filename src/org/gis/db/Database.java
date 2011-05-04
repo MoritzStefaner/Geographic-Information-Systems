@@ -23,7 +23,7 @@ public class Database {
 		}
 	}
 	
-	public void executeQuery(String query) {
+	public void executeUpdate(String query) {
 		try {
 			Statement s = this.conn.createStatement(); //create query statement
 			s.executeUpdate(query);
@@ -34,6 +34,18 @@ public class Database {
 			ex.printStackTrace();
 		}
 
+	}
+	
+	public void executeQuery(String query){
+		try {
+			Statement s = this.conn.createStatement(); //create query statement
+			s.executeQuery(query);
+			
+			s.close(); //close statement when finished
+		} catch(Exception ex) {
+			System.err.println(ex);
+			ex.printStackTrace();
+		}
 	}
 	
 	public Connection getConn(){

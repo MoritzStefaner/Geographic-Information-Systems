@@ -7,12 +7,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 
 import org.gis.db.*;
-import org.postgis.PGgeometry;
+import org.postgis.*;
 
 public class ImportTool {
 	private Database db = null;
@@ -26,7 +25,7 @@ public class ImportTool {
 	}
 
 	public void importStorcks() {
-		this.db.executeQuery("CREATE TABLE storcks ("
+		this.db.executeUpdate("CREATE TABLE storcks ("
 				+ "	id bigint PRIMARY KEY," + "	timestamp time,"
 				+ "	locationLat double precision,"
 				+ "	locationLong double precision," + "	altitude bigint,"
@@ -70,16 +69,14 @@ public class ImportTool {
 		insert = insert.concat(";");
 
 		// System.out.println(insert);
-		this.db.executeQuery(insert);
+		this.db.executeUpdate(insert);
 
 	}
 
 	public void importWorld() throws Exception {
-		db.executeQuery("drop table if exists world");
-		this.db.executeQuery("CREATE TABLE world (" 
-				+ "id int," 
-				+ "x_coordinate double precision,"
-				+ "	y_coordinate double precision," 
+		db.executeUpdate("drop table if exists world");
+		this.db.executeUpdate("CREATE TABLE world (" 
+				+ "id int,"
 				+ "	z bigint,"
 				+ "	m bigint," 
 				+ "	fips varchar," 
@@ -93,10 +90,12 @@ public class ImportTool {
 				+ "	subregion bigint," 
 				+ "	lon double precision,"
 				+ "	lat double precision)");
+		
+		db.executeQuery("SELECT AddGeometryColumn('','world','poly_geom', '-1','POLYGON',2)");
 
 		Connection conn = db.getConn();
 		conn.setAutoCommit(false);
-		PreparedStatement pst = conn.prepareStatement("INSERT INTO world (id, x_coordinate, y_coordinate, z, m, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+		PreparedStatement pst = conn.prepareStatement("INSERT INTO world (id, z, m, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat, poly_geom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
 	
 		
 		File file = new File("TM_WORLD_BORDERS-0.3.csv");
@@ -112,44 +111,117 @@ public class ImportTool {
 		String line = null;
 		String[] token = null;
 		
-		int i = 0;
 		int j = 0;
+		boolean first = true;
+		String polygon = "POLYGON((";
+		int id = 0;
+		String firstx = null;
+		String firsty = null;
+		String z = null;
+		String m = null;
+		String fips = null;
+		String iso2 = null;
+		String iso3 = null;
+		String un = null;
+		String name = null;
+		String area = null;
+		String pop2005 = null;
+		String region = null;
+		String subregion = null;
+		String lon = null;
+		String lat = null;		
 
 		// read each line of text file
 		try {
 			bufRdr.readLine();
 			while ((line = bufRdr.readLine()) != null) {
 				token = line.split("\t");
+				int newid = Integer.parseInt(token[0]);
 				
-				pst.setInt(1, Integer.parseInt(token[0]));
-				pst.setDouble(2, Double.parseDouble(token[1]));
-				pst.setDouble(3, Double.parseDouble(token[2]));
-				pst.setInt(4, Integer.parseInt(token[3]));
-				pst.setInt(5, Integer.parseInt(token[4]));
-				pst.setString(6, token[5]);
-				pst.setString(7, token[6]);
-				pst.setString(8, token[7]);
-				pst.setInt(9, Integer.parseInt(token[8]));
-				pst.setString(10, token[9]);
-				pst.setInt(11, Integer.parseInt(token[10]));
-				pst.setInt(12, Integer.parseInt(token[11]));
-				pst.setInt(13, Integer.parseInt(token[12]));
-				pst.setInt(14, Integer.parseInt(token[13]));
-				pst.setDouble(15, Double.parseDouble(token[14]));
-				pst.setDouble(16, Double.parseDouble(token[15]));
-				pst.executeUpdate();
-				
-				i++;
-				j++;
-								
-				if(i > 1000){
-					i = 0;
+				if (id == newid){
+					if(first){
+						polygon = polygon + token[1] + " " + token[2];
+						firstx = token[1];
+						firsty = token[2];
+						z = token[3];
+						m = token[4];
+						fips = token[5];
+						iso2 = token[6];
+						iso3 = token[7];
+						un = token[8];
+						name = token[9];
+						area = token[10];
+						pop2005 = token[11];
+						region = token[12];
+						subregion = token[13];
+						lon = token[14];
+						lat = token[15];
+						first = false;
+					}
+					polygon = polygon + "," + token[1] + " " + token[2];
+				}else{
+					polygon = polygon + "," + firstx + " " + firsty + "))";
+					pst.setInt(1, id);
+					pst.setInt(2, Integer.parseInt(z));
+					pst.setInt(3, Integer.parseInt(m));
+					pst.setString(4, fips);
+					pst.setString(5, iso2);
+					pst.setString(6, iso3);
+					pst.setInt(7, Integer.parseInt(un));
+					pst.setString(8, name);
+					pst.setInt(9, Integer.parseInt(area));
+					pst.setInt(10, Integer.parseInt(pop2005));
+					pst.setInt(11, Integer.parseInt(region));
+					pst.setInt(12, Integer.parseInt(subregion));
+					pst.setDouble(13, Double.parseDouble(lon));
+					pst.setDouble(14, Double.parseDouble(lat));
+					pst.setString(15, polygon);
+					pst.executeUpdate();
 					conn.commit();
+					
+					firstx = token[1];
+					firsty = token[2];
+					z = token[3];
+					m = token[4];
+					fips = token[5];
+					iso2 = token[6];
+					iso3 = token[7];
+					un = token[8];
+					name = token[9];
+					area = token[10];
+					pop2005 = token[11];
+					region = token[12];
+					subregion = token[13];
+					lon = token[14];
+					lat = token[15];
+					
+					id = newid;
+					polygon = "POLYGON((" + token[1] + " " + token[2];
 				}
+				
+				j++;
 			}
+
+			polygon = polygon + "," + firstx + " " + firsty + "))";
+			pst.setInt(1, id);
+			pst.setInt(2, Integer.parseInt(z));
+			pst.setInt(3, Integer.parseInt(m));
+			pst.setString(4, fips);
+			pst.setString(5, iso2);
+			pst.setString(6, iso3);
+			pst.setInt(7, Integer.parseInt(un));
+			pst.setString(8, name);
+			pst.setInt(9, Integer.parseInt(area));
+			pst.setInt(10, Integer.parseInt(pop2005));
+			pst.setInt(11, Integer.parseInt(region));
+			pst.setInt(12, Integer.parseInt(subregion));
+			pst.setDouble(13, Double.parseDouble(lon));
+			pst.setDouble(14, Double.parseDouble(lat));
+			pst.setString(15, polygon);
+			pst.executeUpdate();
 			conn.commit();
 			conn.setAutoCommit(true);
-			System.out.print(j++ + " Lines eingelesen!");
+			System.out.print("World: " + j + " Lines eingelesen!");
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
