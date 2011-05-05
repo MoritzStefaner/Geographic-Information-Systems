@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import org.gis.db.*;
 import org.postgis.*;
@@ -94,7 +95,6 @@ public class ImportTool {
 		db.executeQuery("SELECT AddGeometryColumn('','world','poly_geom', '-1','POLYGON',2)");
 
 		Connection conn = db.getConn();
-		conn.setAutoCommit(false);
 		PreparedStatement pst = conn.prepareStatement("INSERT INTO world (id, z, m, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat, poly_geom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
 	
 		
@@ -108,6 +108,7 @@ public class ImportTool {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
 		String line = null;
 		String[] token = null;
 		
@@ -177,7 +178,6 @@ public class ImportTool {
 					pst.setDouble(14, Double.parseDouble(lat));
 					pst.setString(15, polygon);
 					pst.executeUpdate();
-					conn.commit();
 					
 					firstx = token[1];
 					firsty = token[2];
@@ -219,8 +219,7 @@ public class ImportTool {
 			pst.setDouble(14, Double.parseDouble(lat));
 			pst.setString(15, polygon);
 			pst.executeUpdate();
-			conn.commit();
-			conn.setAutoCommit(true);
+			
 			System.out.print("World: " + j + " Lines eingelesen!");
 			
 		} catch (IOException e) {
@@ -228,12 +227,131 @@ public class ImportTool {
 			e.printStackTrace();
 		}
 	}
+	
+	public void importConstituencies() throws Exception{
+		db.executeUpdate("drop table if exists constituencies");
+		this.db.executeUpdate("CREATE TABLE constituencies ("
+				+ "id int,"
+				+ "	partid int,"
+				+ " perimeter double precision," 
+				+ "	wkr_nr int," 
+				+ "	wkr_name varchar,"
+				+ "	land_nr int," 
+				+ "	land_name varchar," 
+				+ "	flag int)");
+		
+		db.executeQuery("SELECT AddGeometryColumn('','constituencies','poly_geom', '-1','POLYGON',2)");
+		
+		Connection conn = db.getConn();
+		PreparedStatement pst = conn.prepareStatement("INSERT INTO constituencies (id, partid, perimeter, wkr_nr, wkr_name, land_nr, land_name, flag, poly_geom) VALUES (?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
+	
+		
+		File file = new File("Geometrie_Wahlkreise_17DBT.csv");
+		BufferedReader bufRdr = null;
+
+		try {
+			bufRdr = new BufferedReader(new InputStreamReader(
+					new FileInputStream(file), "UTF-8"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		String line = null;
+		String[] token = null;
+		
+		int j = 0;
+		boolean first = true;
+		String polygon = "POLYGON((";
+		int id = 0;
+		String firstx = null;
+		String firsty = null;
+		String partid = null;
+		String perimeter = null;
+		String wkr_nr = null;
+		String wkr_name = null;
+		String land_nr = null;
+		String land_name = null;
+		String flag = null;	
+
+		// read each line of text file
+		try {
+			bufRdr.readLine();
+			while ((line = bufRdr.readLine()) != null) {
+				token = line.split(";");
+				int newid = Integer.parseInt(token[2]);
+				
+				if (id == newid){
+					if(first){
+						polygon = polygon + token[0] + " " + token[1];
+						firstx = token[0];
+						firsty = token[1];
+						partid = token[3];
+						perimeter = token[4];
+						wkr_nr = token[5];
+						wkr_name = token[6];
+						land_nr = token[7];
+						land_name = token[8];
+						flag = token[9];
+						first = false;
+					}
+					polygon = polygon + "," + token[0] + " " + token[1];
+				}else{
+					polygon = polygon + "," + firstx + " " + firsty + "))";
+					pst.setInt(1, id);
+					pst.setInt(2, Integer.parseInt(partid));
+					pst.setDouble(3, Double.parseDouble(perimeter));
+					pst.setInt(4, Integer.parseInt(wkr_nr));
+					pst.setString(5, wkr_name);
+					pst.setInt(6, Integer.parseInt(land_nr));
+					pst.setString(7, land_name);
+					pst.setInt(8, Integer.parseInt(flag));
+					pst.setString(9, polygon);
+					pst.executeUpdate();
+					
+					firstx = token[0];
+					firsty = token[1];
+					partid = token[3];
+					perimeter = token[4];
+					wkr_nr = token[5];
+					wkr_name = token[6];
+					land_nr = token[7];
+					land_name = token[8];
+					flag = token[9];
+					
+					id = newid;
+					polygon = "POLYGON((" + token[0] + " " + token[1];
+				}
+				
+				j++;
+			}
+
+			polygon = polygon + "," + firstx + " " + firsty + "))";
+			pst.setInt(1, id);
+			pst.setInt(2, Integer.parseInt(partid));
+			pst.setDouble(3, Double.parseDouble(perimeter));
+			pst.setInt(4, Integer.parseInt(wkr_nr));
+			pst.setString(5, wkr_name);
+			pst.setInt(6, Integer.parseInt(land_nr));
+			pst.setString(7, land_name);
+			pst.setInt(8, Integer.parseInt(flag));
+			pst.setString(9, polygon);
+			pst.executeUpdate();
+			System.out.print("Constituencies: " + j + " Lines eingelesen!");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
 		// it.importStorcks();
-		it.importWorld();
+		// it.importWorld();
+		it.importConstituencies();
 	}
 
 }
