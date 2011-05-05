@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -343,6 +344,39 @@ public class ImportTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+	}
+	
+	public void importResults() throws Exception{
+		File file = new File("kerg.csv");
+		BufferedReader bufRdr = null;
+
+		try {
+			bufRdr = new BufferedReader(new InputStreamReader(
+					new FileInputStream(file), "UTF-8"));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		db.executeUpdate("drop table if exists results");
+		this.db.executeUpdate("CREATE TABLE results ("
+				+ "id int,"
+				+ "	partid int,"
+				+ " perimeter double precision," 
+				+ "	wkr_nr int," 
+				+ "	wkr_name varchar,"
+				+ "	land_nr int," 
+				+ "	land_name varchar," 
+				+ "	flag int)");
+		
+		db.executeQuery("SELECT AddGeometryColumn('','constituencies','poly_geom', '-1','POLYGON',2)");
+		
+		Connection conn = db.getConn();
+		PreparedStatement pst = conn.prepareStatement("INSERT INTO constituencies (id, partid, perimeter, wkr_nr, wkr_name, land_nr, land_name, flag, poly_geom) VALUES (?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
+	
+		
 		
 	}
 
