@@ -143,7 +143,7 @@ public class ImportTool {
 	public void importWorld() throws Exception {
 		db.executeUpdate("drop table if exists world");
 		this.db.executeUpdate("CREATE TABLE world (" 
-				+ "id int,"
+				+ "id int PRIMARY KEY,"
 				+ "	z bigint,"
 				+ "	m bigint," 
 				+ "	fips varchar," 
@@ -297,7 +297,7 @@ public class ImportTool {
 	public void importConstituencies() throws Exception{
 		db.executeUpdate("drop table if exists constituencies");
 		this.db.executeUpdate("CREATE TABLE constituencies ("
-				+ "id int,"
+				+ "id int PRIMARY KEY,"
 				+ "	partid int,"
 				+ " perimeter double precision," 
 				+ "	wkr_nr int," 
@@ -423,24 +423,119 @@ public class ImportTool {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-		
 		db.executeUpdate("drop table if exists results");
-		this.db.executeUpdate("CREATE TABLE results ("
-				+ "id int,"
-				+ "	partid int,"
-				+ " perimeter double precision," 
-				+ "	wkr_nr int," 
-				+ "	wkr_name varchar,"
-				+ "	land_nr int," 
-				+ "	land_name varchar," 
-				+ "	flag int)");
+		db.executeUpdate("drop table if exists parties");
+		db.executeUpdate("drop table if exists voter");
 		
-		db.executeQuery("SELECT AddGeometryColumn('','constituencies','poly_geom', '-1','POLYGON',2)");
-		
+		db.executeUpdate("CREATE TABLE parties ("
+				+ " id int PRIMARY KEY,"
+				+ "	name varchar)");
+
 		Connection conn = db.getConn();
-		PreparedStatement pst = conn.prepareStatement("INSERT INTO constituencies (id, partid, perimeter, wkr_nr, wkr_name, land_nr, land_name, flag, poly_geom) VALUES (?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
-	
+		PreparedStatement pstParties = conn.prepareStatement("INSERT INTO parties (id, name) VALUES (?,?)"); 
+
+		db.executeUpdate("CREATE TABLE voter ("
+				+ " id int PRIMARY KEY,"
+				+ "	name varchar,"
+				+ " part_of int," 
+				+ "	elective_cur int," 
+				+ "	elective_prev int,"
+				+ "	voter_cur int," 
+				+ "	voter_prev int)");
+
+		PreparedStatement pstVoter = conn.prepareStatement("INSERT INTO voter (id, name, part_of, elective_cur, elective_prev, voter_cur, voter_prev) VALUES (?,?,?,?,?,?,?)"); 
+		
+		db.executeUpdate("CREATE TABLE results ("
+				+ " constituencies_id int,"
+				+ "	partie_id int," 
+				+ " first_cur int," 
+				+ "	first_prev int,"
+				+ "	second_cur int," 
+				+ "	second_prev int,"
+				+ " FOREIGN KEY (constituencies_id) REFERENCES voter (id)," 
+				+ " FOREIGN KEY (partie_id) REFERENCES parties (id))");
+		
+		PreparedStatement pstResult = conn.prepareStatement("INSERT INTO results (constituencies_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
+		
+		String line = null;
+		String[] token;
+		int partieID = 0;
+		
+		try{
+			bufRdr.readLine();
+			bufRdr.readLine();
+			line = bufRdr.readLine();
+			token = line.split(";");
+			for(int i = 11; i<token.length-1; i= i+4){
+				pstParties.setInt(1, partieID);
+				pstParties.setString(2, token[i]);
+				pstParties.executeUpdate();
+				partieID++;
+			}
+			
+			bufRdr.readLine();
+			bufRdr.readLine();
+			
+			String constituencieID;
+			
+			while((line = bufRdr.readLine()) != null){
+				token = line.split(";");
+				
+				if (token[0].equals("")) { }else {
+					// Macht die Nummerierungen Primary-Key-Fähig.
+					if ((Integer.parseInt(token[2])) == 99) {
+						constituencieID = "99" + token[0];
+					} else {
+						constituencieID = token[0];
+					}
+					pstVoter.setInt(1, Integer.parseInt(constituencieID));
+					pstVoter.setString(2, token[1]);
+					pstVoter.setInt(3, Integer.parseInt(token[2]));
+					pstVoter.setInt(4, Integer.parseInt(token[3]));
+					pstVoter.setInt(5, Integer.parseInt(token[4]));
+					pstVoter.setInt(6, Integer.parseInt(token[7]));
+					pstVoter.setInt(7, Integer.parseInt(token[8]));
+					pstVoter.executeUpdate();
+					partieID = 0;
+					for (int i = 11; i < token.length-1; i = i + 4) {
+
+						pstResult.setInt(1, Integer.parseInt(constituencieID));
+						pstResult.setInt(2, partieID);
+						if (token[i].equals("")) {
+							pstResult.setInt(3, 0);
+						} else {
+							pstResult.setInt(3, Integer.parseInt(token[i]));
+						}
+
+						if (token[i + 1].equals("")) {
+							pstResult.setInt(4, 0);
+						} else {
+							pstResult.setInt(4, Integer.parseInt(token[i + 1]));
+						}
+
+						if (token[i + 2].equals("")) {
+							pstResult.setInt(5, 0);
+						} else {
+							pstResult.setInt(5, Integer.parseInt(token[i + 2]));
+						}
+
+						if (token[i + 3].equals("")) {
+							pstResult.setInt(6, 0);
+						} else {
+							pstResult.setInt(6, Integer.parseInt(token[i + 3]));
+						}
+
+						pstResult.executeUpdate();
+
+						partieID++;
+						}
+				}
+			}
+				
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}
@@ -450,9 +545,10 @@ public class ImportTool {
 		ImportTool it = new ImportTool();
 		// it.importStorcks();
 		// it.importWorld();
-		it.importConstituencies();
-		it.importStorks();
+		//it.importConstituencies();
+		//it.importStorks();
 		//it.importMalte();
+		it.importResults();
 	}
 
 }
