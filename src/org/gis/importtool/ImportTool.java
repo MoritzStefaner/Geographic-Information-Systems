@@ -7,13 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
-
 import org.gis.db.*;
-import org.postgis.*;
 
 public class ImportTool {
 	private Database db = null;
@@ -26,7 +22,7 @@ public class ImportTool {
 		this.db = new Database();
 	}
 	public void importStorks() {
-		this.db.executeQuery(
+		this.db.executeUpdate(
 				"CREATE TABLE storks (" +
 				"	id bigint PRIMARY KEY," +
 				"	timestamp time," +
@@ -34,7 +30,7 @@ public class ImportTool {
 				"	tagLocalIdentifier bigint)"
 				);
 		
-		this.db.executeQuery("SELECT AddGeometryColumn('','storks','geometrycolumn','-1','POINT',2);");
+		this.db.executeUpdate("SELECT AddGeometryColumn('','storks','geometrycolumn','-1','POINT',2);");
 		
 		String insert = new String("INSERT INTO storks (id, timestamp, altitude, tagLocalIdentifier, geometrycolumn) VALUES ");
 		File file = new File("MPIO_White_Stork_Argos.csv");
@@ -75,7 +71,7 @@ public class ImportTool {
 	}
 	
 	public void importMalte() {
-		this.db.executeQuery(
+		this.db.executeUpdate(
 				"CREATE TABLE malte (" +
 				"	id bigint PRIMARY KEY," +
 				"	startTime time," +
@@ -87,7 +83,7 @@ public class ImportTool {
 				"   cellB text)"
 				);
 		
-		this.db.executeQuery("SELECT AddGeometryColumn('','malte','geometrycolumn','-1','POINT',2);");
+		this.db.executeUpdate("SELECT AddGeometryColumn('','malte','geometrycolumn','-1','POINT',2);");
 		
 		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB, geometrycolumn) VALUES ");
 		File file = new File("GermanPolitician.csv");
@@ -144,7 +140,7 @@ public class ImportTool {
 		insert = insert.concat(";");
 		
 		//System.out.println(insert);
-		this.db.executeQuery(insert);
+		this.db.executeUpdate(insert);
 
 	}
 
@@ -629,11 +625,10 @@ public class ImportTool {
 		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
 
-		// it.importStorcks();
-		// it.importWorld();
-		//it.importConstituencies();
-		//it.importStorks();
-		//it.importMalte();
+		it.importWorld();
+		it.importConstituencies();
+		it.importStorks();
+		it.importMalte();
 		it.importResults();
 	}
 
