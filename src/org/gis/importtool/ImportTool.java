@@ -69,19 +69,21 @@ public class ImportTool {
 	}
 	
 	public void importMalte() {
-//		this.db.executeQuery(
-//				"CREATE TABLE malte (" +
-//				"	id bigint PRIMARY KEY," +
-//				"	startTime time," +
-//				"	endTime time," +
-//				"	service text," +
-//				"	inOutgoing text," +
-//				"	direction bigint," +
-//				"   cellA text," +
-//				"   cellB text)"
-//				);
+		this.db.executeQuery(
+				"CREATE TABLE malte (" +
+				"	id bigint PRIMARY KEY," +
+				"	startTime time," +
+				"	endTime time," +
+				"	service text," +
+				"	inOutgoing text," +
+				"	direction bigint," +
+				"   cellA text," +
+				"   cellB text)"
+				);
 		
-		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB) VALUES ");
+		this.db.executeQuery("SELECT AddGeometryColumn('','malte','geometrycolumn','-1','POINT',2);");
+		
+		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB, geometrycolumn) VALUES ");
 		File file = new File("GermanPolitician.csv");
 		BufferedReader bufRdr = null;
 		
@@ -100,26 +102,32 @@ public class ImportTool {
 		//read each line of text file
 		try {
 			bufRdr.readLine();
-			while((line = bufRdr.readLine()) != null && i < 10) {	
-				if (i != 0) {
-					insert = insert.concat(",");
-				}
-				token = line.split(",");
-				if (token.length == 9) {
+			while((line = bufRdr.readLine()) != null) {	
+				token = line.split(";");
+				if (token.length == 9 && !token[4].isEmpty() && !token[5].isEmpty()) {
+					if (i != 0) {
+						insert = insert.concat(",");
+					}
 					if (token[6].isEmpty()) {
 						token[6] = "NULL";
 					}
 					date = (token[0].split(" "))[0].split("/");
 					if (date.length == 3)
-						token[0] = "20"+date[2]+"-"+date[0]+"-"+date[1]+" "+(token[0].split(" "))[1];
+						token[0] = "'20"+date[2]+"-"+date[0]+"-"+date[1]+" "+(token[0].split(" "))[1]+"'";
+					else
+						token[0] = "NULL";
 
 					date = (token[1].split(" "))[0].split("/");
 					if (date.length == 3)
-						token[1] = "20"+date[2]+"-"+date[0]+"-"+date[1]+" "+(token[1].split(" "))[1];
-					newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', '" + token[1] + "', '" + token[2] + "', '" + token[3] + "', " + token[6] + ", '" + token[7] + "', '" + token[8] + "')");
+						token[1] = "'20"+date[2]+"-"+date[0]+"-"+date[1]+" "+(token[1].split(" "))[1]+"'";
+					else
+						token[1] = "NULL";
+					
+					newInsert = new String("(" + String.valueOf(i) + ", " + token[0] + ", " + token[1] + ", '" + token[2] + "', '" + token[3] + "', " + token[6] + ", '" + token[7] + "', '" + token[8] + "', GeomFromText('POINT(" + token[4] + " " + token[5] + ")')" + ")");
+
+					insert = insert.concat(newInsert);
+					i++;
 				}
-				insert = insert.concat(newInsert);
-				i++;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -127,16 +135,16 @@ public class ImportTool {
 		}
 		insert = insert.concat(";");
 		
-		System.out.println(insert);
-		//this.db.executeQuery(insert);
+		//System.out.println(insert);
+		this.db.executeQuery(insert);
 
 	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
-		it.importStorks();
-		//it.importMalte();
+		//it.importStorks();
+		it.importMalte();
 	}
 
 }
