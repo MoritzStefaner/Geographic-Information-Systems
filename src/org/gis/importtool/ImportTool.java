@@ -423,18 +423,23 @@ public class ImportTool {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		db.executeUpdate("drop table if exists results");
+		Connection conn = db.getConn();
+		conn.setAutoCommit(false);
+		
+		db.executeUpdate("drop table if exists results_const");
+		db.executeUpdate("drop table if exists results_states");
 		db.executeUpdate("drop table if exists parties");
-		db.executeUpdate("drop table if exists voter");
+		db.executeUpdate("drop table if exists voter_const");
+		db.executeUpdate("drop table if exists voter_states");
 		
 		db.executeUpdate("CREATE TABLE parties ("
 				+ " id int PRIMARY KEY,"
 				+ "	name varchar)");
 
-		Connection conn = db.getConn();
+		
 		PreparedStatement pstParties = conn.prepareStatement("INSERT INTO parties (id, name) VALUES (?,?)"); 
 
-		db.executeUpdate("CREATE TABLE voter ("
+		db.executeUpdate("CREATE TABLE voter_states ("
 				+ " id int PRIMARY KEY,"
 				+ "	name varchar,"
 				+ " part_of int," 
@@ -443,19 +448,42 @@ public class ImportTool {
 				+ "	voter_cur int," 
 				+ "	voter_prev int)");
 
-		PreparedStatement pstVoter = conn.prepareStatement("INSERT INTO voter (id, name, part_of, elective_cur, elective_prev, voter_cur, voter_prev) VALUES (?,?,?,?,?,?,?)"); 
+		PreparedStatement pstVoterStates = conn.prepareStatement("INSERT INTO voter_states (id, name, part_of, elective_cur, elective_prev, voter_cur, voter_prev) VALUES (?,?,?,?,?,?,?)"); 
 		
-		db.executeUpdate("CREATE TABLE results ("
+		db.executeUpdate("CREATE TABLE voter_const ("
+				+ " id int PRIMARY KEY,"
+				+ "	name varchar,"
+				+ " part_of int," 
+				+ "	elective_cur int," 
+				+ "	elective_prev int,"
+				+ "	voter_cur int," 
+				+ "	voter_prev int)");
+
+		PreparedStatement pstVoterConst = conn.prepareStatement("INSERT INTO voter_const (id, name, part_of, elective_cur, elective_prev, voter_cur, voter_prev) VALUES (?,?,?,?,?,?,?)");
+		
+		db.executeUpdate("CREATE TABLE results_const ("
 				+ " constituencies_id int,"
 				+ "	partie_id int," 
 				+ " first_cur int," 
 				+ "	first_prev int,"
 				+ "	second_cur int," 
 				+ "	second_prev int,"
-				+ " FOREIGN KEY (constituencies_id) REFERENCES voter (id)," 
+				+ " FOREIGN KEY (constituencies_id) REFERENCES voter_const (id)," 
 				+ " FOREIGN KEY (partie_id) REFERENCES parties (id))");
 		
-		PreparedStatement pstResult = conn.prepareStatement("INSERT INTO results (constituencies_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
+		PreparedStatement pstResultConst = conn.prepareStatement("INSERT INTO results_const (constituencies_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
+		
+		db.executeUpdate("CREATE TABLE results_states ("
+				+ " constituencies_id int,"
+				+ "	partie_id int," 
+				+ " first_cur int," 
+				+ "	first_prev int,"
+				+ "	second_cur int," 
+				+ "	second_prev int,"
+				+ " FOREIGN KEY (constituencies_id) REFERENCES voter_states (id)," 
+				+ " FOREIGN KEY (partie_id) REFERENCES parties (id))");
+		
+		PreparedStatement pstResultStates = conn.prepareStatement("INSERT INTO results_states (constituencies_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
 		
 		String line = null;
 		String[] token;
@@ -476,59 +504,108 @@ public class ImportTool {
 			bufRdr.readLine();
 			bufRdr.readLine();
 			
-			String constituencieID;
-			
 			while((line = bufRdr.readLine()) != null){
-				token = line.split(";");
+				token = line.split(";", -2);
 				
 				if (token[0].equals("")) { }else {
-					// Macht die Nummerierungen Primary-Key-Fähig.
-					if ((Integer.parseInt(token[2])) == 99) {
-						constituencieID = "99" + token[0];
+					// Sorts states out of constituencies.
+					if ( ((Integer.parseInt(token[0])) == 99 && token[2].equals("")) || Integer.parseInt(token[2]) == 99) {
+						pstVoterStates.setInt(1, Integer.parseInt(token[0]));
+						pstVoterStates.setString(2, token[1]);
+						if((Integer.parseInt(token[0])) == 99){
+							pstVoterStates.setInt(3, Integer.parseInt(token[0]));
+						} else{
+							pstVoterStates.setInt(3, Integer.parseInt(token[2]));
+							
+						}
+						pstVoterStates.setInt(4, Integer.parseInt(token[3]));
+						pstVoterStates.setInt(5, Integer.parseInt(token[4]));
+						pstVoterStates.setInt(6, Integer.parseInt(token[7]));
+						pstVoterStates.setInt(7, Integer.parseInt(token[8]));
+						pstVoterStates.executeUpdate();
+						
+						// Sets the results per partie by partieID.
+						partieID = 0;
+						for (int i = 11; i < token.length-1; i = i + 4) {
+		
+							if (partieID < 30) {
+								pstResultStates.setInt(1,Integer.parseInt(token[0]));
+								pstResultStates.setInt(2, partieID);
+								if (token[i].equals("")) {
+									pstResultStates.setInt(3, 0);
+								} else {
+									pstResultStates.setInt(3, Integer.parseInt(token[i]));
+								}
+								if (token[i + 1].equals("")) {
+									pstResultStates.setInt(4, 0);
+								} else {
+									pstResultStates.setInt(4, Integer.parseInt(token[i + 1]));
+								}
+								if (token[i + 2].equals("")) {
+									pstResultStates.setInt(5, 0);
+								} else {
+									pstResultStates.setInt(5, Integer.parseInt(token[i + 2]));
+								}
+								if (token[i + 3].equals("")) {
+									pstResultStates.setInt(6, 0);
+								} else {
+									pstResultStates.setInt(6, Integer.parseInt(token[i + 3]));
+								}
+								pstResultStates.executeUpdate();
+								partieID++;
+							}
+						}
+						
+						// Commits after the id of the state was setted, because its foreign key-
+						conn.commit();
+
 					} else {
-						constituencieID = token[0];
+						pstVoterConst.setInt(1, Integer.parseInt(token[0]));
+						pstVoterConst.setString(2, token[1]);
+						pstVoterConst.setInt(3, Integer.parseInt(token[2]));
+						pstVoterConst.setInt(4, Integer.parseInt(token[3]));
+						pstVoterConst.setInt(5, Integer.parseInt(token[4]));
+						pstVoterConst.setInt(6, Integer.parseInt(token[7]));
+						pstVoterConst.setInt(7, Integer.parseInt(token[8]));
+						pstVoterConst.executeUpdate();
+						
+						// Sets the results per partie by partieID.
+						partieID = 0;
+						for (int i = 11; i < token.length-1; i = i + 4) {
+		
+							if (partieID < 30) {
+								pstResultConst.setInt(1,
+										Integer.parseInt(token[0]));
+								pstResultConst.setInt(2, partieID);
+								if (token[i].equals("")) {
+									pstResultConst.setInt(3, 0);
+								} else {
+									pstResultConst.setInt(3, Integer.parseInt(token[i]));
+								}
+								if (token[i + 1].equals("")) {
+									pstResultConst.setInt(4, 0);
+								} else {
+									pstResultConst.setInt(4,
+											Integer.parseInt(token[i + 1]));
+								}
+								if (token[i + 2].equals("")) {
+									pstResultConst.setInt(5, 0);
+								} else {
+									pstResultConst.setInt(5,
+											Integer.parseInt(token[i + 2]));
+								}
+								if (token[i + 3].equals("")) {
+									pstResultConst.setInt(6, 0);
+								} else {
+									pstResultConst.setInt(6,
+											Integer.parseInt(token[i + 3]));
+								}
+								pstResultConst.executeUpdate();
+								partieID++;
+							}
+						}
 					}
-					pstVoter.setInt(1, Integer.parseInt(constituencieID));
-					pstVoter.setString(2, token[1]);
-					pstVoter.setInt(3, Integer.parseInt(token[2]));
-					pstVoter.setInt(4, Integer.parseInt(token[3]));
-					pstVoter.setInt(5, Integer.parseInt(token[4]));
-					pstVoter.setInt(6, Integer.parseInt(token[7]));
-					pstVoter.setInt(7, Integer.parseInt(token[8]));
-					pstVoter.executeUpdate();
-					partieID = 0;
-					for (int i = 11; i < token.length-1; i = i + 4) {
-
-						pstResult.setInt(1, Integer.parseInt(constituencieID));
-						pstResult.setInt(2, partieID);
-						if (token[i].equals("")) {
-							pstResult.setInt(3, 0);
-						} else {
-							pstResult.setInt(3, Integer.parseInt(token[i]));
-						}
-
-						if (token[i + 1].equals("")) {
-							pstResult.setInt(4, 0);
-						} else {
-							pstResult.setInt(4, Integer.parseInt(token[i + 1]));
-						}
-
-						if (token[i + 2].equals("")) {
-							pstResult.setInt(5, 0);
-						} else {
-							pstResult.setInt(5, Integer.parseInt(token[i + 2]));
-						}
-
-						if (token[i + 3].equals("")) {
-							pstResult.setInt(6, 0);
-						} else {
-							pstResult.setInt(6, Integer.parseInt(token[i + 3]));
-						}
-
-						pstResult.executeUpdate();
-
-						partieID++;
-						}
+					
 				}
 			}
 				
@@ -537,7 +614,7 @@ public class ImportTool {
 			e.printStackTrace();
 		}
 		
-		
+		conn.setAutoCommit(true);
 	}
 
 	public static void main(String[] args) throws Exception {
