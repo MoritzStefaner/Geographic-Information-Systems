@@ -1,4 +1,4 @@
-package org.gis.importtool;
+package org.gis.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,8 +25,9 @@ public class ImportTool {
 	public ImportTool() {
 		this.db = new Database();
 	}
-	public void importStorks() {
-		this.db.executeQuery(
+	private void importStorks() {
+		db.executeUpdate("drop table if exists storks");
+		this.db.executeUpdate(
 				"CREATE TABLE storks (" +
 				"	id bigint PRIMARY KEY," +
 				"	timestamp time," +
@@ -74,18 +75,19 @@ public class ImportTool {
 
 	}
 	
-	public void importMalte() {
-//		this.db.executeQuery(
-//				"CREATE TABLE malte (" +
-//				"	id bigint PRIMARY KEY," +
-//				"	startTime time," +
-//				"	endTime time," +
-//				"	service text," +
-//				"	inOutgoing text," +
-//				"	direction bigint," +
-//				"   cellA text," +
-//				"   cellB text)"
-//				);
+	private void importMalte() {
+		db.executeUpdate("drop table if exists malte");
+		this.db.executeUpdate(
+				"CREATE TABLE malte (" +
+				"	id bigint PRIMARY KEY," +
+				"	startTime time," +
+				"	endTime time," +
+				"	service text," +
+				"	inOutgoing text," +
+				"	direction bigint," +
+				"   cellA text," +
+				"   cellB text)"
+				);
 		
 		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB) VALUES ");
 		File file = new File("GermanPolitician.csv");
@@ -140,7 +142,7 @@ public class ImportTool {
 
 	}
 
-	public void importWorld() throws Exception {
+	private void importWorld() throws Exception {
 		db.executeUpdate("drop table if exists world");
 		this.db.executeUpdate("CREATE TABLE world (" 
 				+ "id int PRIMARY KEY,"
@@ -294,7 +296,7 @@ public class ImportTool {
 		}
 	}
 	
-	public void importConstituencies() throws Exception{
+	private void importConstituencies() throws Exception{
 		db.executeUpdate("drop table if exists constituencies");
 		this.db.executeUpdate("CREATE TABLE constituencies ("
 				+ "id int PRIMARY KEY,"
@@ -412,7 +414,7 @@ public class ImportTool {
 		
 	}
 
-	public void importResults() throws Exception{
+	private void importResults() throws Exception{
 		File file = new File("kerg.csv");
 		BufferedReader bufRdr = null;
 
@@ -620,10 +622,9 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
-		// it.importStorcks();
-		// it.importWorld();
-		//it.importConstituencies();
-		//it.importStorks();
+		it.importStorks();
+		it.importWorld();
+		it.importConstituencies();
 		//it.importMalte();
 		it.importResults();
 	}
