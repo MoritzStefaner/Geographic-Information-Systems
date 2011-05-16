@@ -9,7 +9,7 @@ public class Polygon {
 	private LinkedList<Point> ring;
 	
 	public Polygon(){
-		
+		this.ring = new LinkedList<Point>();
 	}
 	
 	public void addPoint(Point point){

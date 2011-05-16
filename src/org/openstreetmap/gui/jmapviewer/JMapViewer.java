@@ -15,6 +15,7 @@ import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -545,9 +546,17 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     /**
      * Paint a polygon.
      */
-    protected void paintPolygon(Graphics g, MapMarkerPolygon p) {
-        if (p != null) {
-            p.paint(g);
+    protected void paintPolygon(Graphics g, MapMarkerPolygon markerPolygon) {
+    	LinkedList<Point> points = new LinkedList<Point>();
+    	LinkedList<org.postgis.Point> polygonPoints = markerPolygon.getPolygonList();
+    	
+    	Iterator<org.postgis.Point> it = polygonPoints.iterator();
+    	while (it.hasNext()) {
+    		org.postgis.Point polygonPoint = it.next();
+    		points.add(getMapPosition(polygonPoint.x, polygonPoint.y));
+    	}
+        if (markerPolygon != null) {
+        	markerPolygon.paint(g, points);
         }
     }
 

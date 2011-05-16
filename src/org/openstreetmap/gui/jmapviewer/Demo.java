@@ -3,13 +3,11 @@ package org.openstreetmap.gui.jmapviewer;
 //License: GPL. Copyright 2008 by Jan Peter Stotz
 
 import java.awt.BorderLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
-import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -18,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.gis.db.Polygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -117,11 +116,11 @@ public class Demo extends JFrame {
         map.addMapMarker(new MapMarkerDot(48.71, -1));
         map.addMapMarker(new MapMarkerDot(49.8588, 8.643));
         
-        LinkedList<Point> linkedListPolygon = new LinkedList<Point>();
-        linkedListPolygon.add(new Point(49, 8));
-        linkedListPolygon.add(new Point(50, 8));
-        linkedListPolygon.add(new Point(49, 9));
-        map.addMapMarkerPolygon(new MapMarkerPolygon(linkedListPolygon));
+        org.gis.db.Polygon polygonA = new Polygon();
+        polygonA.addPoint(new org.postgis.Point(49.814284999, 8.642065999));
+        polygonA.addPoint(new org.postgis.Point(49.91, 8.24));
+        polygonA.addPoint(new org.postgis.Point(49.71, 8.64));
+        map.addMapMarkerPolygon(new MapMarkerPolygon(polygonA));
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
