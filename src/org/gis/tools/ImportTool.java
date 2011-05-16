@@ -1,4 +1,4 @@
-package org.gis.importtool;
+package org.gis.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,7 +21,10 @@ public class ImportTool {
 	public ImportTool() {
 		this.db = new Database();
 	}
-	public void importStorks() {
+
+	private void importStorks() {
+		this.db.executeUpdate("drop table if exists storks");
+
 		this.db.executeUpdate(
 				"CREATE TABLE storks (" +
 				"	id bigint PRIMARY KEY," +
@@ -70,7 +73,9 @@ public class ImportTool {
 
 	}
 	
-	public void importMalte() {
+	private void importMalte() {
+		this.db.executeUpdate("drop table if exists malte");
+
 		this.db.executeUpdate(
 				"CREATE TABLE malte (" +
 				"	id bigint PRIMARY KEY," +
@@ -144,7 +149,7 @@ public class ImportTool {
 
 	}
 
-	public void importWorld() throws Exception {
+	private void importWorld() throws Exception {
 		db.executeUpdate("drop table if exists world");
 		this.db.executeUpdate("CREATE TABLE world (" 
 				+ "id int PRIMARY KEY,"
@@ -298,7 +303,7 @@ public class ImportTool {
 		}
 	}
 	
-	public void importConstituencies() throws Exception{
+	private void importConstituencies() throws Exception{
 		db.executeUpdate("drop table if exists constituencies");
 		this.db.executeUpdate("CREATE TABLE constituencies ("
 				+ "id int PRIMARY KEY,"
@@ -416,7 +421,7 @@ public class ImportTool {
 		
 	}
 
-	public void importResults() throws Exception{
+	private void importResults() throws Exception{
 		File file = new File("kerg.csv");
 		BufferedReader bufRdr = null;
 

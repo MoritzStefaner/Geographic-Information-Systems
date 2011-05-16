@@ -34,16 +34,19 @@ public class Database {
 
 	}
 	
-	public void executeQuery(String query){
+	public  ResultSet executeQuery(String query){
+		ResultSet result = null;
 		try {
 			Statement s = this.conn.createStatement(); //create query statement
-			s.executeQuery(query);
+			 result = s.executeQuery(query);
 			
-			s.close(); //close statement when finished
+			//s.close(); //close statement when finished
 		} catch(Exception ex) {
 			System.err.println(ex);
 			ex.printStackTrace();
 		}
+		
+		return result;
 	}
 	
 	public Connection getConn(){
