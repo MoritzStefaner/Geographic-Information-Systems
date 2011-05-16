@@ -2,8 +2,9 @@ package org.gis.db;
 
 import org.postgis.*;
 
-public class StorkPoint extends Point{
-
+public class StorkPoint extends Point {
+	private static final long serialVersionUID = -2712139067711126319L;
+	
 	private String timestamp;
 	private int locIdentifier;
 	

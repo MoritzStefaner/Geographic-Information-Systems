@@ -2,6 +2,7 @@ package org.gis.db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import org.postgresql.PGConnection;;
 
