@@ -7,22 +7,16 @@ public class StorkPoint extends Point{
 	private String timestamp;
 	private int locIdentifier;
 	
-	public StorkPoint() {
-		
+	public StorkPoint(String stamp, int id, Point point) {
+		this.timestamp = stamp;
+		this.locIdentifier = id;
+		setPoint(point);
 	}
 	
-	public void setPoint(Point point){
+	protected void setPoint(Point point){
 		this.x = point.getX();
 		this.y = point.getY();
 		this.z = point.getZ();
-	}
-	
-	public void setTime(String stamp){
-		this.timestamp = stamp;
-	}
-	
-	public void setIdentifier(int id){
-		this.locIdentifier = id;
 	}
 	
 	public int getIdentifier(){

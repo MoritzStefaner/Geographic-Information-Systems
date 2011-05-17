@@ -4,16 +4,12 @@ import java.util.*;
 
 import org.postgis.Point;
 
-public class Polygon {
+public class Polygon{
 
 	private LinkedList<Point> ring;
 	
-	public Polygon(){
-		
-	}
-	
-	public void addPoint(Point point){
-		ring.add(point);
+	public Polygon(Point[] polygon){
+		setRing(polygon);
 	}
 	
 	public LinkedList<Point> getRing(){

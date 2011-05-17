@@ -151,7 +151,7 @@ public class ImportTool {
 				+ "	fips varchar," 
 				+ "	iso2 varchar,"
 				+ "	iso3 varchar," 
-				+ "	un bigint," 
+				+ "	un int," 
 				+ "	name varchar,"
 				+ "	area bigint," 
 				+ "	pop2005 bigint," 
@@ -622,11 +622,11 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
-		it.importStorks();
-		it.importWorld();
-		it.importConstituencies();
-		//it.importMalte();
-		it.importResults();
+		//it.importStorks();
+		//it.importWorld();
+		//it.importConstituencies();
+		it.importMalte();
+		//it.importResults();
 	}
 
 }
