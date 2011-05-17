@@ -37,6 +37,56 @@ public class WorldPolygon extends Polygon {
 		this.lat = lat;
 	}
 	
+	protected String getFips(){
+		return this.fips;
+	}
+
+	protected String getIso2() {
+		return iso2;
+	}
+
+	protected String getIso3() {
+		return iso3;
+	}
+
+	protected String getName() {
+		return name;
+	}
+
+	protected int getId() {
+		return id;
+	}
+
+	protected int getUn() {
+		return un;
+	}
+
+	protected long getArea() {
+		return area;
+	}
+
+	protected long getPop2005() {
+		return pop2005;
+	}
+
+	protected int getRegion() {
+		return region;
+	}
+
+	protected int getSubregion() {
+		return subregion;
+	}
+
+	protected double getLon() {
+		return lon;
+	}
+
+	protected double getLat() {
+		return lat;
+	}
+	
+	
+	
 	
 
 }

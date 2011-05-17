@@ -19,11 +19,11 @@ public class StorkPoint extends Point {
 		this.z = point.getZ();
 	}
 	
-	public int getIdentifier(){
+	protected int getIdentifier(){
 		return this.locIdentifier;
 	}
 	
-	public String getTimestamp(){
+	protected String getTimestamp(){
 		return this.timestamp;
 	}
 }

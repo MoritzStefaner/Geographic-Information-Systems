@@ -29,8 +29,8 @@ public class ImportTool {
 				"CREATE TABLE storks (" +
 				"	id bigint PRIMARY KEY," +
 				"	timestamp time," +
-				"	altitude bigint," +
-				"	tagLocalIdentifier bigint)"
+				"	altitude int," +
+				"	tagLocalIdentifier int)"
 				);
 		
 		this.db.executeUpdate("SELECT AddGeometryColumn('','storks','geometrycolumn','-1','POINT',2);");
@@ -83,7 +83,7 @@ public class ImportTool {
 				"	endTime time," +
 				"	service text," +
 				"	inOutgoing text," +
-				"	direction bigint," +
+				"	direction int," +
 				"   cellA text," +
 				"   cellB text)"
 				);
@@ -160,10 +160,10 @@ public class ImportTool {
 				+ "	iso3 varchar," 
 				+ "	un int," 
 				+ "	name varchar,"
-				+ "	area bigint," 
-				+ "	pop2005 bigint," 
-				+ "	region bigint,"
-				+ "	subregion bigint," 
+				+ "	area int," 
+				+ "	pop2005 int," 
+				+ "	region int,"
+				+ "	subregion int," 
 				+ "	lon double precision,"
 				+ "	lat double precision)");
 		
@@ -629,11 +629,11 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
-		//it.importStorks();
-		//it.importWorld();
-		//it.importConstituencies();
+		it.importStorks();
+		it.importWorld();
+		it.importConstituencies();
 		it.importMalte();
-		//it.importResults();
+		it.importResults();
 
 	}
 

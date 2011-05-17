@@ -13,7 +13,7 @@ public class Polygon{
 	}
 	
 	public LinkedList<Point> getRing(){
-		return this.ring;
+		return ring;
 	}
 	
 	public void setRing(Point[] points){
