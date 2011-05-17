@@ -7,7 +7,7 @@ import org.postgis.Point;
 public class Polygon{
 
 	private LinkedList<Point> ring;
-	
+
 	public Polygon(Point[] polygon){
 		setRing(polygon);
 	}

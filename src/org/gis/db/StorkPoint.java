@@ -2,8 +2,8 @@ package org.gis.db;
 
 import org.postgis.*;
 
-public class StorkPoint extends Point{
-
+public class StorkPoint extends Point {
+	
 	private String timestamp;
 	private int locIdentifier;
 	
