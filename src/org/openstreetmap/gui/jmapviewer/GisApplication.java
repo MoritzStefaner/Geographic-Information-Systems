@@ -1,7 +1,5 @@
 package org.openstreetmap.gui.jmapviewer;
 
-//License: GPL. Copyright 2008 by Jan Peter Stotz
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.gis.db.Polygon;
+import org.gis.db.WorldPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -24,17 +23,18 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 /**
  *
- * Demonstrates the usage of {@link JMapViewer}
+ * Display map data using {@link JMapViewer}.
  *
- * @author Jan Peter Stotz
+ * @author Dirk Kirsten
+ * @author Stefanie Marx
  *
  */
-public class Demo extends JFrame {
+public class GisApplication extends JFrame {
 
     private static final long serialVersionUID = 1L;
 
-    public Demo() {
-        super("JMapViewer Demo");
+    public GisApplication() {
+        super("Geographic Information Systems");
         setSize(400, 400);
         final JMapViewer map = new JMapViewer();
         // final JMapViewer map = new JMapViewer(new MemoryTileCache(),4);
@@ -115,6 +115,12 @@ public class Demo extends JFrame {
         map.addMapMarker(new MapMarkerDot(49.71, 8.64));
         map.addMapMarker(new MapMarkerDot(48.71, -1));
         map.addMapMarker(new MapMarkerDot(49.8588, 8.643));
+        
+        org.gis.db.Polygon polygonA = new WorldPolygon();
+        polygonA.addPoint(new org.postgis.Point(49.814284999, 8.642065999));
+        polygonA.addPoint(new org.postgis.Point(49.91, 8.24));
+        polygonA.addPoint(new org.postgis.Point(49.71, 8.64));
+        map.addMapMarkerPolygon(new MapMarkerPolygon(polygonA));
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
@@ -127,7 +133,7 @@ public class Demo extends JFrame {
         // java.util.Properties systemProperties = System.getProperties();
         // systemProperties.setProperty("http.proxyHost", "localhost");
         // systemProperties.setProperty("http.proxyPort", "8008");
-        new Demo().setVisible(true);
+        new GisApplication().setVisible(true);
     }
 
 }
