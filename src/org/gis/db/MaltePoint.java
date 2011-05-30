@@ -6,7 +6,6 @@ import org.postgis.Point;
 
 public class MaltePoint extends Point{
 	
-	int id;
 	Time starttime;
 	Time endtime;
 	String service;
@@ -15,8 +14,7 @@ public class MaltePoint extends Point{
 	String cella;
 	String cellb;
 
-	public MaltePoint(int id, Time starttime, Time endtime, String service, String inoutgoing, int direction, String cella, String cellb, Point point) {
-		this.id = id;
+	public MaltePoint(Time starttime, Time endtime, String service, String inoutgoing, int direction, String cella, String cellb, Point point) {
 		this.starttime = starttime;
 		this.endtime = endtime;
 		this.service = service;
@@ -32,10 +30,6 @@ public class MaltePoint extends Point{
 		this.x = point.getX();
 		this.y = point.getY();
 		this.z = point.getZ();
-	}
-
-	protected int getId() {
-		return id;
 	}
 
 	protected Time getStarttime() {

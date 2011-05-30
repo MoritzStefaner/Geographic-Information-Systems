@@ -9,7 +9,6 @@ public class WorldPolygon extends Polygon {
 	String iso3;
 	String name;
 	
-	int id;
 	int un;
 	long area;
 	long pop2005;
@@ -20,10 +19,9 @@ public class WorldPolygon extends Polygon {
 		super();
 	}
 	
-	public WorldPolygon(int id , String fips, String iso2, String iso3, int un, String name, long area, long pop2005, int region, int subregion, Point[] polygon) {
+	public WorldPolygon(String fips, String iso2, String iso3, int un, String name, long area, long pop2005, int region, int subregion, Point[] polygon) {
 		super(polygon);
 		
-		this.id = id;
 		this.fips = fips;
 		this.iso2 = iso2;
 		this.iso3 = iso3;
@@ -49,10 +47,6 @@ public class WorldPolygon extends Polygon {
 
 	protected String getName() {
 		return name;
-	}
-
-	protected int getId() {
-		return id;
 	}
 
 	protected int getUn() {
