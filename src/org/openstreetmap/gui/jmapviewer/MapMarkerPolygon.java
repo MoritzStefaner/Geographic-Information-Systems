@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
+
 import org.gis.db.Polygon;
 
 /**
@@ -19,11 +21,16 @@ public class MapMarkerPolygon {
     private Color color;
 
     public MapMarkerPolygon(Polygon polygon) {
-        this(new Color (0xFF, 0, 0, 0x33), polygon);
+        this(null, polygon);
     }
     
     public MapMarkerPolygon(Color color, Polygon polygon) {
-        this.color = color;
+    	if (color == null) {
+    		Random rand = new Random();
+    		this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
+    	} else {
+    		this.color = color;
+    	}
         this.polygon = polygon;
     }
 
@@ -34,8 +41,13 @@ public class MapMarkerPolygon {
     	Iterator<org.postgis.Point> it2 = polygonPoints.iterator();
     	while (it2.hasNext()) {
     		org.postgis.Point polygonPoint = it2.next();
-    		points.add(viewer.getMapPosition(polygonPoint.x, polygonPoint.y));
+    		Point p = viewer.getMapPosition(polygonPoint.x, polygonPoint.y);
+    		if (p != null)
+    			points.add(p);
     	}
+    	
+    	if (points.size() == 0)
+    		return;
     	
     	Iterator<Point> it = points.iterator();
     	int[] xPoints = new int[points.size()];
@@ -58,19 +70,21 @@ public class MapMarkerPolygon {
         	org.postgis.Point mass = polygon.getMass();
         	Point massCoord = viewer.getMapPosition(mass.x, mass.y);
         	
-        	/* Draw the Text in the middle of the polygon */
-        	/* Find the size of string s in font f in the current Graphics context g. */
-        	FontMetrics fm   = g.getFontMetrics(g.getFont());
-        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(polygon.getText(), g);
-
-        	int textHeight = (int)(rect.getHeight()); 
-        	int textWidth  = (int)(rect.getWidth());
-
-        	/* Center text horizontally and vertically */
-        	int x = massCoord.x - textWidth / 2;
-        	int y = massCoord.y - textHeight / 2  + fm.getAscent();
-
-        	g.drawString(polygon.getText(), x, y);  // Draw the string.
+        	if (massCoord != null) {
+	        	/* Draw the Text in the middle of the polygon */
+	        	/* Find the size of string s in font f in the current Graphics context g. */
+	        	FontMetrics fm   = g.getFontMetrics(g.getFont());
+	        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(polygon.getText(), g);
+	
+	        	int textHeight = (int)(rect.getHeight()); 
+	        	int textWidth  = (int)(rect.getWidth());
+	
+	        	/* Center text horizontally and vertically */
+	        	int x = massCoord.x - textWidth / 2;
+	        	int y = massCoord.y - textHeight / 2  + fm.getAscent();
+	
+	        	g.drawString(polygon.getText(), x, y);  // Draw the string.
+        	}
         }
         
     }

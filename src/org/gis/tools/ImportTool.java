@@ -216,7 +216,7 @@ public class ImportTool {
 				
 				if (id == newid){
 					if(first){
-						polygon = polygon + token[1] + " " + token[2];
+						polygon = polygon + token[2] + " " + token[1];
 						firstx = token[1];
 						firsty = token[2];
 						z = token[3];
@@ -234,9 +234,9 @@ public class ImportTool {
 						lat = token[15];
 						first = false;
 					}
-					polygon = polygon + "," + token[1] + " " + token[2];
+					polygon = polygon + "," + token[2] + " " + token[1];
 				}else{
-					polygon = polygon + "," + firstx + " " + firsty + "))";
+					polygon = polygon + "," + firsty + " " + firstx + "))";
 					pst.setInt(1, id);
 					pst.setInt(2, Integer.parseInt(z));
 					pst.setInt(3, Integer.parseInt(m));
@@ -271,13 +271,13 @@ public class ImportTool {
 					lat = token[15];
 					
 					id = newid;
-					polygon = "POLYGON((" + token[1] + " " + token[2];
+					polygon = "POLYGON((" + token[2] + " " + token[1];
 				}
 				
 				j++;
 			}
 
-			polygon = polygon + "," + firstx + " " + firsty + "))";
+			polygon = polygon + "," + firsty + " " + firstx + "))";
 			pst.setInt(1, id);
 			pst.setInt(2, Integer.parseInt(z));
 			pst.setInt(3, Integer.parseInt(m));
@@ -628,12 +628,11 @@ public class ImportTool {
 
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
-		it.importStorks();
+		//it.importStorks();
 		it.importWorld();
-		it.importConstituencies();
-		it.importMalte();
-		it.importResults();
-
+		//it.importConstituencies();
+		//it.importMalte();
+		//it.importResults();
 	}
 
 }
