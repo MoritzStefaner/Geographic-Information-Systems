@@ -11,6 +11,7 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
@@ -122,6 +123,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setPreferredSize(new Dimension(400, 400));
         setDisplayPositionByLatLon(50, 9, 3);
         //setToolTipText("");
+        
+        addMouseListener(new MouseEventListener());
     }
 
     @Override
@@ -685,6 +688,11 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
     
+    public void addMapMarkerPolygonList(LinkedList<MapMarkerPolygon> polygonList) {
+        mapMarkerPolygonList = polygonList;
+        repaint();
+    }
+    
     public void removeMapMarkerPolygon(MapMarkerPolygon polygon) {
         mapMarkerPolygonList.remove(polygon);
         repaint();
@@ -817,4 +825,21 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
         g.setFont(font);
     }
+
+    /* Internal class to handle mouse events
+     * 
+     */
+    public class MouseEventListener extends MouseAdapter {
+    	/* is called when the mouse is clicked (pressed and released again.
+    	 * This is used to select a point or polygon by an user.
+    	 * 
+    	 * (non-Javadoc)
+    	 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
+    	 */
+        public void mouseClicked(MouseEvent event) {           
+        	Coordinate c = getPosition(event.getX(), event.getY());
+        	System.out.println("Longitude: " + c.getLon() + ", Latitude: " + c.getLat());
+        }
+    }
+
 }

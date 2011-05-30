@@ -9,6 +9,7 @@ import org.gis.db.Database;
 import org.gis.db.MaltePoint;
 import org.gis.db.StorkPoint;
 import org.gis.db.WorldPolygon;
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 import org.postgis.*;
 
 public class ExportObjectsTool {
@@ -19,7 +20,7 @@ public class ExportObjectsTool {
 		this.db = new Database();
 	}
 	
-	private LinkedList<StorkPoint> exportStork(){
+	public LinkedList<StorkPoint> exportStork(){
 		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		LinkedList<StorkPoint> pointList = new LinkedList<StorkPoint>();
 		
@@ -40,7 +41,7 @@ public class ExportObjectsTool {
 		return pointList;	
 	}
 	
-	private LinkedList<MaltePoint> exportMalte(){
+	public LinkedList<MaltePoint> exportMalte(){
 		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn from malte");
 		LinkedList<MaltePoint> pointList = new LinkedList<MaltePoint>();
 		
@@ -60,19 +61,19 @@ public class ExportObjectsTool {
 		return pointList;	
 	}
 
-	private LinkedList<WorldPolygon> exportWorld(){
+	public LinkedList<MapMarkerPolygon> exportWorld(){
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
-		LinkedList<WorldPolygon> polygonList = new LinkedList<WorldPolygon>();
+		LinkedList<MapMarkerPolygon> polygonList = new LinkedList<MapMarkerPolygon>();
 		
 		try {
 			while(result.next()){
-				PGgeometry geom = (PGgeometry) result.getObject(13);
+				PGgeometry geom = (PGgeometry) result.getObject(11);
 				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
 				WorldPolygon polygon = new WorldPolygon((Integer) result.getObject(1), (String) result.getObject(2), (String) result.getObject(3), 
-						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Long) result.getObject(7),
-						(Long) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
-
-				polygonList.add(polygon);
+						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
+						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
+				
+				polygonList.add(new MapMarkerPolygon(polygon));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -80,15 +81,6 @@ public class ExportObjectsTool {
 		}
 		
 		return polygonList;
-	}
-	
-	public static void main(String[] args) {
-		
-		ExportObjectsTool eot = new ExportObjectsTool();
-		
-		//eot.exportStork();
-		//eot.exportWorld();
-		eot.exportMalte();
 	}
 
 }
