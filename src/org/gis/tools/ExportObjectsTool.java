@@ -6,7 +6,9 @@ import java.sql.Time;
 import java.util.*;
 
 import org.gis.db.Database;
+import org.gis.db.MaltePoint;
 import org.gis.db.StorkPoint;
+import org.gis.db.WorldPolygon;
 import org.postgis.*;
 
 public class ExportObjectsTool {
@@ -59,7 +61,7 @@ public class ExportObjectsTool {
 	}
 
 	private LinkedList<WorldPolygon> exportWorld(){
-		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat, poly_geom from world");
+		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		LinkedList<WorldPolygon> polygonList = new LinkedList<WorldPolygon>();
 		
 		try {
@@ -68,8 +70,7 @@ public class ExportObjectsTool {
 				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
 				WorldPolygon polygon = new WorldPolygon((Integer) result.getObject(1), (String) result.getObject(2), (String) result.getObject(3), 
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Long) result.getObject(7),
-						(Long) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), (Double) result.getObject(11),
-						(Double) result.getObject(12), ngeom.getRing(0).getPoints());
+						(Long) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
 
 				polygonList.add(polygon);
 			}
