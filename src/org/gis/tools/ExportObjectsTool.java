@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.gis.db.Database;
 import org.gis.db.StorkPoint;
+import org.gis.db.WorldPolygon;
 import org.postgis.*;
 
 public class ExportObjectsTool {
@@ -38,8 +39,6 @@ public class ExportObjectsTool {
 		return pointList;
 		
 	}
-	
-	
 
 	private LinkedList<WorldPolygon> exportWorld(){
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat, poly_geom from world");
@@ -63,8 +62,6 @@ public class ExportObjectsTool {
 		
 		return polygonList;
 	}
-	
-	
 	
 	public static void main(String[] args) {
 		
