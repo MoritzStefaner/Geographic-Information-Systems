@@ -1,6 +1,7 @@
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Iterator;
@@ -18,15 +19,24 @@ public class MapMarkerPolygon {
     private Color color;
 
     public MapMarkerPolygon(Polygon polygon) {
-        this(Color.YELLOW, polygon);
+        this(new Color (0xFF, 0, 0, 0x33), polygon);
     }
-
+    
     public MapMarkerPolygon(Color color, Polygon polygon) {
         this.color = color;
         this.polygon = polygon;
     }
 
-    public void paint(Graphics g, LinkedList<Point> points) {
+    public void paint(Graphics g, JMapViewer viewer) {
+    	LinkedList<Point> points = new LinkedList<Point>();
+    	LinkedList<org.postgis.Point> polygonPoints = this.getPolygonList();
+    	
+    	Iterator<org.postgis.Point> it2 = polygonPoints.iterator();
+    	while (it2.hasNext()) {
+    		org.postgis.Point polygonPoint = it2.next();
+    		points.add(viewer.getMapPosition(polygonPoint.x, polygonPoint.y));
+    	}
+    	
     	Iterator<Point> it = points.iterator();
     	int[] xPoints = new int[points.size()];
     	int[] yPoints = new int[points.size()];
@@ -43,6 +53,26 @@ public class MapMarkerPolygon {
         g.setColor(color);
         g.fillPolygon(xPoints, yPoints, points.size());
         g.setColor(Color.BLACK);
+        
+        if (!polygon.getText().isEmpty()) {
+        	org.postgis.Point mass = polygon.getMass();
+        	Point massCoord = viewer.getMapPosition(mass.x, mass.y);
+        	
+        	/* Draw the Text in the middle of the polygon */
+        	/* Find the size of string s in font f in the current Graphics context g. */
+        	FontMetrics fm   = g.getFontMetrics(g.getFont());
+        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(polygon.getText(), g);
+
+        	int textHeight = (int)(rect.getHeight()); 
+        	int textWidth  = (int)(rect.getWidth());
+
+        	/* Center text horizontally and vertically */
+        	int x = massCoord.x - textWidth / 2;
+        	int y = massCoord.y - textHeight / 2  + fm.getAscent();
+
+        	g.drawString(polygon.getText(), x, y);  // Draw the string.
+        }
+        
     }
     
     public LinkedList<org.postgis.Point> getPolygonList() {

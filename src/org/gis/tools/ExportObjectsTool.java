@@ -5,7 +5,8 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.*;
 
-import org.gis.db.*;
+import org.gis.db.Database;
+import org.gis.db.StorkPoint;
 import org.postgis.*;
 
 public class ExportObjectsTool {

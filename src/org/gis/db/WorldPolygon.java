@@ -16,11 +16,11 @@ public class WorldPolygon extends Polygon {
 	int region;
 	int subregion;
 	
-	double lon;
-	double lat;
+	public WorldPolygon() {
+		super();
+	}
 	
-	
-	public WorldPolygon(int id , String fips, String iso2, String iso3, int un, String name, long area, long pop2005, int region, int subregion, double lon, double lat, Point[] polygon) {
+	public WorldPolygon(int id , String fips, String iso2, String iso3, int un, String name, long area, long pop2005, int region, int subregion, Point[] polygon) {
 		super(polygon);
 		
 		this.id = id;
@@ -33,8 +33,6 @@ public class WorldPolygon extends Polygon {
 		this.pop2005 = pop2005;
 		this.region = region;
 		this.subregion = subregion;
-		this.lon = lon;
-		this.lat = lat;
 	}
 	
 	protected String getFips(){
@@ -77,12 +75,10 @@ public class WorldPolygon extends Polygon {
 		return subregion;
 	}
 
-	protected double getLon() {
-		return lon;
-	}
-
-	protected double getLat() {
-		return lat;
+	@Override
+	public String getText() {
+		// TODO Auto-generated method stub
+		return "Polygon";
 	}
 	
 	
