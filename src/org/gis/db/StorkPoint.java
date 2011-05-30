@@ -1,13 +1,15 @@
 package org.gis.db;
 
+import java.sql.Time;
+
 import org.postgis.*;
 
 public class StorkPoint extends Point {
 	
-	private String timestamp;
+	private Time timestamp;
 	private int locIdentifier;
 	
-	public StorkPoint(String stamp, int id, Point point) {
+	public StorkPoint(Time stamp, int id, Point point) {
 		this.timestamp = stamp;
 		this.locIdentifier = id;
 		setPoint(point);
@@ -23,7 +25,7 @@ public class StorkPoint extends Point {
 		return this.locIdentifier;
 	}
 	
-	protected String getTimestamp(){
+	protected Time getTimestamp(){
 		return this.timestamp;
 	}
 }

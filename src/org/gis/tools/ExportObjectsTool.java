@@ -2,6 +2,7 @@ package org.gis.tools;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.*;
 
 import org.gis.db.*;
@@ -16,7 +17,7 @@ public class ExportObjectsTool {
 	}
 	
 	private LinkedList<StorkPoint> exportStork(){
-		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from stork");
+		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		LinkedList<StorkPoint> pointList = new LinkedList<StorkPoint>();
 		
 		try {
@@ -25,8 +26,7 @@ public class ExportObjectsTool {
 				PGgeometry geom = (PGgeometry) result.getObject(4);
 				Point point = (Point) geom.getGeometry();
 				point.setZ((Integer) result.getObject(2));
-				StorkPoint spoint = new StorkPoint((String) result.getObject(1), (Integer) result.getObject(3), point);
-				
+				StorkPoint spoint = new StorkPoint((Time) result.getObject(1), (Integer) result.getObject(3), point);
 				pointList.add(spoint);
 			}
 		} catch (SQLException e) {
@@ -34,11 +34,28 @@ public class ExportObjectsTool {
 			e.printStackTrace();
 		}
 		
-		return pointList;
-		
+		return pointList;	
 	}
 	
-	
+	private LinkedList<MaltePoint> exportMalte(){
+		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn from malte");
+		LinkedList<MaltePoint> pointList = new LinkedList<MaltePoint>();
+		
+		try {
+			while(result.next()){
+				PGgeometry geom = (PGgeometry) result.getObject(9);
+				Point point = (Point) geom.getGeometry();
+				MaltePoint mpoint = new MaltePoint((Integer) result.getObject(1), (Time) result.getObject(2), (Time) result.getObject(3), 
+						(String) result.getObject(4), (String) result.getObject(5), (Integer) result.getObject(6), (String) result.getObject(7), (String) result.getObject(8), point);
+				pointList.add(mpoint);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return pointList;	
+	}
 
 	private LinkedList<WorldPolygon> exportWorld(){
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat, poly_geom from world");
@@ -63,15 +80,13 @@ public class ExportObjectsTool {
 		return polygonList;
 	}
 	
-	
-	
 	public static void main(String[] args) {
 		
 		ExportObjectsTool eot = new ExportObjectsTool();
 		
 		//eot.exportStork();
-		eot.exportWorld();
-
+		//eot.exportWorld();
+		eot.exportMalte();
 	}
 
 }
