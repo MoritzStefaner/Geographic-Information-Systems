@@ -33,7 +33,7 @@ public class ImportTool {
 				"	tagLocalIdentifier int)"
 				);
 		
-		this.db.executeUpdate("SELECT AddGeometryColumn('','storks','geometrycolumn','-1','POINT',2);");
+		this.db.executeQuery("SELECT AddGeometryColumn('','storks','geometrycolumn','-1','POINT',2);");
 		
 		String insert = new String("INSERT INTO storks (id, timestamp, altitude, tagLocalIdentifier, geometrycolumn) VALUES ");
 		File file = new File("MPIO_White_Stork_Argos.csv");
@@ -78,7 +78,7 @@ public class ImportTool {
 
 		this.db.executeUpdate(
 				"CREATE TABLE malte (" +
-				"	id bigint PRIMARY KEY," +
+				"	id int PRIMARY KEY," +
 				"	startTime time," +
 				"	endTime time," +
 				"	service text," +
@@ -88,7 +88,7 @@ public class ImportTool {
 				"   cellB text)"
 				);
 		
-		this.db.executeUpdate("SELECT AddGeometryColumn('','malte','geometrycolumn','-1','POINT',2);");
+		this.db.executeQuery("SELECT AddGeometryColumn('','malte','geometrycolumn','-1','POINT',2);");
 		
 		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB, geometrycolumn) VALUES ");
 		File file = new File("GermanPolitician.csv");
@@ -627,13 +627,12 @@ public class ImportTool {
 	}
 
 	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
 		ImportTool it = new ImportTool();
-		it.importStorks();
-		it.importWorld();
-		it.importConstituencies();
+		//it.importStorks();
+		//it.importWorld();
+		//it.importConstituencies();
 		it.importMalte();
-		it.importResults();
+		//it.importResults();
 
 	}
 
