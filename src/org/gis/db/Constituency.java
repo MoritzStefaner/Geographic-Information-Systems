@@ -5,31 +5,53 @@ import java.util.*;
 public class Constituency {
 
 	int number;
-	FederalState federalState;
-	LinkedList<Party> wahlergebnis;
-	LinkedList<ConstPolygon> polygons;
+	String name;
+	int electorate;
+	int voter;
+	private FederalState federalState;
+	private LinkedList<Party> result;
+	private LinkedList<ConstPolygon> polygons;
 	
-	public Constituency(int number, FederalState federalState, LinkedList<Party> wahlergebnis, LinkedList<ConstPolygon> polygons) {
+	public Constituency(int number, String name, int electorate, int voter, FederalState federalState, LinkedList<Party> result, LinkedList<ConstPolygon> polygons) {
 		this.number = number;
+		this.name = name;
+		this.electorate = electorate;
+		this.voter = voter;
 		this.federalState = federalState;
-		this.wahlergebnis = wahlergebnis;
+		this.result = result;
 		this.polygons = polygons;
 	}
 
-	protected int getNumber() {
+	public int getElectorate() {
+		return electorate;
+	}
+
+	public int getVoter() {
+		return voter;
+	}
+
+	public LinkedList<Party> getResult() {
+		return result;
+	}
+
+	public int getNumber() {
 		return number;
 	}
 
-	protected FederalState getFederalState() {
+	public FederalState getFederalState() {
 		return federalState;
 	}
 
-	protected LinkedList<Party> getWahlergebnis() {
-		return wahlergebnis;
+	public LinkedList<Party> getElectionResult() {
+		return result;
 	}
 
-	protected LinkedList<ConstPolygon> getPolygons() {
+	public LinkedList<ConstPolygon> getPolygons() {
 		return polygons;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 }

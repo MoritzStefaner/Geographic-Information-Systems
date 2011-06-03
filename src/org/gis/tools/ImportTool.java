@@ -492,7 +492,7 @@ public class ImportTool {
 				+ " FOREIGN KEY (constituencies_id) REFERENCES voter_states (id)," 
 				+ " FOREIGN KEY (partie_id) REFERENCES parties (id))");
 		
-		PreparedStatement pstResultStates = conn.prepareStatement("INSERT INTO results_states (constituencies_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
+		PreparedStatement pstResultStates = conn.prepareStatement("INSERT INTO results_states (state_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
 		
 		String line = null;
 		String[] token;
