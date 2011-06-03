@@ -7,10 +7,6 @@ import org.postgis.Point;
 public abstract class Polygon {
 
 	private LinkedList<Point> ring;
-
-	public Polygon() {
-		ring = new LinkedList<Point>();
-	}
 	
 	public Polygon(Point[] polygon){
 		setRing(polygon);
@@ -20,7 +16,7 @@ public abstract class Polygon {
 		return ring;
 	}
 	
-	public void setRing(Point[] points){
+	private void setRing(Point[] points){
 		this.ring = new LinkedList<Point>(Arrays.asList(points));
 	}
 	

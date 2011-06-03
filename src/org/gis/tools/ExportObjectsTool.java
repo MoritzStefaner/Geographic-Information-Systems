@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.*;
 
+import org.gis.db.Constituency;
 import org.gis.db.Database;
 import org.gis.db.MaltePoint;
 import org.gis.db.StorkPoint;
@@ -66,7 +67,7 @@ public class ExportObjectsTool {
 		
 		try {
 			while(result.next()){
-				PGgeometry geom = (PGgeometry) result.getObject(13);
+				PGgeometry geom = (PGgeometry) result.getObject(11);
 				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
 				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Long) result.getObject(7),
@@ -82,13 +83,28 @@ public class ExportObjectsTool {
 		return polygonMap;
 	}
 	
+	public HashMap<Integer, Constituency> exportElection2009(){
+		for(int i = 1; i < 300; i++){
+			ResultSet result = db.executeQuery("select poly_geom from constituencies where wkr_nr ="+i);
+			try {
+				result.getObject(1);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+		
+	}
+	
 	public static void main(String[] args) {
 		
 		ExportObjectsTool eot = new ExportObjectsTool();
 		
 		//eot.exportStork();
-		//eot.exportWorld();
-		eot.exportMalte();
+		eot.exportWorld();
+		//eot.exportMalte();
 	}
 
 }

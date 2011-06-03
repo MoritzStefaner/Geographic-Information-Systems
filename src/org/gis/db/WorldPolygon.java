@@ -15,10 +15,6 @@ public class WorldPolygon extends Polygon {
 	int region;
 	int subregion;
 	
-	public WorldPolygon() {
-		super();
-	}
-	
 	public WorldPolygon(String fips, String iso2, String iso3, int un, String name, long area, long pop2005, int region, int subregion, Point[] polygon) {
 		super(polygon);
 		
@@ -74,9 +70,4 @@ public class WorldPolygon extends Polygon {
 		// TODO Auto-generated method stub
 		return "Polygon";
 	}
-	
-	
-	
-	
-
 }
