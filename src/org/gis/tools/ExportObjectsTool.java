@@ -10,6 +10,7 @@ import org.gis.db.Database;
 import org.gis.db.MaltePoint;
 import org.gis.db.StorkPoint;
 import org.gis.db.WorldPolygon;
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 import org.postgis.*;
 
 public class ExportObjectsTool {
@@ -20,7 +21,7 @@ public class ExportObjectsTool {
 		this.db = new Database();
 	}
 	
-	private HashMap<Integer, StorkPoint> exportStork(){
+	public HashMap<Integer, StorkPoint> exportStork(){
 		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
@@ -41,7 +42,7 @@ public class ExportObjectsTool {
 		return pointMap;	
 	}
 	
-	private HashMap<Integer, MaltePoint> exportMalte(){
+	public HashMap<Integer, MaltePoint> exportMalte(){
 		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn from malte");
 		HashMap<Integer, MaltePoint> pointMap = new HashMap<Integer, MaltePoint>();
 		
@@ -61,7 +62,7 @@ public class ExportObjectsTool {
 		return pointMap;	
 	}
 
-	private HashMap<Integer, WorldPolygon> exportWorld(){
+	public HashMap<Integer, WorldPolygon> exportWorld(){
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		HashMap<Integer, WorldPolygon> polygonMap = new HashMap<Integer, WorldPolygon>();
 		
@@ -97,14 +98,4 @@ public class ExportObjectsTool {
 		return null;
 		
 	}
-	
-	public static void main(String[] args) {
-		
-		ExportObjectsTool eot = new ExportObjectsTool();
-		
-		//eot.exportStork();
-		eot.exportWorld();
-		//eot.exportMalte();
-	}
-
 }

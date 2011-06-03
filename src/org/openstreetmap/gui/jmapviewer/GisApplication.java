@@ -14,8 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.gis.db.Polygon;
-import org.gis.db.WorldPolygon;
+import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -109,7 +108,7 @@ public class GisApplication extends JFrame {
         panel.add(button);
         add(map, BorderLayout.CENTER);
 
-        //
+        /*
         map.addMapMarker(new MapMarkerDot(49.814284999, 8.642065999));
         map.addMapMarker(new MapMarkerDot(49.91, 8.24));
         map.addMapMarker(new MapMarkerDot(49.71, 8.64));
@@ -120,7 +119,10 @@ public class GisApplication extends JFrame {
         polygonA.addPoint(new org.postgis.Point(49.814284999, 8.642065999));
         polygonA.addPoint(new org.postgis.Point(49.91, 8.24));
         polygonA.addPoint(new org.postgis.Point(49.71, 8.64));
-        map.addMapMarkerPolygon(new MapMarkerPolygon(polygonA));
+        map.addMapMarkerPolygon(new MapMarkerPolygon(polygonA));*/
+        
+        ExportObjectsTool eot = new ExportObjectsTool();
+		map.addMapMarkerPolygonList(eot.exportWorld());
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
@@ -135,5 +137,4 @@ public class GisApplication extends JFrame {
         // systemProperties.setProperty("http.proxyPort", "8008");
         new GisApplication().setVisible(true);
     }
-
 }

@@ -68,6 +68,6 @@ public class WorldPolygon extends Polygon {
 	@Override
 	public String getText() {
 		// TODO Auto-generated method stub
-		return "Polygon";
+		return getName();
 	}
 }
