@@ -134,6 +134,10 @@ public class ExportObjectsTool {
 			LinkedList<ConstPolygon> polygons = new LinkedList<ConstPolygon>();
 			
 			try {
+				// Sets the pointer of the ResulSet on row 1 to get information.
+				constGeoResult.next();
+				boolean isFirst = true;
+				String constituencyName = (String) constGeoResult.getObject(2);
 				
 				// Checks if the states already exists at the stateMap or if its new to create an new object of it.
 				if(stateMap.containsKey((Integer) constGeoResult.getObject(3))){
@@ -144,7 +148,8 @@ public class ExportObjectsTool {
 				}
 				
 				// Iterates over the ResultSet with all polygons of a constituency from datatbase.
-				while(constGeoResult.next()){
+				while(isFirst || constGeoResult.next()){
+					isFirst = false;
 					PGgeometry geom = (PGgeometry) constGeoResult.getObject(1);
 					org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
 					ConstPolygon polygon = new ConstPolygon(ngeom.getRing(0).getPoints());
@@ -152,7 +157,8 @@ public class ExportObjectsTool {
 				}
 					
 				// Creates the constituency-object and adds it to its state and the map of all constituencies.
-				Constituency constituency = new Constituency(i, (String) constGeoResult.getObject(2), (Integer) constElecResult.getObject(1), 
+				constElecResult.next();
+				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
 						(Integer) constElecResult.getObject(2), curState, getParties(i), polygons);
 				curState.addConstituency(constituency);
 				map.put(i, constituency);
@@ -191,6 +197,7 @@ public class ExportObjectsTool {
 				parties.add(party);
 			}	
 			
+			federalElecResult.next();
 			// Creates the new FederalState-object.
 			state = new FederalState(id, name, (Integer) federalElecResult.getObject(1), (Integer) federalElecResult.getObject(2), parties);
 		
@@ -213,7 +220,7 @@ public class ExportObjectsTool {
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.
 		ResultSet constVoteResult = db.executeQuery("select name, first_cur, second_cur " +
-				"from results_const r join parties p on r.partie_id = p.id where constituencies_id="+i);
+				"from results_const r join parties p on r.partie_id = p.id where constituency_id="+i);
 		try {
 			// Iterates over all lines of the ResulSet.
 			while(constVoteResult.next()){
@@ -225,5 +232,11 @@ public class ExportObjectsTool {
 			e.printStackTrace();
 		}
 		return parties;
+	}
+	
+	public static void main(String[] args) throws Exception {
+		ExportObjectsTool eot = new ExportObjectsTool();
+		
+		eot.exportElection2009();
 	}
 }

@@ -471,25 +471,25 @@ public class ImportTool {
 		PreparedStatement pstVoterConst = conn.prepareStatement("INSERT INTO voter_const (id, name, part_of, elective_cur, elective_prev, voter_cur, voter_prev) VALUES (?,?,?,?,?,?,?)");
 		
 		db.executeUpdate("CREATE TABLE results_const ("
-				+ " constituencies_id int,"
+				+ " constituency_id int,"
 				+ "	partie_id int," 
 				+ " first_cur int," 
 				+ "	first_prev int,"
 				+ "	second_cur int," 
 				+ "	second_prev int,"
-				+ " FOREIGN KEY (constituencies_id) REFERENCES voter_const (id)," 
+				+ " FOREIGN KEY (constituency_id) REFERENCES voter_const (id)," 
 				+ " FOREIGN KEY (partie_id) REFERENCES parties (id))");
 		
-		PreparedStatement pstResultConst = conn.prepareStatement("INSERT INTO results_const (constituencies_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
+		PreparedStatement pstResultConst = conn.prepareStatement("INSERT INTO results_const (constituency_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
 		
 		db.executeUpdate("CREATE TABLE results_states ("
-				+ " constituencies_id int,"
+				+ " state_id int,"
 				+ "	partie_id int," 
 				+ " first_cur int," 
 				+ "	first_prev int,"
 				+ "	second_cur int," 
 				+ "	second_prev int,"
-				+ " FOREIGN KEY (constituencies_id) REFERENCES voter_states (id)," 
+				+ " FOREIGN KEY (state_id) REFERENCES voter_states (id)," 
 				+ " FOREIGN KEY (partie_id) REFERENCES parties (id))");
 		
 		PreparedStatement pstResultStates = conn.prepareStatement("INSERT INTO results_states (state_id, partie_id, first_cur, first_prev, second_cur, second_prev) VALUES (?,?,?,?,?,?)");
@@ -565,7 +565,7 @@ public class ImportTool {
 							}
 						}
 						
-						// Commits after the id of the state was setted, because its foreign key-
+						// Commits after the id of the state was setted, because of its foreign key.
 						conn.commit();
 
 					} else {
@@ -622,6 +622,7 @@ public class ImportTool {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("Results imported.");
 		
 		conn.setAutoCommit(true);
 	}
@@ -629,10 +630,10 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		//it.importStorks();
-		it.importWorld();
+		//it.importWorld();
 		//it.importConstituencies();
 		//it.importMalte();
-		//it.importResults();
+		it.importResults();
 	}
 
 }
