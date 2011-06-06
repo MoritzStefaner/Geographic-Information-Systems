@@ -70,7 +70,7 @@ public class MapMarkerPolygon {
         g.fillPolygon(xPoints, yPoints, points.size());
         g.setColor(Color.BLACK);
         
-        if (!polygon.getText().isEmpty()) {
+        if (polygon.getText() != null && !polygon.getText().isEmpty()) {
         	org.postgis.Point mass = polygon.getMass();
         	Point massCoord = viewer.getMapPosition(mass.x, mass.y);
         	

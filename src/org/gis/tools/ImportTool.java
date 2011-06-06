@@ -319,7 +319,6 @@ public class ImportTool {
 		
 		Connection conn = db.getConn();
 		PreparedStatement pst = conn.prepareStatement("INSERT INTO constituencies (id, partid, perimeter, wkr_nr, wkr_name, land_nr, land_name, flag, poly_geom) VALUES (?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
-	
 		
 		File file = new File("Geometrie_Wahlkreise_17DBT.csv");
 		BufferedReader bufRdr = null;
@@ -358,9 +357,9 @@ public class ImportTool {
 				
 				if (id == newid){
 					if(first){
-						polygon = polygon + token[0] + " " + token[1];
-						firstx = token[0];
-						firsty = token[1];
+						polygon = polygon + token[1] + " " + token[0];
+						firstx = token[1];
+						firsty = token[0];
 						partid = token[3];
 						perimeter = token[4];
 						wkr_nr = token[5];
@@ -370,7 +369,7 @@ public class ImportTool {
 						flag = token[9];
 						first = false;
 					}
-					polygon = polygon + "," + token[0] + " " + token[1];
+					polygon = polygon + "," + token[1] + " " + token[0];
 				}else{
 					polygon = polygon + "," + firstx + " " + firsty + "))";
 					pst.setInt(1, id);
@@ -384,8 +383,8 @@ public class ImportTool {
 					pst.setString(9, polygon);
 					pst.executeUpdate();
 					
-					firstx = token[0];
-					firsty = token[1];
+					firstx = token[1];
+					firsty = token[0];
 					partid = token[3];
 					perimeter = token[4];
 					wkr_nr = token[5];
@@ -395,7 +394,7 @@ public class ImportTool {
 					flag = token[9];
 					
 					id = newid;
-					polygon = "POLYGON((" + token[0] + " " + token[1];
+					polygon = "POLYGON((" + token[1] + " " + token[0];
 				}
 				
 				j++;
@@ -628,11 +627,11 @@ public class ImportTool {
 
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
-		it.importStorks();
-		it.importWorld();
+		//it.importStorks();
+		//it.importWorld();
 		it.importConstituencies();
-		it.importMalte();
-		it.importResults();
+		//it.importMalte();
+		//it.importResults();
 	}
 
 }
