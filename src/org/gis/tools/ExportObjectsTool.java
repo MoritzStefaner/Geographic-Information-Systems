@@ -23,22 +23,22 @@ public class ExportObjectsTool {
 	 */
 	public HashMap<Integer, StorkPoint> exportStork(){
 		// The SQL query to get the information from database.
-		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
+		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
 		try {
 			// Iterates over all lines of the ResultSet to put each line in the map.
 			while(result.next()){
 				
-				PGgeometry geom = (PGgeometry) result.getObject(4);
+				PGgeometry geom = (PGgeometry) result.getObject(5);
 				// Extracts the point dates from the ResultSet.
-				Point point = (Point) geom.getGeometry();
-				point.setZ((Integer) result.getObject(2));
+				GisPoint point = (GisPoint) geom.getGeometry();
+				point.setZ((Integer) result.getObject(3));
 				
 				// Creates a new StorkPoint.
-				StorkPoint spoint = new StorkPoint((Time) result.getObject(1), point);
+				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point);
 				
-				pointMap.put((Integer) result.getObject(3), spoint);
+				pointMap.put((Integer) result.getObject(1), spoint);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -63,10 +63,10 @@ public class ExportObjectsTool {
 			while(result.next()){
 				// Extracts the point dates from the ResultSet.
 				PGgeometry geom = (PGgeometry) result.getObject(9);
-				Point point = (Point) geom.getGeometry();
+				GisPoint point = (GisPoint) geom.getGeometry();
 				
 				// Creates a new MaltePoint-object.
-				MaltePoint mpoint = new MaltePoint((Time) result.getObject(2), (Time) result.getObject(3), 
+				MaltePoint mpoint = new MaltePoint((Integer) result.getObject(1), (Time) result.getObject(2), (Time) result.getObject(3), 
 						(String) result.getObject(4), (String) result.getObject(5), (Integer) result.getObject(6), (String) result.getObject(7), 
 						(String) result.getObject(8), point);
 				
@@ -232,11 +232,5 @@ public class ExportObjectsTool {
 			e.printStackTrace();
 		}
 		return parties;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		ExportObjectsTool eot = new ExportObjectsTool();
-		
-		eot.exportElection2009();
 	}
 }

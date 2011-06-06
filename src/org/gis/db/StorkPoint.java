@@ -2,24 +2,28 @@ package org.gis.db;
 
 import java.sql.Time;
 
-import org.postgis.*;
-
-public class StorkPoint extends Point {
+public class StorkPoint extends GisPoint {
 	
+	private int id;
 	private Time timestamp;
+	private int localIdentifier;
 	
-	public StorkPoint(Time stamp, Point point) {
+	public StorkPoint(int id, Time stamp, int localIdentifier, GisPoint point) {
+		this.id = id;
 		this.timestamp = stamp;
+		this.localIdentifier = localIdentifier;
 		setPoint(point);
 	}
 	
-	protected void setPoint(Point point){
-		this.x = point.getX();
-		this.y = point.getY();
-		this.z = point.getZ();
+	public Time getTimestamp(){
+		return this.timestamp;
 	}
 	
-	protected Time getTimestamp(){
-		return this.timestamp;
+	public int getId(){
+		return this.id;
+	}
+	
+	public int getLocalIdentifier(){
+		return this.localIdentifier;
 	}
 }

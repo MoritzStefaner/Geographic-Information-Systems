@@ -2,19 +2,19 @@ package org.gis.db;
 
 import java.sql.Time;
 
-import org.postgis.Point;
-
-public class MaltePoint extends Point{
+public class MaltePoint extends GisPoint{
 	
-	Time starttime;
-	Time endtime;
-	String service;
-	String inoutgoing;
-	int direction;
-	String cella;
-	String cellb;
+	private int id;
+	private Time starttime;
+	private Time endtime;
+	private String service;
+	private String inoutgoing;
+	private int direction;
+	private String cella;
+	private String cellb;
 
-	public MaltePoint(Time starttime, Time endtime, String service, String inoutgoing, int direction, String cella, String cellb, Point point) {
+	public MaltePoint(int id, Time starttime, Time endtime, String service, String inoutgoing, int direction, String cella, String cellb, GisPoint point) {
+		this.id = id;
 		this.starttime = starttime;
 		this.endtime = endtime;
 		this.service = service;
@@ -24,42 +24,37 @@ public class MaltePoint extends Point{
 		this.cellb = cellb;
 		setPoint(point);
 	}
-	
-	
-	protected void setPoint(Point point){
-		this.x = point.getX();
-		this.y = point.getY();
-		this.z = point.getZ();
-	}
 
-	protected Time getStarttime() {
+	public Time getStarttime() {
 		return starttime;
 	}
 
-	protected Time getEndtime() {
+	public Time getEndtime() {
 		return endtime;
 	}
 
-	protected String getService() {
+	public String getService() {
 		return service;
 	}
 
-	protected String getInoutgoing() {
+	public String getInoutgoing() {
 		return inoutgoing;
 	}
 
-	protected String getCella() {
+	public String getCella() {
 		return cella;
 	}
 
-	protected String getCellb() {
+	public String getCellb() {
 		return cellb;
 	}
 
 
-	protected int getDirection() {
+	public int getDirection() {
 		return direction;
 	}
 	
-	
+	public int getId(){
+		return id;
+	}
 }
