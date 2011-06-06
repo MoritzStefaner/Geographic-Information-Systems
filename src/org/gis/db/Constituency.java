@@ -2,17 +2,18 @@ package org.gis.db;
 
 import java.util.*;
 
-public class Constituency {
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
+public class Constituency {
 	int number;
 	String name;
 	int electorate;
 	int voter;
 	private FederalState federalState;
 	private LinkedList<Party> result;
-	private LinkedList<ConstPolygon> polygons;
+	private LinkedList<MapMarkerPolygon> polygons;
 	
-	public Constituency(int number, String name, int electorate, int voter, FederalState federalState, LinkedList<Party> result, LinkedList<ConstPolygon> polygons) {
+	public Constituency(int number, String name, int electorate, int voter, FederalState federalState, LinkedList<Party> result, LinkedList<MapMarkerPolygon> polygons) {
 		this.number = number;
 		this.name = name;
 		this.electorate = electorate;
@@ -46,7 +47,7 @@ public class Constituency {
 		return result;
 	}
 
-	public LinkedList<ConstPolygon> getPolygons() {
+	public LinkedList<MapMarkerPolygon> getPolygons() {
 		return polygons;
 	}
 

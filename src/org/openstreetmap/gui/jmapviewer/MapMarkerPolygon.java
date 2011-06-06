@@ -33,6 +33,10 @@ public class MapMarkerPolygon {
     	}
         this.polygon = polygon;
     }
+    
+    public Polygon getPolygon() {
+    	return this.polygon;
+    }
 
     public void paint(Graphics g, JMapViewer viewer) {
     	LinkedList<Point> points = new LinkedList<Point>();

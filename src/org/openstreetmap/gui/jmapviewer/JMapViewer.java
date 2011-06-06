@@ -15,6 +15,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.font.TextAttribute;
 import java.awt.geom.Rectangle2D;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -57,7 +58,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     protected List<MapMarker> mapMarkerList;
     protected List<MapRectangle> mapRectangleList;
-    protected List<MapMarkerPolygon> mapMarkerPolygonList;
+    protected Collection<MapMarkerPolygon> mapMarkerPolygonList;
 
     protected boolean mapMarkersVisible;
     protected boolean mapRectanglesVisible;
@@ -550,7 +551,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      * Paint a polygon.
      */
     protected void paintPolygon(Graphics g, MapMarkerPolygon markerPolygon) {
-    	
         if (markerPolygon != null) {
         	markerPolygon.paint(g, this);
         }
@@ -688,7 +688,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
     
-    public void addMapMarkerPolygonList(LinkedList<MapMarkerPolygon> polygonList) {
+    public void addMapMarkerPolygonList(Collection<MapMarkerPolygon> polygonList) {
         mapMarkerPolygonList = polygonList;
         repaint();
     }
@@ -840,6 +840,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         	Coordinate c = getPosition(event.getX(), event.getY());
         	System.out.println("Longitude: " + c.getLon() + ", Latitude: " + c.getLat());
         }
+    }
+    
+    private void getConstituency(double longitude, double latitude) {
+    	
     }
 
 }
