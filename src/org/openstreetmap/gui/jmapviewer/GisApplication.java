@@ -6,6 +6,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -14,6 +17,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.gis.db.Constituency;
+import org.gis.db.ElectionWorld;
 import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -107,22 +112,10 @@ public class GisApplication extends JFrame {
         panel.add(showZoomControls);
         panel.add(button);
         add(map, BorderLayout.CENTER);
-
-        /*
-        map.addMapMarker(new MapMarkerDot(49.814284999, 8.642065999));
-        map.addMapMarker(new MapMarkerDot(49.91, 8.24));
-        map.addMapMarker(new MapMarkerDot(49.71, 8.64));
-        map.addMapMarker(new MapMarkerDot(48.71, -1));
-        map.addMapMarker(new MapMarkerDot(49.8588, 8.643));
         
-        org.gis.db.Polygon polygonA = new WorldPolygon();
-        polygonA.addPoint(new org.postgis.Point(49.814284999, 8.642065999));
-        polygonA.addPoint(new org.postgis.Point(49.91, 8.24));
-        polygonA.addPoint(new org.postgis.Point(49.71, 8.64));
-        map.addMapMarkerPolygon(new MapMarkerPolygon(polygonA));*/
-        
-        ExportObjectsTool eot = new ExportObjectsTool();
-		map.addMapMarkerPolygonList(eot.exportWorld());
+		//map.addMapMarkerPolygonList(eot.exportWorld().values());
+        ElectionWorld ew = new ElectionWorld();
+        map.addMapMarkerPolygonList(ew.getDrawList());
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
