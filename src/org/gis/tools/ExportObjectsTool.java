@@ -6,24 +6,21 @@ import java.sql.Time;
 import java.util.*;
 
 import org.gis.db.*;
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 import org.postgis.*;
 
 public class ExportObjectsTool {
-	
-	private Database db;
-
-	public ExportObjectsTool(){
-		this.db = new Database();
-	}
+	static private Database db;
 	
 	/**
 	 * Exports the point dates of storks from the database.
 	 * 
 	 * @return The point dates as map.
 	 */
-	public HashMap<Integer, StorkPoint> exportStork(){
+	static public HashMap<Integer, StorkPoint> exportStork(){
 		// The SQL query to get the information from database.
-		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
+		db = new Database();
+		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
 		try {
@@ -52,8 +49,9 @@ public class ExportObjectsTool {
 	 * 
 	 * @return A map with the positions as Points.
 	 */
-	public HashMap<Integer, MaltePoint> exportMalte(){
+	static public HashMap<Integer, MaltePoint> exportMalte(){
 		// The SQL query to get the information from database.
+		db = new Database();
 		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn from malte");
 		
 		HashMap<Integer, MaltePoint> pointMap = new HashMap<Integer, MaltePoint>();
@@ -84,11 +82,12 @@ public class ExportObjectsTool {
 	 * 
 	 * @return A map of all countries.
 	 */
-	public HashMap<Integer, WorldPolygon> exportWorld(){
+	static public HashMap<Integer, MapMarkerPolygon> exportWorld(){
 		// The SQL query to get the information from database.
+		db = new Database();
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		
-		HashMap<Integer, WorldPolygon> polygonMap = new HashMap<Integer, WorldPolygon>();
+		HashMap<Integer, MapMarkerPolygon> polygonMap = new HashMap<Integer, MapMarkerPolygon>();
 		
 		try {
 			// Iterates over all lines of the ResultSet to put each line in the map.
@@ -99,16 +98,15 @@ public class ExportObjectsTool {
 				
 				// Creates a new country. 
 				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
-						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Long) result.getObject(7),
-						(Long) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
+						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
+						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
 
-				polygonMap.put((Integer) result.getObject(1), polygon);
+				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return polygonMap;
 	}
 	
@@ -117,7 +115,8 @@ public class ExportObjectsTool {
 	 * 
 	 * @return A map of all constituencies containing all information about the election.
 	 */
-	public HashMap<Integer, Constituency> exportElection2009(){
+	static public HashMap<Integer, Constituency> exportElection2009(){
+		db = new Database();
 		// A map of all constituencies.
 		HashMap<Integer, Constituency> map = new HashMap<Integer, Constituency>();
 		// A map of all federal states.
@@ -131,7 +130,7 @@ public class ExportObjectsTool {
 			ResultSet constGeoResult = db.executeQuery("select poly_geom, wkr_name, land_nr, land_name from constituencies where wkr_nr ="+i);
 			ResultSet constElecResult = db.executeQuery("select elective_cur, voter_cur from voter_const where id ="+i);
 			
-			LinkedList<ConstPolygon> polygons = new LinkedList<ConstPolygon>();
+			LinkedList<MapMarkerPolygon> polygons = new LinkedList<MapMarkerPolygon>();
 			
 			try {
 				// Sets the pointer of the ResulSet on row 1 to get information.
@@ -143,23 +142,23 @@ public class ExportObjectsTool {
 				if(stateMap.containsKey((Integer) constGeoResult.getObject(3))){
 					curState = stateMap.get((Integer) constGeoResult.getObject(3));
 				}else{
-					curState = newFederalState((Integer) constGeoResult.getObject(3), (String) constGeoResult.getObject(4));
+					curState = newFederalState((Integer) constGeoResult.getObject(3), (String) constGeoResult.getObject(4), db);
 					stateMap.put(curState.getId(), curState);
 				}
 				
-				// Iterates over the ResultSet with all polygons of a constituency from datatbase.
+				// Iterates over the ResultSet with all polygons of a constituency from database.
 				while(isFirst || constGeoResult.next()){
 					isFirst = false;
 					PGgeometry geom = (PGgeometry) constGeoResult.getObject(1);
 					org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
 					ConstPolygon polygon = new ConstPolygon(ngeom.getRing(0).getPoints());
-					polygons.add(polygon);
+					polygons.add(new MapMarkerPolygon(polygon));
 				}
 					
 				// Creates the constituency-object and adds it to its state and the map of all constituencies.
 				constElecResult.next();
 				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
-						(Integer) constElecResult.getObject(2), curState, getParties(i), polygons);
+						(Integer) constElecResult.getObject(2), curState, getParties(i, db), polygons);
 				curState.addConstituency(constituency);
 				map.put(i, constituency);
 				
@@ -178,7 +177,7 @@ public class ExportObjectsTool {
 	 * @param name the name of the state.
 	 * @return a new FederalState-object.
 	 */
-	private FederalState newFederalState(Integer id, String name){
+	static public FederalState newFederalState(Integer id, String name, Database db){
 		LinkedList<Party> parties = new LinkedList<Party>();
 		FederalState state = null;
 		
@@ -215,7 +214,7 @@ public class ExportObjectsTool {
 	 * @param i the constituency
 	 * @return a LinkedList of parties
 	 */
-	private LinkedList<Party> getParties(int i){
+	static public LinkedList<Party> getParties(int i, Database db){
 		LinkedList<Party> parties = new LinkedList<Party>();
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.
