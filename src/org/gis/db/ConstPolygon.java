@@ -5,7 +5,7 @@ import org.postgis.Point;
 public class ConstPolygon extends Polygon{
 	
 
-	public ConstPolygon(Point[] polygon){
+	public ConstPolygon(GisPoint[] polygon){
 		super(polygon);
 	}
 

@@ -20,7 +20,7 @@ public class ExportObjectsTool {
 	static public HashMap<Integer, StorkPoint> exportStork(){
 		// The SQL query to get the information from database.
 		db = new Database();
-		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
+		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
 		try {
@@ -29,7 +29,7 @@ public class ExportObjectsTool {
 				
 				PGgeometry geom = (PGgeometry) result.getObject(5);
 				// Extracts the point dates from the ResultSet.
-				GisPoint point = (GisPoint) geom.getGeometry();
+				Point point = (Point) geom.getGeometry();
 				point.setZ((Integer) result.getObject(3));
 				
 				// Creates a new StorkPoint.
@@ -61,7 +61,7 @@ public class ExportObjectsTool {
 			while(result.next()){
 				// Extracts the point dates from the ResultSet.
 				PGgeometry geom = (PGgeometry) result.getObject(9);
-				GisPoint point = (GisPoint) geom.getGeometry();
+				Point point = (Point) geom.getGeometry();
 				
 				// Creates a new MaltePoint-object.
 				MaltePoint mpoint = new MaltePoint((Integer) result.getObject(1), (Time) result.getObject(2), (Time) result.getObject(3), 
@@ -99,7 +99,7 @@ public class ExportObjectsTool {
 				// Creates a new country. 
 				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
-						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
+						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), (GisPoint[]) ngeom.getRing(0).getPoints());
 
 				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
 			}
@@ -151,7 +151,7 @@ public class ExportObjectsTool {
 					isFirst = false;
 					PGgeometry geom = (PGgeometry) constGeoResult.getObject(1);
 					org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
-					ConstPolygon polygon = new ConstPolygon(ngeom.getRing(0).getPoints());
+					ConstPolygon polygon = new ConstPolygon((GisPoint[]) ngeom.getRing(0).getPoints());
 					polygons.add(new MapMarkerPolygon(polygon));
 				}
 					

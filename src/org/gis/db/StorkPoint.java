@@ -2,13 +2,15 @@ package org.gis.db;
 
 import java.sql.Time;
 
+import org.postgis.Point;
+
 public class StorkPoint extends GisPoint {
 	
-	private int id;
+	private Integer id;
 	private Time timestamp;
-	private int localIdentifier;
+	private Integer localIdentifier;
 	
-	public StorkPoint(int id, Time stamp, int localIdentifier, GisPoint point) {
+	public StorkPoint(Integer id, Time stamp, Integer localIdentifier, Point point) {
 		this.id = id;
 		this.timestamp = stamp;
 		this.localIdentifier = localIdentifier;
@@ -19,20 +21,11 @@ public class StorkPoint extends GisPoint {
 		return this.timestamp;
 	}
 	
-	public int getId(){
+	public Integer getId(){
 		return this.id;
 	}
 	
-	public int getLocalIdentifier(){
+	public Integer getLocalIdentifier(){
 		return this.localIdentifier;
-	}
-	
-	@Override
-	public int compareTo(GisPoint point){
-		int kilometer;
-		Database db = new Database();
-		ResulSet result = db.executeQuery("");
-		
-		return id;
 	}
 }

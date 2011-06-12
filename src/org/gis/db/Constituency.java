@@ -5,15 +5,15 @@ import java.util.*;
 import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
 public class Constituency {
-	int number;
+	Integer number;
 	String name;
-	int electorate;
-	int voter;
+	Integer electorate;
+	Integer voter;
 	private FederalState federalState;
 	private LinkedList<Party> result;
 	private LinkedList<MapMarkerPolygon> polygons;
 	
-	public Constituency(int number, String name, int electorate, int voter, FederalState federalState, LinkedList<Party> result, LinkedList<MapMarkerPolygon> polygons) {
+	public Constituency(Integer number, String name, Integer electorate, Integer voter, FederalState federalState, LinkedList<Party> result, LinkedList<MapMarkerPolygon> polygons) {
 		this.number = number;
 		this.name = name;
 		this.electorate = electorate;
@@ -23,11 +23,11 @@ public class Constituency {
 		this.polygons = polygons;
 	}
 
-	public int getElectorate() {
+	public Integer getElectorate() {
 		return electorate;
 	}
 
-	public int getVoter() {
+	public Integer getVoter() {
 		return voter;
 	}
 
@@ -35,7 +35,7 @@ public class Constituency {
 		return result;
 	}
 
-	public int getNumber() {
+	public Integer getNumber() {
 		return number;
 	}
 

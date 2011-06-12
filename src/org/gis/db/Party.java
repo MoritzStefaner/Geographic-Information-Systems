@@ -2,21 +2,21 @@ package org.gis.db;
 
 public class Party {
 
-	private int firstVote;
-	private int secondVote;
+	private Integer firstVote;
+	private Integer secondVote;
 	private String name;
 	
-	public Party(String name, int firstVote, int secondVote){
+	public Party(String name, Integer firstVote, Integer secondVote){
 		this.firstVote = firstVote;
 		this.secondVote = secondVote;
 		this.name = name;
 	}
 
-	public int getErststimme() {
+	public Integer getErststimme() {
 		return firstVote;
 	}
 
-	public int getZweitstimmen() {
+	public Integer getZweitstimmen() {
 		return secondVote;
 	}
 

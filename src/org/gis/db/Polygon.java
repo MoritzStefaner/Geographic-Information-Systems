@@ -16,7 +16,7 @@ public abstract class Polygon {
 		return ring;
 	}
 	
-	private void setRing(GisPoint[] points){
+	protected void setRing(GisPoint[] points){
 		this.ring = new LinkedList<GisPoint>(Arrays.asList(points));
 	}
 	

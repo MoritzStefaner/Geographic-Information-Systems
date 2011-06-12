@@ -2,18 +2,20 @@ package org.gis.db;
 
 import java.sql.Time;
 
+import org.postgis.Point;
+
 public class MaltePoint extends GisPoint{
 	
-	private int id;
+	private Integer id;
 	private Time starttime;
 	private Time endtime;
 	private String service;
 	private String inoutgoing;
-	private int direction;
+	private Integer direction;
 	private String cella;
 	private String cellb;
 
-	public MaltePoint(int id, Time starttime, Time endtime, String service, String inoutgoing, int direction, String cella, String cellb, GisPoint point) {
+	public MaltePoint(Integer id, Time starttime, Time endtime, String service, String inoutgoing, Integer direction, String cella, String cellb, Point point) {
 		this.id = id;
 		this.starttime = starttime;
 		this.endtime = endtime;
@@ -50,11 +52,11 @@ public class MaltePoint extends GisPoint{
 	}
 
 
-	public int getDirection() {
+	public Integer getDirection() {
 		return direction;
 	}
 	
-	public int getId(){
+	public Integer getId(){
 		return id;
 	}
 }

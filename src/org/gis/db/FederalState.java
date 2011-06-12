@@ -4,14 +4,14 @@ import java.util.LinkedList;
 
 public class FederalState {
 
-	private int id;
+	private Integer id;
 	private String name;
-	int electorate;
-	int voter;
+	private Integer electorate;
+	private Integer voter;
 	private LinkedList<Party> result;
 	private LinkedList<Constituency> constituencies;
 	
-	public FederalState(int id, String name, int electorate, int voter, LinkedList<Party> result){
+	public FederalState(Integer id, String name, Integer electorate, Integer voter, LinkedList<Party> result){
 		this.id = id;
 		this.name = name;
 		this.electorate = electorate;
@@ -28,15 +28,15 @@ public class FederalState {
 		constituencies.add(constituency);
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public int getElectorate() {
+	public Integer getElectorate() {
 		return electorate;
 	}
 
-	public int getVoter() {
+	public Integer getVoter() {
 		return voter;
 	}
 
