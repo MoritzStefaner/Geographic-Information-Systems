@@ -2,22 +2,27 @@ package org.gis.db;
 
 import java.util.*;
 
-import org.postgis.Point;
+import org.postgis.*;
 
-public abstract class Polygon {
+public abstract class Polygon extends org.postgis.Polygon{
 
 	private LinkedList<GisPoint> ring;
 	
-	public Polygon(GisPoint[] polygon){
-		setRing(polygon);
+	public Polygon(LinearRing[] rings){
+		super(rings);
+		setRing(this.getRing(0).getPoints());
 	}
 	
 	public LinkedList<GisPoint> getRing(){
 		return ring;
 	}
 	
-	protected void setRing(GisPoint[] points){
-		this.ring = new LinkedList<GisPoint>(Arrays.asList(points));
+	protected void setRing(Point[] points){
+		this.ring = new LinkedList<GisPoint>();
+		
+		for(Point point : points){
+			this.ring.add(new GisPoint(point));
+		}
 	}
 	
 	public void addPoint(GisPoint point) {

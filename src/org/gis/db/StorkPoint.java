@@ -11,10 +11,10 @@ public class StorkPoint extends GisPoint {
 	private Integer localIdentifier;
 	
 	public StorkPoint(Integer id, Time stamp, Integer localIdentifier, Point point) {
+		super(point);
 		this.id = id;
 		this.timestamp = stamp;
 		this.localIdentifier = localIdentifier;
-		setPoint(point);
 	}
 	
 	public Time getTimestamp(){

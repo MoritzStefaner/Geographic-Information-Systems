@@ -1,12 +1,12 @@
 package org.gis.db;
 
-import org.postgis.Point;
+import org.postgis.*;
 
 public class ConstPolygon extends Polygon{
 	
 
-	public ConstPolygon(GisPoint[] polygon){
-		super(polygon);
+	public ConstPolygon(LinearRing[] rings){
+		super(rings);
 	}
 
 	@Override

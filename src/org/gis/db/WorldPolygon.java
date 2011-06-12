@@ -1,5 +1,7 @@
 package org.gis.db;
 
+import org.postgis.*;
+
 public class WorldPolygon extends Polygon {
 
 	String fips;
@@ -13,8 +15,8 @@ public class WorldPolygon extends Polygon {
 	Integer region;
 	Integer subregion;
 	
-	public WorldPolygon(String fips, String iso2, String iso3, Integer un, String name, Integer area, Integer pop2005, Integer region, Integer subregion, GisPoint[] polygon) {
-		super(polygon);
+	public WorldPolygon(String fips, String iso2, String iso3, Integer un, String name, Integer area, Integer pop2005, Integer region, Integer subregion, LinearRing[] rings) {
+		super(rings);
 		
 		this.fips = fips;
 		this.iso2 = iso2;
@@ -39,7 +41,7 @@ public class WorldPolygon extends Polygon {
 		return iso3;
 	}
 
-	protected String getName() {
+	public String getName() {
 		return name;
 	}
 
