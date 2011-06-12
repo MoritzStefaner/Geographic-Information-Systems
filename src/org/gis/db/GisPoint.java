@@ -9,4 +9,6 @@ public abstract class GisPoint extends Point{
 		this.y = point.getY();
 		this.z = point.getZ();
 	}
+	
+	public abstract int compareTo();
 }

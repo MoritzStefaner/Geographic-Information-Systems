@@ -26,4 +26,13 @@ public class StorkPoint extends GisPoint {
 	public int getLocalIdentifier(){
 		return this.localIdentifier;
 	}
+	
+	@Override
+	public int compareTo(GisPoint point){
+		int kilometer;
+		Database db = new Database();
+		ResulSet result = db.executeQuery("");
+		
+		return id;
+	}
 }

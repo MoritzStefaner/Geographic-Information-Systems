@@ -6,21 +6,21 @@ import org.postgis.Point;
 
 public abstract class Polygon {
 
-	private LinkedList<Point> ring;
+	private LinkedList<GisPoint> ring;
 	
-	public Polygon(Point[] polygon){
+	public Polygon(GisPoint[] polygon){
 		setRing(polygon);
 	}
 	
-	public LinkedList<Point> getRing(){
+	public LinkedList<GisPoint> getRing(){
 		return ring;
 	}
 	
-	private void setRing(Point[] points){
-		this.ring = new LinkedList<Point>(Arrays.asList(points));
+	private void setRing(GisPoint[] points){
+		this.ring = new LinkedList<GisPoint>(Arrays.asList(points));
 	}
 	
-	public void addPoint(Point point) {
+	public void addPoint(GisPoint point) {
 		getRing().add(point);
 	}
 	
@@ -30,7 +30,7 @@ public abstract class Polygon {
 		float areal = 0.0f;
 		float Cx = 0.0f;
 		float Cy = 0.0f;
-		Iterator<Point> it = this.getRing().iterator();
+		Iterator<GisPoint> it = this.getRing().iterator();
 		
 		/* The ring is not yet filled, something is wrong */
 		if (this.getRing() == null || this.getRing().size() == 0) {
