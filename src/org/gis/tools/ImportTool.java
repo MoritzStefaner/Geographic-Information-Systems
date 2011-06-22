@@ -27,7 +27,7 @@ public class ImportTool {
 
 		this.db.executeUpdate(
 				"CREATE TABLE storks (" +
-				"	id bigint PRIMARY KEY," +
+				"	id int PRIMARY KEY," +
 				"	timestamp time," +
 				"	altitude int," +
 				"	tagLocalIdentifier int)"
@@ -628,8 +628,8 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		//it.importStorks();
-		//it.importWorld();
-		it.importConstituencies();
+		it.importWorld();
+		//it.importConstituencies();
 		//it.importMalte();
 		//it.importResults();
 	}

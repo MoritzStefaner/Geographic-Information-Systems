@@ -1,6 +1,6 @@
 package org.gis.db;
 
-import org.postgis.Point;
+import org.postgis.*;
 
 public class ConstPolygon extends Polygon{
 	private Constituency constituency;

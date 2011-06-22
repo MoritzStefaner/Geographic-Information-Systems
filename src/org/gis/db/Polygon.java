@@ -2,25 +2,30 @@ package org.gis.db;
 
 import java.util.*;
 
-import org.postgis.Point;
+import org.postgis.*;
 
-public abstract class Polygon {
+public abstract class Polygon extends org.postgis.Polygon{
 
-	private LinkedList<Point> ring;
+	private LinkedList<GisPoint> ring;
 	
-	public Polygon(Point[] polygon){
-		setRing(polygon);
+	public Polygon(LinearRing[] rings){
+		super(rings);
+		setRing(this.getRing(0).getPoints());
 	}
 	
-	public LinkedList<Point> getRing(){
+	public LinkedList<GisPoint> getRing(){
 		return ring;
 	}
 	
-	private void setRing(Point[] points){
-		this.ring = new LinkedList<Point>(Arrays.asList(points));
+	protected void setRing(Point[] points){
+		this.ring = new LinkedList<GisPoint>();
+		
+		for(Point point : points){
+			this.ring.add(new GisPoint(point));
+		}
 	}
 	
-	public void addPoint(Point point) {
+	public void addPoint(GisPoint point) {
 		getRing().add(point);
 	}
 	
@@ -30,7 +35,7 @@ public abstract class Polygon {
 		float areal = 0.0f;
 		float Cx = 0.0f;
 		float Cy = 0.0f;
-		Iterator<Point> it = this.getRing().iterator();
+		Iterator<GisPoint> it = this.getRing().iterator();
 		
 		/* The ring is not yet filled, something is wrong */
 		if (this.getRing() == null || this.getRing().size() == 0) {

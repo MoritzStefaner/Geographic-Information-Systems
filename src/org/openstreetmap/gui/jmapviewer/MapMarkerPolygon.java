@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
+import org.gis.db.GisPoint;
 import org.gis.db.Polygon;
 
 /**
@@ -40,9 +41,9 @@ public class MapMarkerPolygon {
 
     public void paint(Graphics g, JMapViewer viewer) {
     	LinkedList<Point> points = new LinkedList<Point>();
-    	LinkedList<org.postgis.Point> polygonPoints = this.getPolygonList();
+    	LinkedList<GisPoint> polygonPoints = this.getPolygonList();
     	
-    	Iterator<org.postgis.Point> it2 = polygonPoints.iterator();
+    	Iterator<GisPoint> it2 = polygonPoints.iterator();
     	while (it2.hasNext()) {
     		org.postgis.Point polygonPoint = it2.next();
     		Point p = viewer.getMapPosition(polygonPoint.x, polygonPoint.y);
@@ -93,7 +94,7 @@ public class MapMarkerPolygon {
         
     }
     
-    public LinkedList<org.postgis.Point> getPolygonList() {
+    public LinkedList<GisPoint> getPolygonList() {
     	return this.polygon.getRing();
     }
 

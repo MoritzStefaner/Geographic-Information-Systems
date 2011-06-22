@@ -20,22 +20,22 @@ public class ExportObjectsTool {
 	static public HashMap<Integer, StorkPoint> exportStork(){
 		// The SQL query to get the information from database.
 		db = new Database();
-		ResultSet result = db.executeQuery("select timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
+		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
 		try {
 			// Iterates over all lines of the ResultSet to put each line in the map.
 			while(result.next()){
 				
-				PGgeometry geom = (PGgeometry) result.getObject(4);
+				PGgeometry geom = (PGgeometry) result.getObject(5);
 				// Extracts the point dates from the ResultSet.
 				Point point = (Point) geom.getGeometry();
-				point.setZ((Integer) result.getObject(2));
+				point.setZ((Integer) result.getObject(3));
 				
 				// Creates a new StorkPoint.
-				StorkPoint spoint = new StorkPoint((Time) result.getObject(1), point);
+				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point);
 				
-				pointMap.put((Integer) result.getObject(3), spoint);
+				pointMap.put((Integer) result.getObject(1), spoint);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -64,7 +64,7 @@ public class ExportObjectsTool {
 				Point point = (Point) geom.getGeometry();
 				
 				// Creates a new MaltePoint-object.
-				MaltePoint mpoint = new MaltePoint((Time) result.getObject(2), (Time) result.getObject(3), 
+				MaltePoint mpoint = new MaltePoint((Integer) result.getObject(1), (Time) result.getObject(2), (Time) result.getObject(3), 
 						(String) result.getObject(4), (String) result.getObject(5), (Integer) result.getObject(6), (String) result.getObject(7), 
 						(String) result.getObject(8), point);
 				
@@ -77,12 +77,13 @@ public class ExportObjectsTool {
 		return pointMap;	
 	}
 
+	
 	/**
-	 * Exports the geometric dates of all countries of the world.
+	 * Exports the world data set as MapMarkerPolygon.
 	 * 
-	 * @return A map of all countries.
+	 * @return A map of MapMarkerPolygons
 	 */
-	static public HashMap<Integer, MapMarkerPolygon> exportWorld(){
+	static public HashMap<Integer, MapMarkerPolygon> exportWorldAsMapMarkerPolygon(){
 		// The SQL query to get the information from database.
 		db = new Database();
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
@@ -95,13 +96,50 @@ public class ExportObjectsTool {
 				// Extracts the polygon dates from the ResultSet.
 				PGgeometry geom = (PGgeometry) result.getObject(11);
 				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
+				LinearRing[] linearRing = new LinearRing[1];
+				linearRing[0] = ngeom.getRing(0);
 				
 				// Creates a new country. 
 				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
-						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), ngeom.getRing(0).getPoints());
+						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), linearRing);
 
 				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return polygonMap;
+	}
+	
+	/**
+	 * Exports the geometric dates of all countries of the world.
+	 * 
+	 * @return A map of all countries.
+	 */
+	static public HashMap<Integer, WorldPolygon> exportWorld(){
+		// The SQL query to get the information from database.
+		db = new Database();
+		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
+		
+		HashMap<Integer, WorldPolygon> polygonMap = new HashMap<Integer, WorldPolygon>();
+		
+		try {
+			// Iterates over all lines of the ResultSet to put each line in the map.
+			while(result.next()){
+				// Extracts the polygon dates from the ResultSet.
+				PGgeometry geom = (PGgeometry) result.getObject(11);
+				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
+				LinearRing[] linearRing = new LinearRing[1];
+				linearRing[0] = ngeom.getRing(0);
+				
+				// Creates a new country. 
+				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
+						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
+						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10),  linearRing);
+
+				polygonMap.put((Integer) result.getObject(1), polygon);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -216,7 +254,7 @@ public class ExportObjectsTool {
 	 * @param i the constituency
 	 * @return a LinkedList of parties
 	 */
-	static public LinkedList<Party> getParties(int i, Database db){
+	static private LinkedList<Party> getParties(int i, Database db){
 		LinkedList<Party> parties = new LinkedList<Party>();
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.
