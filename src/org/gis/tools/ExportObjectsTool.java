@@ -76,42 +76,6 @@ public class ExportObjectsTool {
 		}
 		return pointMap;	
 	}
-
-	
-	/**
-	 * Exports the world data set as MapMarkerPolygon.
-	 * 
-	 * @return A map of MapMarkerPolygons
-	 */
-	static public HashMap<Integer, MapMarkerPolygon> exportWorldAsMapMarkerPolygon(){
-		// The SQL query to get the information from database.
-		db = new Database();
-		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
-		
-		HashMap<Integer, MapMarkerPolygon> polygonMap = new HashMap<Integer, MapMarkerPolygon>();
-		
-		try {
-			// Iterates over all lines of the ResultSet to put each line in the map.
-			while(result.next()){
-				// Extracts the polygon dates from the ResultSet.
-				PGgeometry geom = (PGgeometry) result.getObject(11);
-				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
-				LinearRing[] linearRing = new LinearRing[1];
-				linearRing[0] = ngeom.getRing(0);
-				
-				// Creates a new country. 
-				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
-						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
-						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10), linearRing);
-
-				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return polygonMap;
-	}
 	
 	/**
 	 * Exports the geometric dates of all countries of the world.
@@ -142,7 +106,6 @@ public class ExportObjectsTool {
 				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return polygonMap;

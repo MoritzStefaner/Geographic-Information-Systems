@@ -114,10 +114,10 @@ public class GisApplication extends JFrame {
         panel.add(button);
         add(map, BorderLayout.CENTER);
         
-		//World w = new World();
-		//map.addMapMarkerPolygonList(w.getWorldPolygons());
-        ElectionWorld ew = new ElectionWorld();
-        map.addMapMarkerPolygonList(ew.getDrawList());
+		World w = new World();
+		map.addMapMarkerPolygonList(w.getWorldPolygons());
+        //ElectionWorld ew = new ElectionWorld();
+        //map.addMapMarkerPolygonList(ew.getDrawList());
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
