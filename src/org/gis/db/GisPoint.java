@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.postgis.Point;
 
-public class GisPoint extends Point{
+public class GisPoint extends Point {
 	
 	public enum Relation{
 		INSIDE, OUTSIDE, BORDER
@@ -41,7 +41,7 @@ public class GisPoint extends Point{
 		return kilometer;
 	}
 	
-	public Relation comprateTo(Polygon polygon){
+	public Relation compareTo(Polygon polygon){
 		boolean value = false;
 		Database db = new Database();
 		
