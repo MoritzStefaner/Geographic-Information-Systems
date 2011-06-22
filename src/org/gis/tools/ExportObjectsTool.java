@@ -118,12 +118,12 @@ public class ExportObjectsTool {
 	 * 
 	 * @return A map of all countries.
 	 */
-	static public HashMap<Integer, WorldPolygon> exportWorld(){
+	static public HashMap<Integer, MapMarkerPolygon> exportWorld(){
 		// The SQL query to get the information from database.
 		db = new Database();
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		
-		HashMap<Integer, WorldPolygon> polygonMap = new HashMap<Integer, WorldPolygon>();
+		HashMap<Integer, MapMarkerPolygon> polygonMap = new HashMap<Integer, MapMarkerPolygon>();
 		
 		try {
 			// Iterates over all lines of the ResultSet to put each line in the map.
@@ -139,7 +139,7 @@ public class ExportObjectsTool {
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
 						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10),  linearRing);
 
-				polygonMap.put((Integer) result.getObject(1), polygon);
+				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -183,7 +183,7 @@ public class ExportObjectsTool {
 					curState = newFederalState((Integer) constGeoResult.getObject(3), (String) constGeoResult.getObject(4), db);
 					stateMap.put(curState.getId(), curState);
 				}
-				
+
 				// Creates the constituency-object and adds it to its state and the map of all constituencies.
 				constElecResult.next();
 				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
@@ -194,7 +194,10 @@ public class ExportObjectsTool {
 					isFirst = false;
 					PGgeometry geom = (PGgeometry) constGeoResult.getObject(1);
 					org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
-					ConstPolygon polygon = new ConstPolygon(ngeom.getRing(0).getPoints(), constituency);
+					LinearRing[] linearRing = new LinearRing[1];
+					linearRing[0] = ngeom.getRing(0);
+
+					ConstPolygon polygon = new ConstPolygon(constituency, linearRing);
 					polygons.add(new MapMarkerPolygon(polygon));
 				}
 				constituency.addPolygons(polygons);

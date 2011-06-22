@@ -3,7 +3,6 @@ package org.gis.db;
 import org.postgis.*;
 
 public class WorldPolygon extends Polygon {
-
 	String fips;
 	String iso2;
 	String iso3;
