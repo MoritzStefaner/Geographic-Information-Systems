@@ -127,9 +127,6 @@ public class GisApplication extends JFrame {
      * @param args
      */
     public static void main(String[] args) {
-        // java.util.Properties systemProperties = System.getProperties();
-        // systemProperties.setProperty("http.proxyHost", "localhost");
-        // systemProperties.setProperty("http.proxyPort", "8008");
         new GisApplication().setVisible(true);
     }
 }

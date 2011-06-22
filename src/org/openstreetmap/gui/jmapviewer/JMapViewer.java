@@ -838,11 +838,12 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     	 */
         public void mouseClicked(MouseEvent event) {           
         	Coordinate c = getPosition(event.getX(), event.getY());
-        	System.out.println("Longitude: " + c.getLon() + ", Latitude: " + c.getLat());
+        	getConstituency(c.getLon(), c.getLat());
         }
     }
     
     private void getConstituency(double longitude, double latitude) {
+    	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
     	
     }
 
