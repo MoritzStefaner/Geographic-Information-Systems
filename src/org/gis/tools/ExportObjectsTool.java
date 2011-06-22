@@ -146,19 +146,21 @@ public class ExportObjectsTool {
 					stateMap.put(curState.getId(), curState);
 				}
 				
+				// Creates the constituency-object and adds it to its state and the map of all constituencies.
+				constElecResult.next();
+				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
+						(Integer) constElecResult.getObject(2), curState, getParties(i, db));
+				
 				// Iterates over the ResultSet with all polygons of a constituency from database.
 				while(isFirst || constGeoResult.next()){
 					isFirst = false;
 					PGgeometry geom = (PGgeometry) constGeoResult.getObject(1);
 					org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
-					ConstPolygon polygon = new ConstPolygon(ngeom.getRing(0).getPoints());
+					ConstPolygon polygon = new ConstPolygon(ngeom.getRing(0).getPoints(), constituency);
 					polygons.add(new MapMarkerPolygon(polygon));
 				}
-					
-				// Creates the constituency-object and adds it to its state and the map of all constituencies.
-				constElecResult.next();
-				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
-						(Integer) constElecResult.getObject(2), curState, getParties(i, db), polygons);
+				constituency.addPolygons(polygons);
+				
 				curState.addConstituency(constituency);
 				map.put(i, constituency);
 				

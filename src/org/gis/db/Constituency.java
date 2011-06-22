@@ -13,16 +13,20 @@ public class Constituency {
 	private LinkedList<Party> result;
 	private LinkedList<MapMarkerPolygon> polygons;
 	
-	public Constituency(int number, String name, int electorate, int voter, FederalState federalState, LinkedList<Party> result, LinkedList<MapMarkerPolygon> polygons) {
+	public Constituency(int number, String name, int electorate, int voter, FederalState federalState, LinkedList<Party> result) {
 		this.number = number;
 		this.name = name;
 		this.electorate = electorate;
 		this.voter = voter;
 		this.federalState = federalState;
 		this.result = result;
-		this.polygons = polygons;
+		this.polygons = new LinkedList<MapMarkerPolygon>();
 	}
 
+	public void addPolygons(LinkedList<MapMarkerPolygon> list) {
+		this.polygons = list;
+	}
+	
 	public int getElectorate() {
 		return electorate;
 	}

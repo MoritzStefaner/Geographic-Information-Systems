@@ -19,6 +19,7 @@ import javax.swing.JPanel;
 
 import org.gis.db.Constituency;
 import org.gis.db.ElectionWorld;
+import org.gis.db.World;
 import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
@@ -113,7 +114,8 @@ public class GisApplication extends JFrame {
         panel.add(button);
         add(map, BorderLayout.CENTER);
         
-		//map.addMapMarkerPolygonList(eot.exportWorld().values());
+		//World w = new World();
+		//map.addMapMarkerPolygonList(w.getWorldPolygons());
         ElectionWorld ew = new ElectionWorld();
         map.addMapMarkerPolygonList(ew.getDrawList());
 
