@@ -58,7 +58,7 @@ public class ImportTool {
 					insert = insert.concat(",");
 				}
 				token = line.split(",");
-				newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', " + token[4] + ", " + token[25].replace("\"", "") + ", GeomFromText('POINT(" + token[1] + " " + token[2] + ")')" + ")");
+				newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', " + token[4] + ", " + token[25].replace("\"", "") + ", GeomFromText('POINT(" + token[2] + " " + token[1] + ")')" + ")");
 				insert = insert.concat(newInsert);
 				i++;
 			}
@@ -132,7 +132,7 @@ public class ImportTool {
 					else
 						token[1] = "NULL";
 					
-					newInsert = new String("(" + String.valueOf(i) + ", " + token[0] + ", " + token[1] + ", '" + token[2] + "', '" + token[3] + "', " + token[6] + ", '" + token[7] + "', '" + token[8] + "', GeomFromText('POINT(" + token[4] + " " + token[5] + ")')" + ")");
+					newInsert = new String("(" + String.valueOf(i) + ", " + token[0] + ", " + token[1] + ", '" + token[2] + "', '" + token[3] + "', " + token[6] + ", '" + token[7] + "', '" + token[8] + "', GeomFromText('POINT(" + token[5] + " " + token[4] + ")')" + ")");
 
 					insert = insert.concat(newInsert);
 					i++;
@@ -628,7 +628,7 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		//it.importStorks();
-		it.importWorld();
+		//it.importWorld();
 		//it.importConstituencies();
 		//it.importMalte();
 		//it.importResults();
