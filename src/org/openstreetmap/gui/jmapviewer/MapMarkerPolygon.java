@@ -1,6 +1,7 @@
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -44,7 +45,7 @@ public class MapMarkerPolygon{
     	this.color = color;
     }
 
-    public void paint(Graphics g, JMapViewer viewer) {
+    public void paint(Graphics g, JMapViewer viewer, boolean names) {
     	LinkedList<Point> points = new LinkedList<Point>();
     	LinkedList<GisPoint> polygonPoints = this.getPolygonList();
     	
@@ -75,14 +76,17 @@ public class MapMarkerPolygon{
         g.setColor(color);
         g.fillPolygon(xPoints, yPoints, points.size());
         g.setColor(Color.BLACK);
+        g.drawPolygon(xPoints, yPoints, points.size());
         
-        if (polygon.getText() != null && !polygon.getText().isEmpty()) {
+        if (names && polygon.getText() != null && !polygon.getText().isEmpty()) {
         	org.postgis.Point mass = polygon.getMass();
         	Point massCoord = viewer.getMapPosition(mass.x, mass.y);
         	
         	if (massCoord != null) {
 	        	/* Draw the Text in the middle of the polygon */
 	        	/* Find the size of string s in font f in the current Graphics context g. */
+        		Font font = new Font("Verdana", Font.PLAIN, 12);
+        		g.setFont(font);
 	        	FontMetrics fm   = g.getFontMetrics(g.getFont());
 	        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(polygon.getText(), g);
 	

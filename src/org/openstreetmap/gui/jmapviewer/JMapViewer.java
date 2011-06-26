@@ -82,6 +82,8 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     protected JSlider zoomSlider;
     protected JButton zoomInButton;
     protected JButton zoomOutButton;
+    
+    protected boolean renderNames;
 
     private TileSource tileSource;
 
@@ -133,6 +135,10 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         //        Point screenPoint = event.getLocationOnScreen();
         //        Coordinate c = getPosition(screenPoint);
         return super.getToolTipText(event);
+    }
+    
+    public void setRenderNames(boolean render) {
+    	renderNames = render;
     }
 
     protected void initializeZoomSlider() {
@@ -522,15 +528,15 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             }
         }
 
-        if (mapMarkersVisible && mapMarkerList != null) {
-            for (MapMarker marker : mapMarkerList) {
-                paintMarker(g, marker);
-            }
-        }
-        
         if (mapMarkerPolygonList != null) {
         	for (MapMarkerPolygon p : mapMarkerPolygonList) {
                 paintPolygon(g, p);
+            }
+        }
+        
+        if (mapMarkersVisible && mapMarkerList != null) {
+            for (MapMarker marker : mapMarkerList) {
+                paintMarker(g, marker);
             }
         }
         
@@ -552,7 +558,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
      */
     protected void paintPolygon(Graphics g, MapMarkerPolygon markerPolygon) {
         if (markerPolygon != null) {
-        	markerPolygon.paint(g, this);
+        	markerPolygon.paint(g, this, renderNames);
         }
     }
 

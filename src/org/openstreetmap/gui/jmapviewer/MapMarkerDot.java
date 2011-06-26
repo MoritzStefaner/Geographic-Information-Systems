@@ -42,7 +42,7 @@ public class MapMarkerDot implements MapMarker {
     }
 
     public void paint(Graphics g, Point position) {
-        int size_h = 5;
+        int size_h = 3;
         int size = size_h * 2;
         g.setColor(color);
         g.fillOval(position.x - size_h, position.y - size_h, size, size);

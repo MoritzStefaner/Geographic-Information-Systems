@@ -104,7 +104,7 @@ public class ElectionWorld {
 					
 					while (it3.hasNext()) {
 						MapMarkerPolygon m = it3.next();
-						m.setColor(new Color(0.0f, 1.0f, 0.0f, alpha));
+						m.setColor(new Color((float) ((1 - alpha)*0.6 + 0.4), 1.0f, 1 - alpha, 0.8f));
 					}
 					
 					found = true;

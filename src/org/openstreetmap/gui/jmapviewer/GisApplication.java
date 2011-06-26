@@ -65,8 +65,10 @@ public class GisApplication extends JFrame {
         ew = null;
         JPanel rightPanel = new JPanel();
         JPanel helpPanel = new JPanel();
-        JPanel informationElectionPanel = new JPanel();
+        JPanel informationElectionPanel = new JPanel(new FlowLayout());
         JPanel informationWorldPanel = new JPanel();
+        JPanel electionTab = new JPanel(new FlowLayout());
+        JPanel worldTab = new JPanel(new FlowLayout());
         final JTabbedPane tabs = new JTabbedPane();
         
         /* Set same Window standard operations */
@@ -95,11 +97,9 @@ public class GisApplication extends JFrame {
         rightPanel.add(tileSourceSelector);
         
         /* Creates the tabs */
-        JPanel malte = new JPanel(new FlowLayout());
-        JPanel world = new JPanel(new FlowLayout());
         tabs.setPreferredSize(new Dimension(250, 500));
-        tabs.addTab("Election", malte);
-        tabs.addTab("World", world);
+        tabs.addTab("Election", electionTab);
+        tabs.addTab("World", worldTab);
         tabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
               if (tabs.getSelectedIndex() == 0) {
@@ -112,6 +112,15 @@ public class GisApplication extends JFrame {
         rightPanel.add(tabs);
         
         /* Constructs Information panel for election 2009*/
+        final JCheckBox renderNames = new JCheckBox("Render Names?");
+        renderNames.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				map.setRenderNames(renderNames.isSelected());
+			}
+        });
+        map.setRenderNames(false);
+        electionTab.add(renderNames);
+        
         informationElection = new JTextArea();
         informationElection.setPreferredSize(new Dimension(220, 420));
         informationElection.setText("None");
@@ -121,7 +130,7 @@ public class GisApplication extends JFrame {
         informationElectionPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Information"),
                 BorderFactory.createEmptyBorder(5,5,5,5)));
-        malte.add(informationElectionPanel);
+        electionTab.add(informationElectionPanel);
         
         /* Constructs Information panel for world*/
         informationWorld = new JTextArea();
@@ -133,7 +142,7 @@ public class GisApplication extends JFrame {
         informationWorldPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Information"),
                 BorderFactory.createEmptyBorder(5,5,5,5)));
-        world.add(informationWorldPanel);
+        worldTab.add(informationWorldPanel);
         
         /* Constructs main map display */
         try {
@@ -171,7 +180,6 @@ public class GisApplication extends JFrame {
     }
     
     private void getConstituency(double longitude, double latitude) {
-    	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
     	GisPoint p = new GisPoint(latitude, longitude);
     	Constituency c = ew.getConstituencyMap().get(ew.compareToGermany(p));
     	if (c != null)
@@ -179,7 +187,6 @@ public class GisApplication extends JFrame {
     }
     
     private void getCountry(double longitude, double latitude) {
-    	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
     	GisPoint p = new GisPoint(latitude, longitude);
     	MapMarkerPolygon pol = w.getCountries().get(w.compareToWorld(p));
     	if (pol != null)
