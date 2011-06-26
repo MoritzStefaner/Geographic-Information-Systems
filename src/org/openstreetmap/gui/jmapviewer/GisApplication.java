@@ -23,7 +23,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.gis.db.Constituency;
 import org.gis.db.ElectionWorld;
@@ -51,7 +54,8 @@ public class GisApplication extends JFrame {
     private final JMapViewer map;
     private World w;
     private ElectionWorld ew;
-    private JTextArea information;
+    private JTextArea informationElection;
+    private JTextArea informationWorld;
 
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
@@ -61,7 +65,9 @@ public class GisApplication extends JFrame {
         ew = null;
         JPanel rightPanel = new JPanel();
         JPanel helpPanel = new JPanel();
-        JPanel informationPanel = new JPanel();
+        JPanel informationElectionPanel = new JPanel();
+        JPanel informationWorldPanel = new JPanel();
+        final JTabbedPane tabs = new JTabbedPane();
         
         /* Set same Window standard operations */
         setLayout(new BorderLayout());
@@ -77,7 +83,7 @@ public class GisApplication extends JFrame {
         
         /* Constructs right panel */
         add(rightPanel, BorderLayout.EAST);
-        rightPanel.setPreferredSize(new Dimension(180, 1));
+        rightPanel.setPreferredSize(new Dimension(250, 1));
         rightPanel.setLayout(new FlowLayout());
         JComboBox tileSourceSelector = new JComboBox(new TileSource[] { new OsmTileSource.Mapnik(),
                 new OsmTileSource.TilesAtHome(), new OsmTileSource.CycleMap(), new BingAerialTileSource() });
@@ -86,26 +92,48 @@ public class GisApplication extends JFrame {
                 map.setTileSource((TileSource) e.getItem());
             }
         });
+        rightPanel.add(tileSourceSelector);
         
-        final JCheckBox malteControl = new JCheckBox("show Malte", true);
-        malteControl.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                displayMalte(malteControl.isSelected());
+        /* Creates the tabs */
+        JPanel malte = new JPanel(new FlowLayout());
+        JPanel world = new JPanel(new FlowLayout());
+        tabs.setPreferredSize(new Dimension(250, 500));
+        tabs.addTab("Election", malte);
+        tabs.addTab("World", world);
+        tabs.addChangeListener(new ChangeListener() {
+            public void stateChanged(ChangeEvent e) {
+              if (tabs.getSelectedIndex() == 0) {
+            	  displayMalte(true);
+              } else if (tabs.getSelectedIndex() == 1) {
+            	  showWorld(true);
+              }
             }
-        });
-        rightPanel.add(malteControl);
+          });
+        rightPanel.add(tabs);
         
-        /* Constructs Information panel */
-        information = new JTextArea(5, 10);
-        information.setText("None");
-        information.setBackground(rightPanel.getBackground());
-        information.setEditable(false);
-        informationPanel.add(information);
-        informationPanel.setBorder(BorderFactory.createCompoundBorder(
+        /* Constructs Information panel for election 2009*/
+        informationElection = new JTextArea();
+        informationElection.setPreferredSize(new Dimension(220, 420));
+        informationElection.setText("None");
+        informationElection.setBackground(rightPanel.getBackground());
+        informationElection.setEditable(false);
+        informationElectionPanel.add(informationElection);
+        informationElectionPanel.setBorder(BorderFactory.createCompoundBorder(
                 BorderFactory.createTitledBorder("Information"),
                 BorderFactory.createEmptyBorder(5,5,5,5)));
-        rightPanel.add(informationPanel);
+        malte.add(informationElectionPanel);
+        
+        /* Constructs Information panel for world*/
+        informationWorld = new JTextArea();
+        informationWorld.setPreferredSize(new Dimension(220, 420));
+        informationWorld.setText("None");
+        informationWorld.setBackground(rightPanel.getBackground());
+        informationWorld.setEditable(false);
+        informationWorldPanel.add(informationWorld);
+        informationWorldPanel.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createTitledBorder("Information"),
+                BorderFactory.createEmptyBorder(5,5,5,5)));
+        world.add(informationWorldPanel);
         
         /* Constructs main map display */
         try {
@@ -113,7 +141,6 @@ public class GisApplication extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-        rightPanel.add(tileSourceSelector);
         
         map.setMapMarkerVisible(true);
         add(map, BorderLayout.CENTER);
@@ -146,15 +173,17 @@ public class GisApplication extends JFrame {
     private void getConstituency(double longitude, double latitude) {
     	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
     	GisPoint p = new GisPoint(latitude, longitude);
-    	String pol = ew.getConstituencyMap().get(ew.compareToGermany(p)).getName();
-    	information.setText(pol);
+    	Constituency c = ew.getConstituencyMap().get(ew.compareToGermany(p));
+    	if (c != null)
+    		informationElection.setText(c.getInformation());
     }
     
     private void getCountry(double longitude, double latitude) {
     	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
     	GisPoint p = new GisPoint(latitude, longitude);
-    	Polygon pol = w.getCountries().get(w.compareToWorld(p)).getPolygon();
-    	System.out.println(pol.getText());
+    	MapMarkerPolygon pol = w.getCountries().get(w.compareToWorld(p));
+    	if (pol != null)
+    		informationWorld.setText(pol.getPolygon().getText());
     }
     
     private void showWorld(boolean show) {

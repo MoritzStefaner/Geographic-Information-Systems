@@ -50,8 +50,10 @@ public class ElectionWorld {
 		ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('"+point+"'))");
 		
 		try {
-			result.next();
-			return (Integer) result.getObject(1);
+			if (result.next())
+				return (Integer) result.getObject(1);
+			else
+				return null;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -58,4 +58,19 @@ public class Constituency {
 		return name;
 	}
 
+	public String getInformation() {
+		String s = getName() + "\n";
+		s = s + getFederalState().getName() + "\n\n";
+		
+		s = s + "Wahlberechtigte: " + getElectorate() + "\n";
+		s = s + "Wähler: " + getVoter() + "\n\n";
+		
+		Iterator<Party> it = getResult().iterator();
+		while (it.hasNext()) {
+			Party p = it.next();
+			s = s + p.getName() + ": " + p.getZweitstimmen() + "\n";
+		}
+		
+		return s;
+	}
 }
