@@ -17,7 +17,7 @@ import org.gis.db.Polygon;
  * @author Dirk Kirsten
  *
  */
-public class MapMarkerPolygon {
+public class MapMarkerPolygon{
     private Polygon polygon;
     private Color color;
 

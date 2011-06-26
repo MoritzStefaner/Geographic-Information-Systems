@@ -7,6 +7,7 @@ import org.postgis.Point;
 
 public class GisPoint extends Point {
 	
+	// The enumeration for the relation between a point and a polygon.
 	public enum Relation{
 		INSIDE, OUTSIDE, BORDER
 	}
@@ -21,6 +22,14 @@ public class GisPoint extends Point {
 		this.z = point.getZ();
 	}
 	
+	/**
+	 * Hard task a.
+	 * 
+	 * Compares this point to another one and gives the distance.
+	 * 
+	 * @param point
+	 * @return The distance in kilometers.
+	 */
 	public Double compareTo(GisPoint point){
 		double kilometer = 0;
 		double meter = 0;
@@ -41,12 +50,19 @@ public class GisPoint extends Point {
 		return kilometer;
 	}
 	
-	public Relation compareTo(Polygon polygon) {
+	/**
+	 * Hard task b.
+	 * 
+	 * Describes the relation of this point to a polygon.
+	 * 
+	 * @param polygon
+	 * @return The enumeration value of the relation.
+	 */
+	public Relation compareTo(Polygon polygon){
 		boolean value = false;
 		Database db = new Database();
 		
-		ResultSet contains = db.executeQuery("SELECT ST_Contains(polygon, point) FROM (SELECT ST_Buffer(ST_GeomFromText('"+polygon+"'),0) As polygon, " +
-				"ST_Buffer(ST_GeomFromText('"+this+"'),0) As point) As foo;");
+		ResultSet contains = db.executeQuery("SELECT Contains(GeomFromText('"+polygon+"'), GeomFromText('"+this+"')) AS contains");
 		try {
 			contains.next();
 			value = (Boolean) contains.getObject(1);
@@ -56,7 +72,7 @@ public class GisPoint extends Point {
 			e.printStackTrace();
 		}
 		
-		
+		// If this point isn't inside the polygon test if the point touches it.
 		if(value){
 			return Relation.INSIDE;
 		}else{
@@ -76,6 +92,30 @@ public class GisPoint extends Point {
 		}
 		
 		return Relation.OUTSIDE;
+	}
+	
+	/**
+	 * Relates this point to the constituencies of Germany.
+	 * 
+	 * @return The position of this point as constituency id.
+	 */
+	public Integer compareToConstituencies(){
+		
+		Database db = new Database();
+		
+		ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('"+this+"'))");
+		
+		try {
+			result.next();
+			return (Integer) result.getObject(1);
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
 	}
 	
 }
