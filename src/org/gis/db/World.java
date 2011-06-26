@@ -30,8 +30,7 @@ public class World {
 	 * @return The position of the point as country id.
 	 */
 	public Integer compareToWorld(GisPoint point){
-		
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		
 		ResultSet result = db.executeQuery("SELECT id FROM world WHERE Contains(poly_geom, GeomFromText('"+point+"'))");
 		
@@ -53,7 +52,7 @@ public class World {
 	 * @return The id of the country.
 	 */
 	public Integer getLargest(){
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		
 		ResultSet result = db.executeQuery("SELECT id, Area(GeomFromText(poly_geom, 4326))  FROM world ORDER BY area DESC");
 		
@@ -78,7 +77,7 @@ public class World {
 	 */
     public LinkedList<MapMarkerPolygon> getStorkTravel(){
     	LinkedList<MapMarkerPolygon> list = new LinkedList<MapMarkerPolygon>();
-    	Database db = new Database();
+    	Database db = Database.getDatabase();
     	
     	// TODO Performance reduzieren.
     	ResultSet result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE Contains(poly_geom, geometrycolumn)");

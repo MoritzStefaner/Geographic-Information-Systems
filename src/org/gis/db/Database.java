@@ -7,6 +7,7 @@ import java.sql.Statement;
 import org.postgresql.PGConnection;;
 
 public class Database {
+	private static Database db = null;
 	private Connection conn = null;
 	private final String url = "jdbc:postgresql://localhost:5432/gis"; //connection string using localhost and postgis database
 	
@@ -20,6 +21,13 @@ public class Database {
 			System.err.println(ex);
 			ex.printStackTrace();
 		}
+	}
+	
+	public static Database getDatabase() {
+		if (db == null)
+			db = new Database();
+		
+		return db;
 	}
 	
 	public void executeUpdate(String query) {
@@ -39,7 +47,7 @@ public class Database {
 		ResultSet result = null;
 		try {
 			Statement s = this.conn.createStatement(); //create query statement
-			 result = s.executeQuery(query);
+			result = s.executeQuery(query);
 			
 			//s.close(); //close statement when finished
 		} catch(Exception ex) {

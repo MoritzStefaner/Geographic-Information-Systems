@@ -12,6 +12,7 @@ public class Constituency {
 	private FederalState federalState;
 	private LinkedList<Party> result;
 	private LinkedList<MapMarkerPolygon> polygons;
+	private int malteOccurence;
 	
 	public Constituency(Integer number, String name, Integer electorate, Integer voter, FederalState federalState, LinkedList<Party> result) {
 		this.number = number;
@@ -20,8 +21,17 @@ public class Constituency {
 		this.voter = voter;
 		this.federalState = federalState;
 		this.result = result;
+		this.malteOccurence = 0;
 	}
 
+	public void addMalteOccurence() {
+		++malteOccurence;
+	}
+	
+	public int getMalteOccureces() {
+		return malteOccurence;
+	}
+	
 	public void addPolygons(LinkedList<MapMarkerPolygon> list) {
 		this.polygons = list;
 	}

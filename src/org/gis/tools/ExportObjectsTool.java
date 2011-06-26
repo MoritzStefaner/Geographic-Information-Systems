@@ -19,7 +19,7 @@ public class ExportObjectsTool {
 	 */
 	static public HashMap<Integer, StorkPoint> exportStork(){
 		// The SQL query to get the information from database.
-		db = new Database();
+		db = Database.getDatabase();
 		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
@@ -51,7 +51,7 @@ public class ExportObjectsTool {
 	 */
 	static public HashMap<Integer, MaltePoint> exportMalte(){
 		// The SQL query to get the information from database.
-		db = new Database();
+		db = Database.getDatabase();
 		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn from malte");
 		
 		HashMap<Integer, MaltePoint> pointMap = new HashMap<Integer, MaltePoint>();
@@ -84,7 +84,7 @@ public class ExportObjectsTool {
 	 */
 	static public HashMap<Integer, MapMarkerPolygon> exportWorld(){
 		// The SQL query to get the information from database.
-		db = new Database();
+		db = Database.getDatabase();
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		
 		HashMap<Integer, MapMarkerPolygon> polygonMap = new HashMap<Integer, MapMarkerPolygon>();
@@ -117,7 +117,7 @@ public class ExportObjectsTool {
 	 * @return A map of all constituencies containing all information about the election.
 	 */
 	static public HashMap<Integer, Constituency> exportElection2009(){
-		db = new Database();
+		db = Database.getDatabase();
 		// A map of all constituencies.
 		HashMap<Integer, Constituency> map = new HashMap<Integer, Constituency>();
 		// A map of all federal states.

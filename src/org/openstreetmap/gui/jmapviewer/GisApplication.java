@@ -1,23 +1,16 @@
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -32,10 +25,8 @@ import org.gis.db.Constituency;
 import org.gis.db.ElectionWorld;
 import org.gis.db.GisPoint;
 import org.gis.db.MaltePoint;
-import org.gis.db.Polygon;
 import org.gis.db.World;
 import org.gis.tools.ExportObjectsTool;
-import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
@@ -56,7 +47,9 @@ public class GisApplication extends JFrame {
     private ElectionWorld ew;
     private JTextArea informationElection;
     private JTextArea informationWorld;
-
+    
+    private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE }; 
+    
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
         setSize(800, 800);
@@ -70,6 +63,8 @@ public class GisApplication extends JFrame {
         JPanel electionTab = new JPanel(new FlowLayout());
         JPanel worldTab = new JPanel(new FlowLayout());
         final JTabbedPane tabs = new JTabbedPane();
+        String[] displayStyleTypes = {"Results Green Party", "Green Party <> Malte Spitz"};
+        final JComboBox displayStyle = new JComboBox(displayStyleTypes);
         
         /* Set same Window standard operations */
         setLayout(new BorderLayout());
@@ -103,7 +98,10 @@ public class GisApplication extends JFrame {
         tabs.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent e) {
               if (tabs.getSelectedIndex() == 0) {
-            	  displayMalte(true);
+            	  if (displayStyle.getSelectedIndex() == 0)
+                  	displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+                  else if (displayStyle.getSelectedIndex() == 0)
+                  	displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
               } else if (tabs.getSelectedIndex() == 1) {
             	  showWorld(true);
               }
@@ -111,7 +109,7 @@ public class GisApplication extends JFrame {
           });
         rightPanel.add(tabs);
         
-        /* Constructs Information panel for election 2009*/
+        /* Constructs Information panel for election 2009 */
         final JCheckBox renderNames = new JCheckBox("Render Names?");
         renderNames.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
@@ -120,6 +118,16 @@ public class GisApplication extends JFrame {
         });
         map.setRenderNames(false);
         electionTab.add(renderNames);
+        
+        displayStyle.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (displayStyle.getSelectedIndex() == 0)
+                	displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+                else if (displayStyle.getSelectedIndex() == 1)
+                	displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
+            }
+        });
+        electionTab.add(displayStyle);
         
         informationElection = new JTextArea();
         informationElection.setPreferredSize(new Dimension(220, 420));
@@ -154,8 +162,7 @@ public class GisApplication extends JFrame {
         map.setMapMarkerVisible(true);
         add(map, BorderLayout.CENTER);
         
-        //showWorld(true);
-        displayMalte(true);
+        displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
     }
     
     /* Internal class to handle mouse events
@@ -203,17 +210,22 @@ public class GisApplication extends JFrame {
     	}
 }
     
-    private void displayMalte(boolean show) {
+    private void displayMalte(boolean show, displayStyleType style) {
     	if (show) {
+            Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();
             ew = new ElectionWorld();
-            ew.setColorByGreenPartyLinear();
+            
+            if (style == displayStyleType.GREEN_PARTY_NORMAL)
+            	ew.setColorByGreenPartyLinear();
+            else if (style == displayStyleType.GREEN_PARTY_CORR_MALTE)
+            	ew.setColorByGreenPartyCorrMalte(c);
+            
             map.addMapMarkerPolygonList(ew.getDrawList());
             
-            Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();
             Iterator<MaltePoint> it = c.iterator();
             while (it.hasNext()) {
             	MaltePoint mp = it.next();
-                map.mapMarkerList.add(new MapMarkerDot(mp.getY(), mp.getX()));
+                map.mapMarkerList.add(new MapMarkerDot(mp.getX(), mp.getY()));
             }
     	} else {
     		map.mapMarkerPolygonList.clear();

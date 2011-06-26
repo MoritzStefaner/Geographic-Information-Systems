@@ -44,7 +44,7 @@ public class GisPoint extends Point {
 	public Double compareTo(GisPoint point){
 		double kilometer = 0;
 		double meter = 0;
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		
 		ResultSet result = db.executeQuery("SELECT ST_Distance(gg1, gg2) FROM (SELECT	ST_GeographyFromText('SRID=4326;"+this+"') As gg1, " +
 				"ST_GeographyFromText('SRID=4326;"+point+"') As gg2) As foo;");
@@ -71,7 +71,7 @@ public class GisPoint extends Point {
 	 */
 	public Relation compareTo(Polygon polygon){
 		boolean value = false;
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		
 		ResultSet contains = db.executeQuery("SELECT Contains(GeomFromText('"+polygon+"'), GeomFromText('"+this+"')) AS contains");
 		try {
@@ -111,17 +111,17 @@ public class GisPoint extends Point {
 	 * @return The position of this point as constituency id.
 	 */
 	public Integer compareToConstituencies(){
+		Database db = Database.getDatabase();
 		
-		Database db = new Database();
-		
-		ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('"+this+"'))");
+		ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('" + this + "'))");
 		
 		try {
-			result.next();
-			return (Integer) result.getObject(1);
+			if (result.next())
+				return (Integer) result.getObject(1);
+			else
+				return null;
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

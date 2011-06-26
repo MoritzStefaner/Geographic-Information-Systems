@@ -3,6 +3,7 @@ package org.gis.db;
 import java.awt.Color;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,7 +20,7 @@ public class ElectionWorld {
 	public ElectionWorld() {
 		this.constituencyMap = ExportObjectsTool.exportElection2009();
 		this.drawList = getElectionPolygons(this.constituencyMap);
-		
+
 		setGreenPartyExtrema();
 	}
 	
@@ -50,7 +51,7 @@ public class ElectionWorld {
 	 * @return The position of the point as country id.
 	 */
 	public Integer compareToGermany(GisPoint point){
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		
 		ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('"+point+"'))");
 		
@@ -114,4 +115,45 @@ public class ElectionWorld {
 		
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
+	
+	public void setColorByGreenPartyCorrMalte(Collection<MaltePoint> malte) {
+		Iterator<MaltePoint> it = malte.iterator();
+		
+		while (it.hasNext()) {
+			MaltePoint m = it.next();
+			Integer constituencyInt = m.compareToConstituencies();
+			if (constituencyInt != null) {
+				Constituency c = constituencyMap.get(constituencyInt);
+				c.addMalteOccurence();
+			}
+		}
+		
+		Iterator<Constituency> it2 = getConstituencyMap().values().iterator();
+		while (it2.hasNext()) {
+			Constituency c = it2.next();
+			Iterator<Party> it3 = c.getResult().iterator();
+			boolean found = false;
+			while (it3.hasNext() && !found) {
+				Party p = it3.next();
+				if (p.getName().equalsIgnoreCase("GRÜNE")) {
+					Iterator<MapMarkerPolygon> it4 = c.getPolygons().iterator();
+					float expected = (maxGreenParty / 100) * c.getMalteOccureces();
+					if (expected > 1)
+						expected = 1;
+					float actual = ((p.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty));
+					float alpha = 1 - actual - expected;
+					
+					while (it4.hasNext()) {
+						MapMarkerPolygon m = it4.next();
+						m.setColor(new Color((float) ((1 - alpha)*0.6 + 0.4), 1.0f, 1 - alpha, 0.8f));
+					}
+					
+					found = true;
+				}
+			}
+		}
+		
+		this.drawList = getElectionPolygons(this.constituencyMap);
+	}
+	
 }

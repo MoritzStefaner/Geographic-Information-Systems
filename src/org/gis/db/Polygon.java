@@ -94,7 +94,7 @@ public abstract class Polygon extends org.postgis.Polygon {
 	 */
 	public Relation compareTo(GisPoint point){
 		boolean value = false;
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		
 		ResultSet contains = db.executeQuery("SELECT Contains(GeomFromText('"+this+"'), GeomFromText('"+point+"')) AS contains");
 		try {
@@ -141,7 +141,7 @@ public abstract class Polygon extends org.postgis.Polygon {
 	 */
 	public String compareTo(Polygon polygon){
 		
-		Database db = new Database();
+		Database db = Database.getDatabase();
 		String matrix = "";
 		
 		ResultSet result = db.executeQuery("SELECT Relate(GeometryFromText('"+this+"'), GeometryFromText('"+polygon+"'))");
