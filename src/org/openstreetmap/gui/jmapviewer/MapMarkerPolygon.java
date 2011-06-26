@@ -27,8 +27,9 @@ public class MapMarkerPolygon{
     
     public MapMarkerPolygon(Color color, Polygon polygon) {
     	if (color == null) {
-    		Random rand = new Random();
-    		this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
+    		//Random rand = new Random();
+    		//this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
+    		this.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     	} else {
     		this.color = color;
     	}
@@ -37,6 +38,10 @@ public class MapMarkerPolygon{
     
     public Polygon getPolygon() {
     	return this.polygon;
+    }
+    
+    public void setColor(Color color) {
+    	this.color = color;
     }
 
     public void paint(Graphics g, JMapViewer viewer) {

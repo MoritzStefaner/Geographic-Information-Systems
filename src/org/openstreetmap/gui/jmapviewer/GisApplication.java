@@ -199,6 +199,7 @@ public class GisApplication extends JFrame {
     private void displayMalte(boolean show) {
     	if (show) {
             ew = new ElectionWorld();
+            ew.setColorByGreenPartyLinear();
             map.addMapMarkerPolygonList(ew.getDrawList());
             
             Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();
