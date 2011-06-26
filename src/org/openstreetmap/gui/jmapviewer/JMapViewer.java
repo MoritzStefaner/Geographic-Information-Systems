@@ -28,6 +28,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.gis.db.GisPoint;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
@@ -836,7 +837,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     	 * (non-Javadoc)
     	 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
     	 */
-        public void mouseClicked(MouseEvent event) {           
+        public void mouseClicked(MouseEvent event) {         
         	Coordinate c = getPosition(event.getX(), event.getY());
         	getConstituency(c.getLon(), c.getLat());
         }
@@ -844,7 +845,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
     
     private void getConstituency(double longitude, double latitude) {
     	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
-    	
+    	GisPoint p = new GisPoint(new org.postgis.Point(longitude, latitude));
     }
-
 }

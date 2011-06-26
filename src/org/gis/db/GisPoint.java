@@ -41,7 +41,7 @@ public class GisPoint extends Point {
 		return kilometer;
 	}
 	
-	public Relation compareTo(Polygon polygon){
+	public Relation compareTo(Polygon polygon) {
 		boolean value = false;
 		Database db = new Database();
 		

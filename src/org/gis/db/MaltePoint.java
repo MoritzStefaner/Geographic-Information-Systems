@@ -4,7 +4,7 @@ import java.sql.Time;
 
 import org.postgis.Point;
 
-public class MaltePoint extends GisPoint{
+public class MaltePoint extends GisPoint {
 	
 	private Integer id;
 	private Time starttime;

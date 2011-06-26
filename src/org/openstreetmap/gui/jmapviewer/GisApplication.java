@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -19,6 +20,7 @@ import javax.swing.JPanel;
 
 import org.gis.db.Constituency;
 import org.gis.db.ElectionWorld;
+import org.gis.db.MaltePoint;
 import org.gis.db.World;
 import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -37,11 +39,12 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 public class GisApplication extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    private final JMapViewer map;
 
     public GisApplication() {
         super("Geographic Information Systems");
         setSize(400, 400);
-        final JMapViewer map = new JMapViewer();
+        map = new JMapViewer();
         // final JMapViewer map = new JMapViewer(new MemoryTileCache(),4);
         // map.setTileLoader(new OsmFileCacheTileLoader(map));
         // new DefaultMapController(map);
@@ -84,24 +87,10 @@ public class GisApplication extends JFrame {
         map.setTileLoader((TileLoader) tileLoaderSelector.getSelectedItem());
         panel.add(tileSourceSelector);
         panel.add(tileLoaderSelector);
-        final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
-        showMapMarker.setSelected(map.getMapMarkersVisible());
-        showMapMarker.addActionListener(new ActionListener() {
+        
+        map.setMapMarkerVisible(true);
+        map.setTileGridVisible(false);
 
-            public void actionPerformed(ActionEvent e) {
-                map.setMapMarkerVisible(showMapMarker.isSelected());
-            }
-        });
-        panel.add(showMapMarker);
-        final JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
-        showTileGrid.setSelected(map.isTileGridVisible());
-        showTileGrid.addActionListener(new ActionListener() {
-
-            public void actionPerformed(ActionEvent e) {
-                map.setTileGridVisible(showTileGrid.isSelected());
-            }
-        });
-        panel.add(showTileGrid);
         final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
         showZoomControls.setSelected(map.getZoomContolsVisible());
         showZoomControls.addActionListener(new ActionListener() {
@@ -112,15 +101,42 @@ public class GisApplication extends JFrame {
         });
         panel.add(showZoomControls);
         panel.add(button);
+        
+        final JCheckBox malteControl = new JCheckBox("show Malte", true);
+        malteControl.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                displayMalte(malteControl.isSelected());
+            }
+        });
+        panel.add(malteControl);
+        displayMalte(true);
+        
         add(map, BorderLayout.CENTER);
         
-		World w = new World();
-		map.addMapMarkerPolygonList(w.getWorldPolygons());
-        //ElectionWorld ew = new ElectionWorld();
-        //map.addMapMarkerPolygonList(ew.getDrawList());
+		//World w = new World();
+		//map.addMapMarkerPolygonList(w.getWorldPolygons());
 
         // map.setDisplayPositionByLatLon(49.807, 8.6, 11);
         // map.setTileGridVisible(true);
+    }
+    
+    private void displayMalte(boolean show) {
+    	if (show) {
+            ElectionWorld ew = new ElectionWorld();
+            map.addMapMarkerPolygonList(ew.getDrawList());
+            
+            Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();
+            Iterator<MaltePoint> it = c.iterator();
+            while (it.hasNext()) {
+            	MaltePoint mp = it.next();
+                map.mapMarkerList.add(new MapMarkerDot(mp.getY(), mp.getX()));
+            }
+    	} else {
+    		map.mapMarkerPolygonList.clear();
+    		map.mapMarkerList.clear();
+    		map.setZoom(map.getZoom()*2);
+    	}
     }
 
     /**

@@ -4,7 +4,7 @@ import java.util.*;
 
 import org.postgis.*;
 
-public abstract class Polygon extends org.postgis.Polygon{
+public abstract class Polygon extends org.postgis.Polygon {
 
 	private LinkedList<GisPoint> ring;
 	
