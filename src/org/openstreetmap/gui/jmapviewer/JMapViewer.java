@@ -126,7 +126,6 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         setDisplayPositionByLatLon(50, 9, 3);
         //setToolTipText("");
         
-        addMouseListener(new MouseEventListener());
     }
 
     @Override
@@ -827,24 +826,5 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         g.setFont(font);
     }
 
-    /* Internal class to handle mouse events
-     * 
-     */
-    public class MouseEventListener extends MouseAdapter {
-    	/* is called when the mouse is clicked (pressed and released again.
-    	 * This is used to select a point or polygon by an user.
-    	 * 
-    	 * (non-Javadoc)
-    	 * @see java.awt.event.MouseAdapter#mouseClicked(java.awt.event.MouseEvent)
-    	 */
-        public void mouseClicked(MouseEvent event) {         
-        	Coordinate c = getPosition(event.getX(), event.getY());
-        	getConstituency(c.getLon(), c.getLat());
-        }
-    }
-    
-    private void getConstituency(double longitude, double latitude) {
-    	System.out.println("Longitude: " + longitude + ", Latitude: " + latitude);
-    	GisPoint p = new GisPoint(new org.postgis.Point(longitude, latitude));
-    }
+
 }

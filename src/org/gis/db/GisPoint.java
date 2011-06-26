@@ -16,6 +16,17 @@ public class GisPoint extends Point {
 		setPoint(point);
 	}
 	
+	public GisPoint(double x, double y) {
+		this.x = x;
+		this.y = y;
+	}
+	
+	public GisPoint(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+	
 	public void setPoint(Point point){
 		this.x = point.getX();
 		this.y = point.getY();

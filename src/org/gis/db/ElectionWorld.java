@@ -1,5 +1,7 @@
 package org.gis.db;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -37,5 +39,23 @@ public class ElectionWorld {
 		return drawList;
 	}
     
+	/**
+	 * Relates a point to the countries in the world.
+	 * 
+	 * @return The position of the point as country id.
+	 */
+	public Integer compareToGermany(GisPoint point){
+		Database db = new Database();
+		
+		ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('"+point+"'))");
+		
+		try {
+			result.next();
+			return (Integer) result.getObject(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
     
 }
