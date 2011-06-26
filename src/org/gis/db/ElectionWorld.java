@@ -137,15 +137,16 @@ public class ElectionWorld {
 				Party p = it3.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
 					Iterator<MapMarkerPolygon> it4 = c.getPolygons().iterator();
-					float expected = (maxGreenParty / 100) * c.getMalteOccureces();
+					float expected = (maxGreenParty / 500) * c.getMalteOccureces();
 					if (expected > 1)
 						expected = 1;
-					float actual = ((p.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty));
-					float alpha = 1 - actual - expected;
+					float actual = ((p.getZweitstimmen() / (float) c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty));
+					float alpha = 1 - Math.abs((actual - expected));
+					float alpha2 = (float) Math.min(2*alpha, 1.0);
 					
 					while (it4.hasNext()) {
 						MapMarkerPolygon m = it4.next();
-						m.setColor(new Color((float) ((1 - alpha)*0.6 + 0.4), 1.0f, 1 - alpha, 0.8f));
+						m.setColor(new Color(1 - alpha2, alpha2, 0.0f, 0.9f));
 					}
 					
 					found = true;

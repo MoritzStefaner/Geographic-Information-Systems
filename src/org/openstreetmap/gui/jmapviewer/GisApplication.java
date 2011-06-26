@@ -162,7 +162,7 @@ public class GisApplication extends JFrame {
         map.setMapMarkerVisible(true);
         add(map, BorderLayout.CENTER);
         
-        displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+        displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
     }
     
     /* Internal class to handle mouse events
