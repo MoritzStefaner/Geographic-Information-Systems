@@ -225,7 +225,7 @@ public class ExportObjectsTool {
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.
 		ResultSet constVoteResult = db.executeQuery("select name, first_cur, second_cur " +
-				"from results_const r join parties p on r.partie_id = p.id where constituency_id="+i);
+				"from results_const r join parties p on r.partie_id = p.id where name != 'Gültige' and name != 'Ungültige' and constituency_id = "+i);
 		try {
 			// Iterates over all lines of the ResulSet.
 			while(constVoteResult.next()){

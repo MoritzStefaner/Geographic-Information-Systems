@@ -114,6 +114,107 @@ public class ElectionWorld {
 		}
 		
 		this.drawList = getElectionPolygons(this.constituencyMap);
+	}	
+	
+	public void setColorByDifference() {
+		Iterator<Constituency> it = getConstituencyMap().values().iterator();
+		
+		while (it.hasNext()) {
+			Constituency c = it.next();
+			Iterator<Party> it2 = c.getResult().iterator();
+			
+			Party winner = null;
+			float winnerPercentage = 0.0f;
+			float secondPercentage = 0.0f;
+			
+			Party p1 = it2.next();
+			Party p2 = it2.next();
+			if (p1.getZweitstimmen() / (float) c.getVoter() > p2.getZweitstimmen() / (float) c.getVoter()) {
+				winner = p1;
+				winnerPercentage = p1.getZweitstimmen() / (float) c.getVoter();
+				secondPercentage = p2.getZweitstimmen() / (float) c.getVoter();
+			} else {
+				winner = p2;
+				winnerPercentage = p2.getZweitstimmen() / (float) c.getVoter();
+				secondPercentage = p1.getZweitstimmen() / (float) c.getVoter();
+			}
+			while (it2.hasNext()) {
+				Party p = it2.next();
+				float percentage = p.getZweitstimmen() / (float) c.getVoter();
+				if (percentage > winnerPercentage) {
+					secondPercentage = winnerPercentage;
+					winnerPercentage = percentage;
+					winner = p;
+				} else if (percentage > secondPercentage) {
+					secondPercentage = percentage;
+				}
+			}
+			
+			/* Set color */
+			Iterator<MapMarkerPolygon> it3 = c.getPolygons().iterator();
+			
+			float alpha = Math.min((winnerPercentage - secondPercentage) * 10, 1.0f) * 0.8f;
+			Color col = null;
+			if (winner.getName().equalsIgnoreCase("CDU") || winner.getName().equalsIgnoreCase("CSU"))
+				col = new Color(0.0f, 0.0f, 0.0f, alpha);
+			else if (winner.getName().equalsIgnoreCase("SPD"))
+				col = new Color(1.0f, 0.0f, 0.0f, alpha);
+			else if (winner.getName().equalsIgnoreCase("DIE LINKE"))
+				col = new Color(1.0f, 0.0f, 1.0f, alpha);
+			else if (winner.getName().equalsIgnoreCase("GRÜNE"))
+				col = new Color(0.0f, 1.0f, 0.0f, alpha);
+			else
+				col = Color.GRAY;
+			
+			while (it3.hasNext()) {
+				MapMarkerPolygon m = it3.next();
+				m.setColor(col);
+			}
+		}
+		
+		this.drawList = getElectionPolygons(this.constituencyMap);
+	}
+	
+	public void setColorByWinner() {
+		Iterator<Constituency> it = getConstituencyMap().values().iterator();
+		
+		while (it.hasNext()) {
+			Constituency c = it.next();
+			Iterator<Party> it2 = c.getResult().iterator();
+			
+			Party winner = null;
+			float winnerPercentage = 0.0f;
+			while (it2.hasNext()) {
+				Party p = it2.next();
+				float percentage = p.getZweitstimmen() / (float) c.getVoter();
+				if (percentage > winnerPercentage) {
+					winnerPercentage = percentage;
+					winner = p;
+				}
+			}
+			
+			/* Set color */
+			Iterator<MapMarkerPolygon> it3 = c.getPolygons().iterator();
+			
+			Color col = null;
+			if (winner.getName().equalsIgnoreCase("CDU") || winner.getName().equalsIgnoreCase("CSU"))
+				col = new Color(0.0f, 0.0f, 0.0f, 0.75f);
+			else if (winner.getName().equalsIgnoreCase("SPD"))
+				col = new Color(1.0f, 0.0f, 0.0f, 0.75f);
+			else if (winner.getName().equalsIgnoreCase("DIE LINKE"))
+				col = new Color(1.0f, 0.0f, 1.0f, 0.75f);
+			else if (winner.getName().equalsIgnoreCase("GRÜNE"))
+				col = new Color(0.0f, 1.0f, 0.0f, 0.75f);
+			else
+				col = Color.GRAY;
+			
+			while (it3.hasNext()) {
+				MapMarkerPolygon m = it3.next();
+				m.setColor(col);
+			}
+		}
+		
+		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
 	public void setColorByGreenPartyCorrMalte(Collection<MaltePoint> malte) {

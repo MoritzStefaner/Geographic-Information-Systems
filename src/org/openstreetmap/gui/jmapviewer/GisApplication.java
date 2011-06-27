@@ -48,7 +48,7 @@ public class GisApplication extends JFrame {
     private JTextArea informationElection;
     private JTextArea informationWorld;
     
-    private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE }; 
+    private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE }; 
     
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
@@ -63,7 +63,7 @@ public class GisApplication extends JFrame {
         JPanel electionTab = new JPanel(new FlowLayout());
         JPanel worldTab = new JPanel(new FlowLayout());
         final JTabbedPane tabs = new JTabbedPane();
-        String[] displayStyleTypes = {"Results Green Party", "Green Party <> Malte Spitz"};
+        String[] displayStyleTypes = {"Results Green Party", "Green Party <> Malte Spitz", "Winner", "Difference"};
         final JComboBox displayStyle = new JComboBox(displayStyleTypes);
         
         /* Set same Window standard operations */
@@ -100,8 +100,12 @@ public class GisApplication extends JFrame {
               if (tabs.getSelectedIndex() == 0) {
             	  if (displayStyle.getSelectedIndex() == 0)
                   	displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
-                  else if (displayStyle.getSelectedIndex() == 0)
+                  else if (displayStyle.getSelectedIndex() == 1)
                   	displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
+                  else if (displayStyle.getSelectedIndex() == 2)
+                    	displayMalte(true, displayStyleType.WINNER);
+                  else if (displayStyle.getSelectedIndex() == 3)
+                  	displayMalte(true, displayStyleType.DIFFERENCE);
               } else if (tabs.getSelectedIndex() == 1) {
             	  showWorld(true);
               }
@@ -125,6 +129,10 @@ public class GisApplication extends JFrame {
                 	displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
                 else if (displayStyle.getSelectedIndex() == 1)
                 	displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
+                else if (displayStyle.getSelectedIndex() == 2)
+                	displayMalte(true, displayStyleType.WINNER);
+                else if (displayStyle.getSelectedIndex() == 3)
+                  	displayMalte(true, displayStyleType.DIFFERENCE);
             }
         });
         electionTab.add(displayStyle);
@@ -162,7 +170,7 @@ public class GisApplication extends JFrame {
         map.setMapMarkerVisible(true);
         add(map, BorderLayout.CENTER);
         
-        displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
+        displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
     }
     
     /* Internal class to handle mouse events
@@ -219,14 +227,21 @@ public class GisApplication extends JFrame {
             	ew.setColorByGreenPartyLinear();
             else if (style == displayStyleType.GREEN_PARTY_CORR_MALTE)
             	ew.setColorByGreenPartyCorrMalte(c);
+            else if (style == displayStyleType.WINNER)
+            	ew.setColorByWinner();
+            else if (style == displayStyleType.DIFFERENCE)
+            	ew.setColorByDifference();
             
             map.addMapMarkerPolygonList(ew.getDrawList());
             
-            Iterator<MaltePoint> it = c.iterator();
-            while (it.hasNext()) {
-            	MaltePoint mp = it.next();
-                map.mapMarkerList.add(new MapMarkerDot(mp.getX(), mp.getY()));
-            }
+            if (style == displayStyleType.GREEN_PARTY_CORR_MALTE || style == displayStyleType.GREEN_PARTY_NORMAL) {
+	            Iterator<MaltePoint> it = c.iterator();
+	            while (it.hasNext()) {
+	            	MaltePoint mp = it.next();
+	                map.mapMarkerList.add(new MapMarkerDot(mp.getX(), mp.getY()));
+	            }
+            } else
+            	map.mapMarkerList.clear();
     	} else {
     		map.mapMarkerPolygonList.clear();
     		map.mapMarkerList.clear();
