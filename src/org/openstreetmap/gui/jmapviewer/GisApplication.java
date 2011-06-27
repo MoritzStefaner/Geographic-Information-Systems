@@ -48,7 +48,8 @@ public class GisApplication extends JFrame {
     private JTextArea informationElection;
     private JTextArea informationWorld;
     
-    private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE }; 
+    private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
+    	TURNOUT, INFLUENCE }; 
     
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
@@ -63,7 +64,8 @@ public class GisApplication extends JFrame {
         JPanel electionTab = new JPanel(new FlowLayout());
         JPanel worldTab = new JPanel(new FlowLayout());
         final JTabbedPane tabs = new JTabbedPane();
-        String[] displayStyleTypes = {"Results Green Party", "Green Party <> Malte Spitz", "Winner", "Difference"};
+        String[] displayStyleTypes = { "Results Green Party", "Green Party <> Malte Spitz", 
+        		"Winner", "Difference", "Turnout", "Influence" };
         final JComboBox displayStyle = new JComboBox(displayStyleTypes);
         
         /* Set same Window standard operations */
@@ -105,7 +107,11 @@ public class GisApplication extends JFrame {
                   else if (displayStyle.getSelectedIndex() == 2)
                     	displayMalte(true, displayStyleType.WINNER);
                   else if (displayStyle.getSelectedIndex() == 3)
-                  	displayMalte(true, displayStyleType.DIFFERENCE);
+                  		displayMalte(true, displayStyleType.DIFFERENCE);
+                  else if (displayStyle.getSelectedIndex() == 4)
+                    	displayMalte(true, displayStyleType.TURNOUT);
+                  else if (displayStyle.getSelectedIndex() == 5)
+                  		displayMalte(true, displayStyleType.INFLUENCE);
               } else if (tabs.getSelectedIndex() == 1) {
             	  showWorld(true);
               }
@@ -133,6 +139,10 @@ public class GisApplication extends JFrame {
                 	displayMalte(true, displayStyleType.WINNER);
                 else if (displayStyle.getSelectedIndex() == 3)
                   	displayMalte(true, displayStyleType.DIFFERENCE);
+                else if (displayStyle.getSelectedIndex() == 4)
+                	displayMalte(true, displayStyleType.TURNOUT);
+                else if (displayStyle.getSelectedIndex() == 5)
+                	displayMalte(true, displayStyleType.INFLUENCE);
             }
         });
         electionTab.add(displayStyle);
@@ -231,6 +241,10 @@ public class GisApplication extends JFrame {
             	ew.setColorByWinner();
             else if (style == displayStyleType.DIFFERENCE)
             	ew.setColorByDifference();
+            else if (style == displayStyleType.TURNOUT)
+            	ew.setColorByTurnout();
+            else if (style == displayStyleType.INFLUENCE)
+            	ew.setColorByInfluence();
             
             map.addMapMarkerPolygonList(ew.getDrawList());
             

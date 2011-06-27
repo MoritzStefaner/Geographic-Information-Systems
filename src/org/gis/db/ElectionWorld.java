@@ -116,6 +116,53 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}	
 	
+	public void setColorByInfluence() {
+		Iterator<Constituency> it = getConstituencyMap().values().iterator();
+		
+		int maxVoter = 0;
+		int allVoters = 0;
+		int minVoter = 100000000;
+		while (it.hasNext()) {
+			Constituency c = it.next();
+			allVoters += c.getVoter();
+			if (c.getVoter() > maxVoter)
+				maxVoter = c.getVoter();
+			if (c.getVoter() < minVoter)
+				minVoter = c.getVoter();
+		}
+		
+		it = getConstituencyMap().values().iterator();
+		while (it.hasNext()) {
+			Constituency c = it.next();
+			Iterator<MapMarkerPolygon> it2 = c.getPolygons().iterator();
+			float alpha = (c.getVoter() - minVoter) / (float) (maxVoter - minVoter);
+			
+			while (it2.hasNext()) {
+				MapMarkerPolygon m = it2.next();
+				m.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
+			}
+		}
+		
+		this.drawList = getElectionPolygons(this.constituencyMap);
+	}	
+	
+	public void setColorByTurnout() {
+		Iterator<Constituency> it = getConstituencyMap().values().iterator();
+		
+		while (it.hasNext()) {
+			Constituency c = it.next();
+			Iterator<MapMarkerPolygon> it2 = c.getPolygons().iterator();
+			float alpha = (float) Math.min(Math.max(c.getVoter() / (float) c.getElectorate() - 0.6, 0.0f) / 0.2, 1.0f);
+			
+			while (it2.hasNext()) {
+				MapMarkerPolygon m = it2.next();
+				m.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
+			}
+		}
+		
+		this.drawList = getElectionPolygons(this.constituencyMap);
+	}	
+	
 	public void setColorByDifference() {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
