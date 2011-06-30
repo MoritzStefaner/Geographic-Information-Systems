@@ -9,6 +9,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
@@ -25,8 +26,10 @@ import org.gis.db.Constituency;
 import org.gis.db.ElectionWorld;
 import org.gis.db.GisPoint;
 import org.gis.db.MaltePoint;
+import org.gis.db.Party;
 import org.gis.db.World;
 import org.gis.tools.ExportObjectsTool;
+import org.openstreetmap.gui.jmapviewer.interfaces.PartyChart;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
@@ -47,6 +50,7 @@ public class GisApplication extends JFrame {
     private ElectionWorld ew;
     private JTextArea informationElection;
     private JTextArea informationWorld;
+    private PartyChart partyChart;
     
     private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
     	TURNOUT, INFLUENCE }; 
@@ -67,6 +71,8 @@ public class GisApplication extends JFrame {
         String[] displayStyleTypes = { "Results Green Party", "Green Party <> Malte Spitz", 
         		"Winner", "Difference", "Turnout", "Influence" };
         final JComboBox displayStyle = new JComboBox(displayStyleTypes);
+        partyChart = new PartyChart();
+        partyChart.setPreferredSize(new Dimension(201, 200));
         
         /* Set same Window standard operations */
         setLayout(new BorderLayout());
@@ -94,7 +100,7 @@ public class GisApplication extends JFrame {
         rightPanel.add(tileSourceSelector);
         
         /* Creates the tabs */
-        tabs.setPreferredSize(new Dimension(250, 500));
+        tabs.setPreferredSize(new Dimension(250, 600));
         tabs.addTab("Election", electionTab);
         tabs.addTab("World", worldTab);
         tabs.addChangeListener(new ChangeListener() {
@@ -148,7 +154,7 @@ public class GisApplication extends JFrame {
         electionTab.add(displayStyle);
         
         informationElection = new JTextArea();
-        informationElection.setPreferredSize(new Dimension(220, 420));
+        informationElection.setPreferredSize(new Dimension(220, 250));
         informationElection.setText("None");
         informationElection.setBackground(rightPanel.getBackground());
         informationElection.setEditable(false);
@@ -157,6 +163,7 @@ public class GisApplication extends JFrame {
                 BorderFactory.createTitledBorder("Information"),
                 BorderFactory.createEmptyBorder(5,5,5,5)));
         electionTab.add(informationElectionPanel);
+        electionTab.add(partyChart);
         
         /* Constructs Information panel for world*/
         informationWorld = new JTextArea();
@@ -204,11 +211,19 @@ public class GisApplication extends JFrame {
         }
     }
     
+    private void drawPartyResults(LinkedList<Party> parties, int voters) {
+    	partyChart.setParties(parties);
+    	partyChart.setVoter(voters);
+    	partyChart.paint(partyChart.getGraphics());
+    }
+    
     private void getConstituency(double longitude, double latitude) {
     	GisPoint p = new GisPoint(latitude, longitude);
     	Constituency c = ew.getConstituencyMap().get(ew.compareToGermany(p));
-    	if (c != null)
+    	if (c != null) {
     		informationElection.setText(c.getInformation());
+    		drawPartyResults(c.getElectionResult(), c.getVoter());
+    	}
     }
     
     private void getCountry(double longitude, double latitude) {

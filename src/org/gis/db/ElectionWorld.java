@@ -114,7 +114,47 @@ public class ElectionWorld {
 		}
 		
 		this.drawList = getElectionPolygons(this.constituencyMap);
-	}	
+	}
+	/*
+	private void setColorByGreenPartyAndMalteExtrema(Collection<MaltePoint> malte) {
+		Iterator<MaltePoint> it = malte.iterator();
+		
+		while (it.hasNext()) {
+			MaltePoint m = it.next();
+			Integer constituencyInt = m.compareToConstituencies();
+			if (constituencyInt != null) {
+				Constituency c = constituencyMap.get(constituencyInt);
+				c.addMalteOccurence();
+			}
+		}
+		
+		Iterator<Constituency> it2 = getConstituencyMap().values().iterator();
+		LinkedList<Constituency> topGreen = new LinkedList<Constituency>();
+		
+		while (it2.hasNext()) {
+			Constituency c = it2.next();
+			Iterator<Party> it3 = c.getResult().iterator();
+			boolean found = false;
+			while (it3.hasNext() && !found) {
+				Party p = it3.next();
+				if (p.getName().equalsIgnoreCase("GRÜNE")) {
+					if (topGreen.size() < 5) {
+						topGreen.add(c);
+					} else {
+						Iterator<Constituency> it4 = topGreen.iterator();
+						boolean found2 = false;
+						
+						while (it4.hasNext() && !found2) {
+							Constituency c2 = it4.next();
+							if (c2.)
+						}
+					}
+					
+					found = true;
+				}
+			}
+		}
+	}*/
 	
 	public void setColorByInfluence() {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
@@ -144,7 +184,7 @@ public class ElectionWorld {
 		}
 		
 		this.drawList = getElectionPolygons(this.constituencyMap);
-	}	
+	}
 	
 	public void setColorByTurnout() {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
@@ -285,7 +325,7 @@ public class ElectionWorld {
 				Party p = it3.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
 					Iterator<MapMarkerPolygon> it4 = c.getPolygons().iterator();
-					float expected = (maxGreenParty / 500) * c.getMalteOccureces();
+					float expected = (maxGreenParty / 500) * c.getMalteOccurences();
 					if (expected > 1)
 						expected = 1;
 					float actual = ((p.getZweitstimmen() / (float) c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty));

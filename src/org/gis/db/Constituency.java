@@ -28,7 +28,7 @@ public class Constituency {
 		++malteOccurence;
 	}
 	
-	public int getMalteOccureces() {
+	public int getMalteOccurences() {
 		return malteOccurence;
 	}
 	
