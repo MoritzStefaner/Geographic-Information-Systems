@@ -103,7 +103,7 @@ public class ExportObjectsTool {
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
 						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10),  linearRing);
 
-				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon));
+				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon, true));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

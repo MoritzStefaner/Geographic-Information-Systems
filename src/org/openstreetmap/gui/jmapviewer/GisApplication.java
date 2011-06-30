@@ -235,6 +235,9 @@ public class GisApplication extends JFrame {
     
     private void showWorld(boolean show) {
     	if (show) {
+    		map.mapMarkerPolygonList.clear();
+    		map.mapMarkerList.clear();
+    		
     		w = new World();
     		map.addMapMarkerPolygonList(w.getWorldPolygons());
     	} else {

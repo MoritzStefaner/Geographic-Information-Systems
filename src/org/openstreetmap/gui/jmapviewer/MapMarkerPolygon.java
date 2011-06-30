@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
 import org.gis.db.GisPoint;
 import org.gis.db.Polygon;
@@ -25,10 +26,16 @@ public class MapMarkerPolygon{
         this(null, polygon);
     }
     
+    public MapMarkerPolygon(Polygon polygon, boolean random) {
+    	if (random) {
+	    	Random rand = new Random();
+			this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
+	    	this.polygon = polygon;
+    	}
+    }
+    
     public MapMarkerPolygon(Color color, Polygon polygon) {
     	if (color == null) {
-    		//Random rand = new Random();
-    		//this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
     		this.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     	} else {
     		this.color = color;
