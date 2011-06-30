@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Random;
 
 import org.gis.db.GisPoint;
 import org.gis.db.Polygon;
@@ -50,14 +49,18 @@ public class MapMarkerPolygon{
     	LinkedList<GisPoint> polygonPoints = this.getPolygonList();
     	
     	Iterator<GisPoint> it2 = polygonPoints.iterator();
+    	boolean visible = false;
     	while (it2.hasNext()) {
     		org.postgis.Point polygonPoint = it2.next();
-    		Point p = viewer.getMapPosition(polygonPoint.x, polygonPoint.y);
-    		if (p != null)
-    			points.add(p);
+    		Point p = viewer.getMapPosition(polygonPoint.x, polygonPoint.y, false);
+    		
+    		if (!visible && (p.x > 0 && p.y > 0 && p.x < viewer.getWidth() && p.y < viewer.getHeight()))
+    			visible = true;
+    		
+    		points.add(p);
     	}
     	
-    	if (points.size() == 0)
+    	if (points.size() == 0 || !visible)
     		return;
     	
     	Iterator<Point> it = points.iterator();
