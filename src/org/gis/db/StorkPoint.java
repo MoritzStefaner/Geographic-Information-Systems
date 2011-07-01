@@ -5,7 +5,7 @@ import java.sql.Time;
 import org.postgis.Point;
 
 public class StorkPoint extends GisPoint {
-	
+	private static final long serialVersionUID = -3905001789779713514L;
 	private Integer id;
 	private Time timestamp;
 	private Integer localIdentifier;

@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.gis.db.*;
 
 public class ImportTool {
@@ -30,12 +33,13 @@ public class ImportTool {
 				"	id int PRIMARY KEY," +
 				"	timestamp time," +
 				"	altitude int," +
-				"	tagLocalIdentifier int)"
+				"	tagLocalIdentifier int," +
+				"	world_id int)"
 				);
 		
 		this.db.executeQuery("SELECT AddGeometryColumn('','storks','geometrycolumn','-1','POINT',2);");
 		
-		String insert = new String("INSERT INTO storks (id, timestamp, altitude, tagLocalIdentifier, geometrycolumn) VALUES ");
+		String insert = new String("INSERT INTO storks (id, timestamp, altitude, tagLocalIdentifier, geometrycolumn, world_id) VALUES ");
 		File file = new File("MPIO_White_Stork_Argos.csv");
 		BufferedReader bufRdr = null;
 
@@ -58,7 +62,19 @@ public class ImportTool {
 					insert = insert.concat(",");
 				}
 				token = line.split(",");
-				newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', " + token[4] + ", " + token[25].replace("\"", "") + ", GeomFromText('POINT(" + token[2] + " " + token[1] + ")')" + ")");
+				
+				/* Get country where this point belongs to */
+				ResultSet result = db.executeQuery("SELECT id FROM world WHERE Contains(poly_geom, GeomFromText('POINT(" + token[2] + " " + token[1] + ")'))");
+		    	
+				int world_id = 0;
+		    	try {
+					if (result.next())
+						world_id = (Integer) result.getObject(1);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				newInsert = new String("(" + String.valueOf(i) + ", '" + token[0] + "', " + token[4] + ", " + token[25].replace("\"", "") + ", GeomFromText('POINT(" + token[2] + " " + token[1] + ")')" + ", " + world_id + ")");
 				insert = insert.concat(newInsert);
 				i++;
 			}
@@ -628,10 +644,10 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		it.importStorks();
-		it.importWorld();
-		it.importConstituencies();
-		it.importMalte();
-		it.importResults();
+		//it.importWorld();
+		//it.importConstituencies();
+		//it.importMalte();
+		//it.importResults();
 	}
 
 }

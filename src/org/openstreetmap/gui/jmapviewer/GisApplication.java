@@ -1,6 +1,7 @@
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
@@ -27,6 +28,7 @@ import org.gis.db.ElectionWorld;
 import org.gis.db.GisPoint;
 import org.gis.db.MaltePoint;
 import org.gis.db.Party;
+import org.gis.db.StorkPoint;
 import org.gis.db.World;
 import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.interfaces.PartyChart;
@@ -51,6 +53,7 @@ public class GisApplication extends JFrame {
     private JTextArea informationElection;
     private JTextArea informationWorld;
     private PartyChart partyChart;
+    private final JComboBox storkSelection;
     
     private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
     	TURNOUT, INFLUENCE }; 
@@ -71,6 +74,10 @@ public class GisApplication extends JFrame {
         String[] displayStyleTypes = { "Results Green Party", "Green Party <> Malte Spitz", 
         		"Winner", "Difference", "Turnout", "Influence" };
         final JComboBox displayStyle = new JComboBox(displayStyleTypes);
+        String[] storkSelectionOptions = { "All", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
+        storkSelection = new JComboBox(storkSelectionOptions);
+        String[] displayStyleWorldTypes = { "Normal", "Travel through" };
+        final JComboBox displayStyleWorld = new JComboBox(displayStyleWorldTypes);
         partyChart = new PartyChart();
         partyChart.setPreferredSize(new Dimension(201, 200));
         
@@ -166,8 +173,50 @@ public class GisApplication extends JFrame {
         electionTab.add(partyChart);
         
         /* Constructs Information panel for world*/
+        storkSelection.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		if (storkSelection.getSelectedIndex() == 0)
+        			w.loadAllStorks();
+        		else 
+        			w.loadSelectedStorks(getStorkId());
+        		
+        		drawStorks();
+        	}
+        });
+        worldTab.add(storkSelection);
+        
+        displayStyleWorld.addItemListener(new ItemListener() {
+        	public void itemStateChanged(ItemEvent e) {
+        		if (displayStyleWorld.getSelectedIndex() == 0) {
+        			if (storkSelection.getSelectedIndex() == 0)
+            			w.loadAllStorks();
+            		else 
+            			w.loadSelectedStorks(getStorkId());
+        		} else if (displayStyleWorld.getSelectedIndex() == 1) {
+        			w.setColorByTravelThrough();
+        			
+        			if (storkSelection.getSelectedIndex() == 0)
+            			w.loadAllStorks();
+            		else 
+            			w.loadSelectedStorks(getStorkId());
+        		} else if (displayStyleWorld.getSelectedIndex() == 2) {
+        			
+        			if (storkSelection.getSelectedIndex() == 0) {
+            			w.loadAllStorks();
+            			w.setColorByTravelThroughPercentage();
+        			}
+            		else {
+            			w.loadSelectedStorks(getStorkId());
+            			w.setColorByTravelThroughPercentage(getStorkId());
+            		}
+        		}
+        			
+        	}
+        });
+        worldTab.add(displayStyleWorld);
+        
         informationWorld = new JTextArea();
-        informationWorld.setPreferredSize(new Dimension(220, 420));
+        informationWorld.setPreferredSize(new Dimension(220, 250));
         informationWorld.setText("None");
         informationWorld.setBackground(rightPanel.getBackground());
         informationWorld.setEditable(false);
@@ -176,6 +225,7 @@ public class GisApplication extends JFrame {
                 BorderFactory.createTitledBorder("Information"),
                 BorderFactory.createEmptyBorder(5,5,5,5)));
         worldTab.add(informationWorldPanel);
+        
         
         /* Constructs main map display */
         try {
@@ -188,6 +238,35 @@ public class GisApplication extends JFrame {
         add(map, BorderLayout.CENTER);
         
         displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+    }
+    
+    private Integer getStorkId() {
+    	if (storkSelection.getSelectedIndex() == 1)
+			return 91397;
+		else if (storkSelection.getSelectedIndex() == 2)
+			return 77195;
+		else if (storkSelection.getSelectedIndex() == 3)
+			return 91398;
+		else if (storkSelection.getSelectedIndex() == 4)
+			return 91398;
+		else if (storkSelection.getSelectedIndex() == 5)
+			return 93412;
+		else if (storkSelection.getSelectedIndex() == 6)
+			return 93411;
+		else if (storkSelection.getSelectedIndex() == 7)
+			return 54977;
+		else if (storkSelection.getSelectedIndex() == 8)
+			return 14544;
+		else if (storkSelection.getSelectedIndex() == 9)
+			return 40534;
+		else if (storkSelection.getSelectedIndex() == 10)
+			return 54983;
+		else if (storkSelection.getSelectedIndex() == 11)
+			return 54988;
+		else if (storkSelection.getSelectedIndex() == 12)
+			return 14543;
+		else
+			return null;
     }
     
     /* Internal class to handle mouse events
@@ -233,13 +312,25 @@ public class GisApplication extends JFrame {
     		informationWorld.setText(pol.getPolygon().getText());
     }
     
+    private void drawStorks() {
+		map.mapMarkerList.clear();
+    	Iterator<StorkPoint> it = w.getStorks().values().iterator();
+        while (it.hasNext()) {
+        	StorkPoint sp = it.next();
+            map.mapMarkerList.add(new MapMarkerDot(sp.getX(), sp.getY()));
+        }
+    }
+    
     private void showWorld(boolean show) {
     	if (show) {
     		map.mapMarkerPolygonList.clear();
-    		map.mapMarkerList.clear();
+    		ew = null;
     		
     		w = new World();
+    		w.loadAllStorks();
     		map.addMapMarkerPolygonList(w.getWorldPolygons());
+    		
+    		drawStorks();
     	} else {
     		map.mapMarkerPolygonList.clear();
     		w = null;
@@ -249,6 +340,8 @@ public class GisApplication extends JFrame {
     private void displayMalte(boolean show, displayStyleType style) {
     	if (show) {
             Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();
+            w = null;
+            
             ew = new ElectionWorld();
             
             if (style == displayStyleType.GREEN_PARTY_NORMAL)

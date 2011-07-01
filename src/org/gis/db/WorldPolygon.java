@@ -14,6 +14,8 @@ public class WorldPolygon extends Polygon {
 	Integer region;
 	Integer subregion;
 	
+	private int amountStorks;
+	
 	public WorldPolygon(String fips, String iso2, String iso3, Integer un, String name, Integer area, Integer pop2005, Integer region, Integer subregion, LinearRing[] rings) {
 		super(rings);
 		
@@ -44,6 +46,14 @@ public class WorldPolygon extends Polygon {
 		return name;
 	}
 
+	protected int getAmountStorks() {
+		return amountStorks;
+	}
+	
+	public void setAmountStorks(int a) {
+		amountStorks = a;
+	}
+	
 	protected Integer getUn() {
 		return un;
 	}

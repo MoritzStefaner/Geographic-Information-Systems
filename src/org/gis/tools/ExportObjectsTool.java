@@ -45,6 +45,38 @@ public class ExportObjectsTool {
 	}
 	
 	/**
+	 * Exports the point dates of storks from the database.
+	 * 
+	 * @return The point dates as map.
+	 */
+	static public HashMap<Integer, StorkPoint> exportStorkSelected(int id){
+		// The SQL query to get the information from database.
+		db = Database.getDatabase();
+		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks where taglocalidentifier = " + id);
+		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
+		
+		try {
+			// Iterates over all lines of the ResultSet to put each line in the map.
+			while(result.next()){
+				
+				PGgeometry geom = (PGgeometry) result.getObject(5);
+				// Extracts the point dates from the ResultSet.
+				Point point = (Point) geom.getGeometry();
+				point.setZ((Integer) result.getObject(3));
+				
+				// Creates a new StorkPoint.
+				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point);
+				
+				pointMap.put((Integer) result.getObject(1), spoint);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pointMap;	
+	}
+	
+	/**
 	 * Exports the position dates of Mr. Malte during the election in Germany in 2009.
 	 * 
 	 * @return A map with the positions as Points.
