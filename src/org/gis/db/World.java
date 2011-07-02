@@ -117,23 +117,25 @@ public class World {
     	
     	ResultSet result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.world_id = world.id GROUP BY world.id");
     	
-    	long sum = 0;
+    	int max = 0;
     	try {
 			while(result.next()) {
 				WorldPolygon wp = getCountries().get((Integer) result.getObject(1));
-				wp.setAmountStorks((Integer) result.getObject(1));
+				int now = ((Long) result.getObject(2)).intValue();
+				wp.setAmountStorks(now);
 				list.add(wp);
-				sum += (Long) result.getObject(2);
+				if (now > max)
+					max = now;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Sum: " + sum);
+		System.out.println("Max: " + max);
 		Iterator<WorldPolygon> it2 = list.iterator();
 		while (it2.hasNext()) {
 			WorldPolygon wp = it2.next();
-			float alpha = wp.getAmountStorks() / sum;
+			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 1 / (float)3);
 			System.out.println(wp.getAmountStorks());
 			wp.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
