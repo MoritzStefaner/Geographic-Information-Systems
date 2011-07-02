@@ -113,33 +113,42 @@ public class ExportObjectsTool {
 	 * 
 	 * @return A map of all countries.
 	 */
-	static public HashMap<Integer, WorldPolygon> exportWorld(){
+	static public HashMap<Integer, Country> exportWorld(){
 		// The SQL query to get the information from database.
 		db = Database.getDatabase();
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		
-		HashMap<Integer, WorldPolygon> polygonMap = new HashMap<Integer, WorldPolygon>();
+		HashMap<Integer, Country> countryMap = new HashMap<Integer, Country>();
 		
 		try {
 			// Iterates over all lines of the ResultSet to put each line in the map.
 			while(result.next()){
+				
+				// Creates a new country. 
+				Country country = new Country((String) result.getObject(2), (String) result.getObject(3), 
+						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
+						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10));
+				
 				// Extracts the polygon dates from the ResultSet.
 				PGgeometry geom = (PGgeometry) result.getObject(11);
 				org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
-				LinearRing[] linearRing = new LinearRing[1];
-				linearRing[0] = ngeom.getRing(0);
+				LinkedList<CountryPolygon> list = new LinkedList<CountryPolygon>();
 				
-				// Creates a new country. 
-				WorldPolygon polygon = new WorldPolygon((String) result.getObject(2), (String) result.getObject(3), 
-						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
-						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10),  linearRing);
-
-				polygonMap.put((Integer) result.getObject(1), polygon);
+				for(int i = 0; i < ngeom.numRings(); i++){
+					
+					LinearRing[] ring = new LinearRing[1];
+					ring[0] = ngeom.getRing(i);
+					CountryPolygon polygon = new CountryPolygon(country, ring);
+					list.add(polygon);
+				}
+				
+				country.addPolygons(list);
+				countryMap.put((Integer) result.getObject(1), country);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return polygonMap;
+		return countryMap;
 	}
 	
 	/**

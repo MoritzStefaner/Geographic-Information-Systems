@@ -23,6 +23,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.gis.db.Constituency;
+import org.gis.db.Country;
+import org.gis.db.CountryPolygon;
 import org.gis.db.ElectionWorld;
 import org.gis.db.GisPoint;
 import org.gis.db.MaltePoint;
@@ -294,9 +296,9 @@ public class GisApplication extends JFrame {
     
     private void getCountry(double longitude, double latitude) {
     	GisPoint p = new GisPoint(latitude, longitude);
-    	MapMarkerPolygon pol = w.getCountries().get(w.compareToWorld(p));
+    	Country pol = w.getCountries().get(w.compareToWorld(p));
     	if (pol != null)
-    		informationWorld.setText(pol.getText());
+    		informationWorld.setText(pol.getName());
     }
     
     private void drawStorks() {
@@ -313,6 +315,8 @@ public class GisApplication extends JFrame {
     		displayMalte(false, null);
     		
     		w = new World();
+
+    		w.loadAllStorks();
     		
     		if (displayStyle == displayStyleTypeStorks.RANDOM) {
 				w.setColorRandom();
@@ -340,7 +344,13 @@ public class GisApplication extends JFrame {
         		}
     		}
 
-    		map.addMapMarkerPolygonList(w.getWorldPolygons());
+    		LinkedList<CountryPolygon> all = new LinkedList<CountryPolygon>();
+    		Iterator<Country> it = w.getCountryPolygons().iterator();
+    		while (it.hasNext()) {
+    			Country c = it.next();
+    			all.addAll(c.getPolygons());
+    		}
+    		map.addMapMarkerPolygonList(all);
     		drawStorks();
     	} else {
     		map.mapMarkerPolygonList.clear();

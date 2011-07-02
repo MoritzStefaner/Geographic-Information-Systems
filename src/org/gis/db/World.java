@@ -11,7 +11,7 @@ import java.util.Random;
 import org.gis.tools.ExportObjectsTool;
 
 public class World {
-	private HashMap<Integer, WorldPolygon> countries;
+	private HashMap<Integer, Country> countries;
 	private HashMap<Integer, StorkPoint> storks;
 	
 	public World() {
@@ -30,12 +30,12 @@ public class World {
 		return storks;
 	}
 
-	public HashMap<Integer, WorldPolygon> getCountries() {
+	public HashMap<Integer, Country> getCountries() {
 		return countries;
 	}
     
-	public LinkedList<WorldPolygon> getWorldPolygons() {
-		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>(countries.values());
+	public LinkedList<Country> getCountryPolygons() {
+		LinkedList<Country> list = new LinkedList<Country>(countries.values());
 		return list;
 	}
 	
@@ -83,10 +83,10 @@ public class World {
 	}
 	
 	public void setColorRandom() {
-		Iterator<WorldPolygon> it = getCountries().values().iterator();
+		Iterator<Country> it2 = getCountries().values().iterator();
 		
-		while (it.hasNext()) {
-			WorldPolygon wp = it.next();
+		while (it2.hasNext()) {
+			Country wp = it2.next();
 			
 			Random rand = new Random();
 			wp.setColor(new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f));
@@ -101,10 +101,10 @@ public class World {
 		setColorByTravelThrough(id, false);
 	}
 	public void setColorByTravelThrough(int id, boolean all) {
-		Iterator<WorldPolygon> it = getCountries().values().iterator();
+		Iterator<Country> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
-			WorldPolygon mmp = it.next();
+			Country mmp = it.next();
 			mmp.setColor(Color.WHITE);
 		}
 		
@@ -124,14 +124,14 @@ public class World {
 	}
 	
 	private void setColorByTravelThroughPercentage(int id, boolean all) {
-		Iterator<WorldPolygon> it = getCountries().values().iterator();
+		Iterator<Country> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
-			WorldPolygon mmp = it.next();
+			Country mmp = it.next();
 			mmp.setColor(Color.WHITE);
 		}
 		
-		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>();
+		LinkedList<Country> list = new LinkedList<Country>();
     	Database db = Database.getDatabase();
     	
     	ResultSet result;
@@ -143,7 +143,7 @@ public class World {
     	int max = 0;
     	try {
 			while(result.next()) {
-				WorldPolygon wp = getCountries().get((Integer) result.getObject(1));
+				Country wp = getCountries().get((Integer) result.getObject(1));
 				int now = ((Long) result.getObject(2)).intValue();
 				wp.setAmountStorks(now);
 				list.add(wp);
@@ -154,9 +154,9 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		Iterator<WorldPolygon> it2 = list.iterator();
+		Iterator<Country> it2 = list.iterator();
 		while (it2.hasNext()) {
-			WorldPolygon wp = it2.next();
+			Country wp = it2.next();
 			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 0.33);
 			wp.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
