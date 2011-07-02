@@ -8,10 +8,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.gis.tools.ExportObjectsTool;
-import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
 public class World {
-	private HashMap<Integer, MapMarkerPolygon> countries;
+	private HashMap<Integer, WorldPolygon> countries;
 	private HashMap<Integer, StorkPoint> storks;
 	
 	public World() {
@@ -30,12 +29,12 @@ public class World {
 		return storks;
 	}
 
-	public HashMap<Integer, MapMarkerPolygon> getCountries() {
+	public HashMap<Integer, WorldPolygon> getCountries() {
 		return countries;
 	}
     
-	public LinkedList<MapMarkerPolygon> getWorldPolygons() {
-		LinkedList<MapMarkerPolygon> list = new LinkedList<MapMarkerPolygon>(countries.values());
+	public LinkedList<WorldPolygon> getWorldPolygons() {
+		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>(countries.values());
 		return list;
 	}
 	
@@ -72,12 +71,10 @@ public class World {
 		// Ignores the Antartica as a country.
 		ResultSet result = db.executeQuery("SELECT id, name, Area(GeomFromText(poly_geom, 4326))  FROM world WHERE name != 'Antarctica' ORDER BY area DESC");
 		
-		
 		try {
 			result.next();
 			return (Integer) result.getObject(1);
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -85,10 +82,10 @@ public class World {
 	}
 	
 	public void setColorByTravelThrough() {
-		Iterator<MapMarkerPolygon> it = getCountries().values().iterator();
+		Iterator<WorldPolygon> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
-			MapMarkerPolygon mmp = it.next();
+			WorldPolygon mmp = it.next();
 			mmp.setColor(Color.WHITE);
 		}
 		
@@ -108,32 +105,39 @@ public class World {
 	}
 	
 	private void setColorByTravelThroughPercentage(int id, boolean all) {
-		Iterator<MapMarkerPolygon> it = getCountries().values().iterator();
+		Iterator<WorldPolygon> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
-			MapMarkerPolygon mmp = it.next();
+			WorldPolygon mmp = it.next();
 			mmp.setColor(Color.WHITE);
 		}
 		
-		LinkedList<MapMarkerPolygon> list = new LinkedList<MapMarkerPolygon>();
+		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>();
     	Database db = Database.getDatabase();
     	
     	ResultSet result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.world_id = world.id GROUP BY world.id");
     	
-    	int sum = 0;
+    	int max = 0;
     	try {
 			while(result.next()) {
-				list.add(getCountries().get((Integer) result.getObject(1)));
-				sum += (Integer) result.getObject(2);
+				WorldPolygon wp = getCountries().get((Integer) result.getObject(1));
+				int now = ((Long) result.getObject(2)).intValue();
+				wp.setAmountStorks(now);
+				list.add(wp);
+				if (now > max)
+					max = now;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		
-		Iterator<Integer> it2 = getStorkTravel().iterator();	
+		System.out.println("Max: " + max);
+		Iterator<WorldPolygon> it2 = list.iterator();
 		while (it2.hasNext()) {
-			Integer i = it2.next();
-			getCountries().get(i).setColor(Color.RED);
+			WorldPolygon wp = it2.next();
+			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 1 / (float)3);
+			System.out.println(wp.getAmountStorks());
+			wp.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
 	}
 	

@@ -56,7 +56,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
 
     protected List<MapMarker> mapMarkerList;
     protected List<MapRectangle> mapRectangleList;
-    protected Collection<MapMarkerPolygon> mapMarkerPolygonList;
+    protected Collection<? extends MapMarkerPolygon> mapMarkerPolygonList;
 
     protected boolean mapMarkersVisible;
     protected boolean mapRectanglesVisible;
@@ -686,12 +686,13 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
         repaint();
     }
     
+    /*
     public void addMapMarkerPolygon(MapMarkerPolygon polygon) {
         mapMarkerPolygonList.add(polygon);
         repaint();
-    }
+    }*/
     
-    public void addMapMarkerPolygonList(Collection<MapMarkerPolygon> polygonList) {
+    public void addMapMarkerPolygonList(Collection<? extends MapMarkerPolygon> polygonList) {
         mapMarkerPolygonList = polygonList;
         repaint();
     }

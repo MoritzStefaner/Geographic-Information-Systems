@@ -8,7 +8,7 @@ import org.gis.db.GisPoint.Relation;
 import org.postgis.*;
 
 public abstract class Polygon extends org.postgis.Polygon {
-
+	private static final long serialVersionUID = -5307565671537188424L;
 	// The ring from org.postgis.Polygon as LinkedList.
 	private LinkedList<GisPoint> ring;
 	

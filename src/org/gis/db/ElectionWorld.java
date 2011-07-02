@@ -100,7 +100,7 @@ public class ElectionWorld {
 			while (it2.hasNext() && !found) {
 				Party p = it2.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
-					Iterator<MapMarkerPolygon> it3 = c.getPolygons().iterator();
+					Iterator<ConstPolygon> it3 = c.getPolygons().iterator();
 					float alpha = (p.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty);
 					
 					while (it3.hasNext()) {
@@ -174,11 +174,11 @@ public class ElectionWorld {
 		it = getConstituencyMap().values().iterator();
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			Iterator<MapMarkerPolygon> it2 = c.getPolygons().iterator();
+			Iterator<ConstPolygon> it2 = c.getPolygons().iterator();
 			float alpha = (c.getVoter() - minVoter) / (float) (maxVoter - minVoter);
 			
 			while (it2.hasNext()) {
-				MapMarkerPolygon m = it2.next();
+				ConstPolygon m = it2.next();
 				m.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 			}
 		}
@@ -191,11 +191,11 @@ public class ElectionWorld {
 		
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			Iterator<MapMarkerPolygon> it2 = c.getPolygons().iterator();
+			Iterator<ConstPolygon> it2 = c.getPolygons().iterator();
 			float alpha = (float) Math.min(Math.max(c.getVoter() / (float) c.getElectorate() - 0.6, 0.0f) / 0.2, 1.0f);
 			
 			while (it2.hasNext()) {
-				MapMarkerPolygon m = it2.next();
+				ConstPolygon m = it2.next();
 				m.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 			}
 		}
@@ -238,7 +238,7 @@ public class ElectionWorld {
 			}
 			
 			/* Set color */
-			Iterator<MapMarkerPolygon> it3 = c.getPolygons().iterator();
+			Iterator<ConstPolygon> it3 = c.getPolygons().iterator();
 			
 			float alpha = Math.min((winnerPercentage - secondPercentage) * 10, 1.0f) * 0.8f;
 			Color col = null;
@@ -254,7 +254,7 @@ public class ElectionWorld {
 				col = Color.GRAY;
 			
 			while (it3.hasNext()) {
-				MapMarkerPolygon m = it3.next();
+				ConstPolygon m = it3.next();
 				m.setColor(col);
 			}
 		}
@@ -281,7 +281,7 @@ public class ElectionWorld {
 			}
 			
 			/* Set color */
-			Iterator<MapMarkerPolygon> it3 = c.getPolygons().iterator();
+			Iterator<ConstPolygon> it3 = c.getPolygons().iterator();
 			
 			Color col = null;
 			if (winner.getName().equalsIgnoreCase("CDU") || winner.getName().equalsIgnoreCase("CSU"))
@@ -296,7 +296,7 @@ public class ElectionWorld {
 				col = Color.GRAY;
 			
 			while (it3.hasNext()) {
-				MapMarkerPolygon m = it3.next();
+				ConstPolygon m = it3.next();
 				m.setColor(col);
 			}
 		}
@@ -324,7 +324,7 @@ public class ElectionWorld {
 			while (it3.hasNext() && !found) {
 				Party p = it3.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
-					Iterator<MapMarkerPolygon> it4 = c.getPolygons().iterator();
+					Iterator<ConstPolygon> it4 = c.getPolygons().iterator();
 					float expected = (maxGreenParty / 500) * c.getMalteOccurences();
 					if (expected > 1)
 						expected = 1;
@@ -333,7 +333,7 @@ public class ElectionWorld {
 					float alpha2 = (float) Math.min(2*alpha, 1.0);
 					
 					while (it4.hasNext()) {
-						MapMarkerPolygon m = it4.next();
+						ConstPolygon m = it4.next();
 						m.setColor(new Color(1 - alpha2, alpha2, 0.0f, 0.9f));
 					}
 					
