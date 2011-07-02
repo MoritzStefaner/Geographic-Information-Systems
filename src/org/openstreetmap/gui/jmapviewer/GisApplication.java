@@ -75,7 +75,7 @@ public class GisApplication extends JFrame {
         final JComboBox displayStyle = new JComboBox(displayStyleTypes);
         String[] storkSelectionOptions = { "All", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
         storkSelection = new JComboBox(storkSelectionOptions);
-        String[] displayStyleWorldTypes = { "Normal", "Travel through" };
+        String[] displayStyleWorldTypes = { "Normal", "Travel through", "Travel through percentage" };
         final JComboBox displayStyleWorld = new JComboBox(displayStyleWorldTypes);
         partyChart = new PartyChart();
         partyChart.setPreferredSize(new Dimension(201, 200));
