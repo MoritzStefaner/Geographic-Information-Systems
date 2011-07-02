@@ -101,12 +101,13 @@ public class ImportTool {
 				"	inOutgoing text," +
 				"	direction int," +
 				"   cellA text," +
-				"   cellB text)"
+				"   cellB text," +
+				"   wkr_nr int)"
 				);
 		
 		this.db.executeQuery("SELECT AddGeometryColumn('','malte','geometrycolumn','-1','POINT',2);");
 		
-		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB, geometrycolumn) VALUES ");
+		String insert = new String("INSERT INTO malte (id, startTime, endTime, service, inOutgoing, direction, cellA, cellB, geometrycolumn, wkr_nr) VALUES ");
 		File file = new File("GermanPolitician.csv");
 		BufferedReader bufRdr = null;
 		
@@ -148,7 +149,18 @@ public class ImportTool {
 					else
 						token[1] = "NULL";
 					
-					newInsert = new String("(" + String.valueOf(i) + ", " + token[0] + ", " + token[1] + ", '" + token[2] + "', '" + token[3] + "', " + token[6] + ", '" + token[7] + "', '" + token[8] + "', GeomFromText('POINT(" + token[5] + " " + token[4] + ")')" + ")");
+					ResultSet result = db.executeQuery("SELECT wkr_nr FROM constituencies WHERE Contains(poly_geom, GeomFromText('POINT(" + token[5] + " " + token[4] + ")'))");
+					Integer value = 0;
+					
+					try {
+						result.next();
+						value = (Integer) result.getObject(1);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					newInsert = new String("(" + String.valueOf(i) + ", " + token[0] + ", " + token[1] + ", '" + token[2] + "', '" + token[3] + "', " + token[6] + ", '" + token[7] + "', '" + token[8] + "', GeomFromText('POINT(" + token[5] + " " + token[4] + ")'), " + value + ")");
 
 					insert = insert.concat(newInsert);
 					i++;
@@ -646,7 +658,7 @@ public class ImportTool {
 		it.importStorks();
 		//it.importWorld();
 		//it.importConstituencies();
-		//it.importMalte();
+		it.importMalte();
 		//it.importResults();
 	}
 
