@@ -181,7 +181,7 @@ public class ImportTool {
 
 	}
 	
-	private void newImportWorld() throws Exception{
+	private void importWorld() throws Exception{
 		db.executeUpdate("drop table if exists world");
 		this.db.executeUpdate("CREATE TABLE world (" 
 				+ "id int PRIMARY KEY,"
@@ -245,27 +245,10 @@ public class ImportTool {
 			int newid = Integer.parseInt(token[0]);
 			
 			if (id == newid){				
-//				if(newRing){
-//					firstx = token[2];
-//					firsty = token[1];
-//					polygon = polygon + ",(" + firstx + " " + firsty;
-//					newRing = false;
-//				}else{
-//					
-//					if(firstx.equalsIgnoreCase(token[2]) && firsty.equalsIgnoreCase(token[1])){
-//						polygon = polygon + "," + token[2] + " " + token[1] + ")";
-//						newRing = true;
-//					} else {
-//						polygon = polygon + "," + token[2] + " " + token[1];
-//					}
-//				}
-				
 				GisPoint point = new GisPoint(Double.parseDouble(token[2]), Double.parseDouble(token[1]));
 				points.add(point);
 	
 			}else{
-//				firstx = token[2];
-//				firsty = token[1];
 				
 				if (firstCountry) {
 					firstCountry = false;
@@ -372,170 +355,6 @@ public class ImportTool {
 		
 		polygon = polygon + ")";
 		return polygon;
-	}
-
-	private void importWorld() throws Exception {
-		db.executeUpdate("drop table if exists world");
-		this.db.executeUpdate("CREATE TABLE world (" 
-				+ "id int PRIMARY KEY,"
-				+ "	z bigint,"
-				+ "	m bigint," 
-				+ "	fips varchar," 
-				+ "	iso2 varchar,"
-				+ "	iso3 varchar," 
-				+ "	un int," 
-				+ "	name varchar,"
-				+ "	area int," 
-				+ "	pop2005 int," 
-				+ "	region int,"
-				+ "	subregion int," 
-				+ "	lon double precision,"
-				+ "	lat double precision)");
-		
-		db.executeQuery("SELECT AddGeometryColumn('','world','poly_geom', '-1','POLYGON',2)");
-
-		Connection conn = db.getConn();
-		PreparedStatement pst = conn.prepareStatement("INSERT INTO world (id, z, m, fips, iso2, iso3, un, name, area, pop2005, region, subregion, lon, lat, poly_geom) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,GeomFromText(?, -1))");
-	
-		
-		File file = new File("TM_WORLD_BORDERS-0.3.csv");
-		BufferedReader bufRdr = null;
-
-		try {
-			bufRdr = new BufferedReader(new InputStreamReader(
-					new FileInputStream(file), "UTF-16"));
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		String line = null;
-		String[] token = null;
-		
-		int j = 0;
-		boolean firstCountry = true;
-		boolean firstRing = true;
-		boolean newRing = false;
-		String polygon = "POLYGON((";
-		int id = -1;
-		String firstx = null;
-		String firsty = null;
-		String z = null;
-		String m = null;
-		String fips = null;
-		String iso2 = null;
-		String iso3 = null;
-		String un = null;
-		String name = null;
-		String area = null;
-		String pop2005 = null;
-		String region = null;
-		String subregion = null;
-		String lon = null;
-		String lat = null;		
-
-		// read each line of text file
-		try {
-			bufRdr.readLine();
-			while ((line = bufRdr.readLine()) != null) {
-				token = line.split("\t");
-				int newid = Integer.parseInt(token[0]);
-				
-				if (id == newid){
-					
-					if(newRing){
-						firstx = token[2];
-						firsty = token[1];
-						polygon = polygon + ",(" + firstx + " " + firsty;
-						newRing = false;
-					}else{
-						
-						if(firstx.equalsIgnoreCase(token[2]) && firsty.equalsIgnoreCase(token[1])){
-							polygon = polygon + "," + token[2] + " " + token[1] + ")";
-							newRing = true;
-						} else {
-							polygon = polygon + "," + token[2] + " " + token[1];
-						}
-					}
-				}else{
-					//polygon = polygon + "," + firsty + " " + firstx + "))";
-					
-					firstx = token[2];
-					firsty = token[1];
-					newRing = false;
-					
-					if (firstCountry) {
-						polygon = "POLYGON((" + firstx + " " + firsty;
-						firstCountry = false;
-					} else {
-						polygon = polygon + ")";
-						if (id == 23){
-							System.out.println(polygon);
-							break;
-						}
-						pst.setInt(1, id);
-						pst.setInt(2, Integer.parseInt(z));
-						pst.setInt(3, Integer.parseInt(m));
-						pst.setString(4, fips);
-						pst.setString(5, iso2);
-						pst.setString(6, iso3);
-						pst.setInt(7, Integer.parseInt(un));
-						pst.setString(8, name);
-						pst.setInt(9, Integer.parseInt(area));
-						pst.setInt(10, Integer.parseInt(pop2005));
-						pst.setInt(11, Integer.parseInt(region));
-						pst.setInt(12, Integer.parseInt(subregion));
-						pst.setDouble(13, Double.parseDouble(lon));
-						pst.setDouble(14, Double.parseDouble(lat));
-						pst.setString(15, polygon);
-						pst.executeUpdate();
-						polygon = "POLYGON((" + firstx + " " + firsty;
-					}
-					
-					id = newid;
-					z = token[3];
-					m = token[4];
-					fips = token[5];
-					iso2 = token[6];
-					iso3 = token[7];
-					un = token[8];
-					name = token[9];
-					area = token[10];
-					pop2005 = token[11];
-					region = token[12];
-					subregion = token[13];
-					lon = token[14];
-					lat = token[15];
-				}
-				
-				j++;
-			}
-
-//			polygon = polygon + "," + firsty + " " + firstx + "))";
-			polygon = polygon + ")";
-			pst.setInt(1, id);
-			pst.setInt(2, Integer.parseInt(z));
-			pst.setInt(3, Integer.parseInt(m));
-			pst.setString(4, fips);
-			pst.setString(5, iso2);
-			pst.setString(6, iso3);
-			pst.setInt(7, Integer.parseInt(un));
-			pst.setString(8, name);
-			pst.setInt(9, Integer.parseInt(area));
-			pst.setInt(10, Integer.parseInt(pop2005));
-			pst.setInt(11, Integer.parseInt(region));
-			pst.setInt(12, Integer.parseInt(subregion));
-			pst.setDouble(13, Double.parseDouble(lon));
-			pst.setDouble(14, Double.parseDouble(lat));
-			pst.setString(15, polygon);
-			pst.executeUpdate();
-			
-			System.out.print("World: " + j + " Lines eingelesen!");
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	private void importConstituencies() throws Exception{
