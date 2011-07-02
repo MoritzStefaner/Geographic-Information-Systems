@@ -1,8 +1,10 @@
 package org.gis.db;
 
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 import org.postgis.*;
 
-public class WorldPolygon extends Polygon {
+public class WorldPolygon extends MapMarkerPolygon {
+	private static final long serialVersionUID = -7748395030950978455L;
 	String fips;
 	String iso2;
 	String iso3;

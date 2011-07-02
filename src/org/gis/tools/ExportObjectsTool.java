@@ -6,7 +6,6 @@ import java.sql.Time;
 import java.util.*;
 
 import org.gis.db.*;
-import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 import org.postgis.*;
 
 public class ExportObjectsTool {
@@ -114,12 +113,12 @@ public class ExportObjectsTool {
 	 * 
 	 * @return A map of all countries.
 	 */
-	static public HashMap<Integer, MapMarkerPolygon> exportWorld(){
+	static public HashMap<Integer, WorldPolygon> exportWorld(){
 		// The SQL query to get the information from database.
 		db = Database.getDatabase();
 		ResultSet result = db.executeQuery("select id, fips, iso2, iso3, un, name, area, pop2005, region, subregion, poly_geom from world");
 		
-		HashMap<Integer, MapMarkerPolygon> polygonMap = new HashMap<Integer, MapMarkerPolygon>();
+		HashMap<Integer, WorldPolygon> polygonMap = new HashMap<Integer, WorldPolygon>();
 		
 		try {
 			// Iterates over all lines of the ResultSet to put each line in the map.
@@ -135,7 +134,7 @@ public class ExportObjectsTool {
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
 						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10),  linearRing);
 
-				polygonMap.put((Integer) result.getObject(1), new MapMarkerPolygon(polygon, true));
+				polygonMap.put((Integer) result.getObject(1), polygon);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -163,7 +162,7 @@ public class ExportObjectsTool {
 			ResultSet constGeoResult = db.executeQuery("select poly_geom, wkr_name, land_nr, land_name from constituencies where wkr_nr ="+i);
 			ResultSet constElecResult = db.executeQuery("select elective_cur, voter_cur from voter_const where id ="+i);
 			
-			LinkedList<MapMarkerPolygon> polygons = new LinkedList<MapMarkerPolygon>();
+			LinkedList<ConstPolygon> polygons = new LinkedList<ConstPolygon>();
 			
 			try {
 				// Sets the pointer of the ResulSet on row 1 to get information.
@@ -193,7 +192,7 @@ public class ExportObjectsTool {
 					linearRing[0] = ngeom.getRing(0);
 
 					ConstPolygon polygon = new ConstPolygon(constituency, linearRing);
-					polygons.add(new MapMarkerPolygon(polygon));
+					polygons.add(polygon);
 				}
 				constituency.addPolygons(polygons);
 				

@@ -2,8 +2,6 @@ package org.gis.db;
 
 import java.util.*;
 
-import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
-
 public class Constituency {
 	Integer number;
 	String name;
@@ -11,7 +9,7 @@ public class Constituency {
 	Integer voter;
 	private FederalState federalState;
 	private LinkedList<Party> result;
-	private LinkedList<MapMarkerPolygon> polygons;
+	private LinkedList<ConstPolygon> polygons;
 	private int malteOccurence;
 	
 	public Constituency(Integer number, String name, Integer electorate, Integer voter, FederalState federalState, LinkedList<Party> result) {
@@ -32,7 +30,7 @@ public class Constituency {
 		return malteOccurence;
 	}
 	
-	public void addPolygons(LinkedList<MapMarkerPolygon> list) {
+	public void addPolygons(LinkedList<ConstPolygon> list) {
 		this.polygons = list;
 	}
 	
@@ -60,7 +58,7 @@ public class Constituency {
 		return result;
 	}
 
-	public LinkedList<MapMarkerPolygon> getPolygons() {
+	public LinkedList<ConstPolygon> getPolygons() {
 		return polygons;
 	}
 

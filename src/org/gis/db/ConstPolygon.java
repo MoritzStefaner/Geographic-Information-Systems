@@ -1,8 +1,10 @@
 package org.gis.db;
 
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 import org.postgis.*;
 
-public class ConstPolygon extends Polygon {
+public class ConstPolygon extends MapMarkerPolygon {
+	private static final long serialVersionUID = 7360713891145160594L;
 	private Constituency constituency;
 	
 	public ConstPolygon(Constituency c, LinearRing[] rings){

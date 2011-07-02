@@ -1,7 +1,6 @@
 package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
@@ -321,7 +320,7 @@ public class GisApplication extends JFrame {
         }
     }
     
-    private void showWorld(boolean show) {
+	private void showWorld(boolean show) {
     	if (show) {
     		map.mapMarkerPolygonList.clear();
     		ew = null;

@@ -11,6 +11,7 @@ import java.util.Random;
 
 import org.gis.db.GisPoint;
 import org.gis.db.Polygon;
+import org.postgis.LinearRing;
 
 /**
  * A simple implementation of a polygon
@@ -18,15 +19,21 @@ import org.gis.db.Polygon;
  * @author Dirk Kirsten
  *
  */
-public class MapMarkerPolygon{
-    private Polygon polygon;
+public class MapMarkerPolygon extends Polygon {
+	private static final long serialVersionUID = -4607579477142781251L;
+	private Polygon polygon;
     private Color color;
 
-    public MapMarkerPolygon(Polygon polygon) {
-        this(null, polygon);
+    public MapMarkerPolygon(LinearRing[] rings, Polygon polygon) {
+        this(rings, null, polygon);
     }
     
-    public MapMarkerPolygon(Polygon polygon, boolean random) {
+    public MapMarkerPolygon(LinearRing[] rings) {
+        super(rings);
+    }
+    
+    public MapMarkerPolygon(LinearRing[] rings, Polygon polygon, boolean random) {
+    	super(rings);
     	if (random) {
 	    	Random rand = new Random();
 			this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
@@ -34,7 +41,8 @@ public class MapMarkerPolygon{
     	}
     }
     
-    public MapMarkerPolygon(Color color, Polygon polygon) {
+    public MapMarkerPolygon(LinearRing[] rings, Color color, Polygon polygon) {
+    	super(rings);
     	if (color == null) {
     		this.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     	} else {
@@ -114,7 +122,7 @@ public class MapMarkerPolygon{
     }
     
     public LinkedList<GisPoint> getPolygonList() {
-    	return this.polygon.getRing();
+    	return getRing();
     }
 
     public String toString() {
@@ -131,5 +139,11 @@ public class MapMarkerPolygon{
     	String description = "Polygon";
         return description;
     }
+
+	@Override
+	public String getText() {
+		// TODO Auto-generated method stub
+		return "Test";
+	}
 
 }
