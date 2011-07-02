@@ -82,6 +82,13 @@ public class World {
 	}
 	
 	public void setColorByTravelThrough() {
+		setColorByTravelThrough(0, true);
+	}
+	
+	public void setColorByTravelThrough(int id) {
+		setColorByTravelThrough(id, false);
+	}
+	public void setColorByTravelThrough(int id, boolean all) {
 		Iterator<WorldPolygon> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
@@ -89,7 +96,7 @@ public class World {
 			mmp.setColor(Color.WHITE);
 		}
 		
-		Iterator<Integer> it2 = getStorkTravel().iterator();	
+		Iterator<Integer> it2 = getStorkTravel(id, all).iterator();	
 		while (it2.hasNext()) {
 			Integer i = it2.next();
 			getCountries().get(i).setColor(Color.RED);
@@ -115,8 +122,12 @@ public class World {
 		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>();
     	Database db = Database.getDatabase();
     	
-    	ResultSet result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.world_id = world.id GROUP BY world.id");
-    	
+    	ResultSet result;
+    	if (all)
+    		result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.world_id = world.id GROUP BY world.id");
+    	else
+    		result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.id = " + id + " AND storks.world_id = world.id GROUP BY world.id");
+    		
     	int max = 0;
     	try {
 			while(result.next()) {
@@ -131,12 +142,10 @@ public class World {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Max: " + max);
 		Iterator<WorldPolygon> it2 = list.iterator();
 		while (it2.hasNext()) {
 			WorldPolygon wp = it2.next();
-			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 1 / (float)3);
-			System.out.println(wp.getAmountStorks());
+			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 0.33);
 			wp.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
 	}
@@ -148,11 +157,16 @@ public class World {
 	 * 
 	 * @return An ID list of the countries.
 	 */
-    public LinkedList<Integer> getStorkTravel(){
+    public LinkedList<Integer> getStorkTravel(int id, boolean all) {
     	LinkedList<Integer> list = new LinkedList<Integer>();
     	Database db = Database.getDatabase();
     	
-    	ResultSet result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.world_id = world.id");
+    	ResultSet result;
+    	System.out.println(all);
+    	if (all)
+    		result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.world_id = world.id");
+    	else
+    		result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.id = " + id + " AND storks.world_id = world.id");
     	
     	try {
 			while(result.next()){
