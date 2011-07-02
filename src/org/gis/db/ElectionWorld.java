@@ -345,4 +345,29 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
+	/**
+	 * Hard task e.
+	 * 
+	 * Calculates all constituencies through which Malte did travel.
+	 * 
+	 * @return An wkrNr list of the constituencies.
+	 */
+    public LinkedList<Integer> getMalteTravel(){
+    	LinkedList<Integer> list = new LinkedList<Integer>();
+    	Database db = Database.getDatabase();
+    	
+    	ResultSet result = db.executeQuery("SELECT DISTINCT constituencies.wkr_nr FROM constituencies, malte WHERE constituencies.wkr_nr = malte.wkr_nr");
+    	
+    	try {
+			while(result.next()){
+				list.add((Integer) result.getObject(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return list;
+    }
+	
 }

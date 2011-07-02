@@ -20,7 +20,7 @@ public class ExportObjectsTool {
 	static public HashMap<Integer, StorkPoint> exportStork(){
 		// The SQL query to get the information from database.
 		db = Database.getDatabase();
-		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks");
+		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn, world_id from storks");
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
 		try {
@@ -33,7 +33,7 @@ public class ExportObjectsTool {
 				point.setZ((Integer) result.getObject(3));
 				
 				// Creates a new StorkPoint.
-				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point);
+				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point, (Integer) result.getObject(6));
 				
 				pointMap.put((Integer) result.getObject(1), spoint);
 			}
@@ -52,7 +52,7 @@ public class ExportObjectsTool {
 	static public HashMap<Integer, StorkPoint> exportStorkSelected(int id){
 		// The SQL query to get the information from database.
 		db = Database.getDatabase();
-		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn from storks where taglocalidentifier = " + id);
+		ResultSet result = db.executeQuery("select id, timestamp, altitude, taglocalidentifier, geometrycolumn, world_id from storks where taglocalidentifier = " + id);
 		HashMap<Integer, StorkPoint> pointMap = new HashMap<Integer, StorkPoint>();
 		
 		try {
@@ -65,7 +65,7 @@ public class ExportObjectsTool {
 				point.setZ((Integer) result.getObject(3));
 				
 				// Creates a new StorkPoint.
-				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point);
+				StorkPoint spoint = new StorkPoint((Integer) result.getObject(1), (Time) result.getObject(2), (Integer) result.getObject(4), point, (Integer) result.getObject(6));
 				
 				pointMap.put((Integer) result.getObject(1), spoint);
 			}
@@ -84,7 +84,7 @@ public class ExportObjectsTool {
 	static public HashMap<Integer, MaltePoint> exportMalte(){
 		// The SQL query to get the information from database.
 		db = Database.getDatabase();
-		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn from malte");
+		ResultSet result = db.executeQuery("select id, starttime, endtime, service, inoutgoing, direction, cella, cellb, geometrycolumn, wkr_nr from malte");
 		
 		HashMap<Integer, MaltePoint> pointMap = new HashMap<Integer, MaltePoint>();
 		
@@ -98,7 +98,7 @@ public class ExportObjectsTool {
 				// Creates a new MaltePoint-object.
 				MaltePoint mpoint = new MaltePoint((Integer) result.getObject(1), (Time) result.getObject(2), (Time) result.getObject(3), 
 						(String) result.getObject(4), (String) result.getObject(5), (Integer) result.getObject(6), (String) result.getObject(7), 
-						(String) result.getObject(8), point);
+						(String) result.getObject(8), (Integer) result.getObject(10), point);
 				
 				pointMap.put((Integer) result.getObject(1), mpoint);
 			}
@@ -175,14 +175,14 @@ public class ExportObjectsTool {
 				if(stateMap.containsKey((Integer) constGeoResult.getObject(3))){
 					curState = stateMap.get((Integer) constGeoResult.getObject(3));
 				}else{
-					curState = newFederalState((Integer) constGeoResult.getObject(3), (String) constGeoResult.getObject(4), db);
+					curState = newFederalState((Integer) constGeoResult.getObject(3), (String) constGeoResult.getObject(4));
 					stateMap.put(curState.getId(), curState);
 				}
 
 				// Creates the constituency-object and adds it to its state and the map of all constituencies.
 				constElecResult.next();
 				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
-						(Integer) constElecResult.getObject(2), curState, getParties(i, db));
+						(Integer) constElecResult.getObject(2), curState, getParties(i));
 				
 				// Iterates over the ResultSet with all polygons of a constituency from database.
 				while(isFirst || constGeoResult.next()){
@@ -215,7 +215,8 @@ public class ExportObjectsTool {
 	 * @param name the name of the state.
 	 * @return a new FederalState-object.
 	 */
-	static public FederalState newFederalState(Integer id, String name, Database db){
+	static public FederalState newFederalState(Integer id, String name){
+		db = Database.getDatabase();
 		LinkedList<Party> parties = new LinkedList<Party>();
 		FederalState state = null;
 		
@@ -252,7 +253,8 @@ public class ExportObjectsTool {
 	 * @param i the constituency
 	 * @return a LinkedList of parties
 	 */
-	static private LinkedList<Party> getParties(int i, Database db){
+	static private LinkedList<Party> getParties(int i){
+		db = Database.getDatabase();
 		LinkedList<Party> parties = new LinkedList<Party>();
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.

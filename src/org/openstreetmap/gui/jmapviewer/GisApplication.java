@@ -41,7 +41,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  * Display map data using {@link JMapViewer}.
  *
  * @author Dirk Kirsten
- * @author Stefanie Marx
+ * @author Stephanie Marx
  *
  */
 public class GisApplication extends JFrame {

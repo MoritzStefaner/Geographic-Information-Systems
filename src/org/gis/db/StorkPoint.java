@@ -9,12 +9,14 @@ public class StorkPoint extends GisPoint {
 	private Integer id;
 	private Time timestamp;
 	private Integer localIdentifier;
+	private Integer worldId;
 	
-	public StorkPoint(Integer id, Time stamp, Integer localIdentifier, Point point) {
+	public StorkPoint(Integer id, Time stamp, Integer localIdentifier, Point point, Integer worldId) {
 		super(point);
 		this.id = id;
 		this.timestamp = stamp;
 		this.localIdentifier = localIdentifier;
+		this.worldId = worldId;
 	}
 	
 	public Time getTimestamp(){

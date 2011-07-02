@@ -14,8 +14,9 @@ public class MaltePoint extends GisPoint {
 	private Integer direction;
 	private String cella;
 	private String cellb;
+	private Integer constId;
 
-	public MaltePoint(Integer id, Time starttime, Time endtime, String service, String inoutgoing, Integer direction, String cella, String cellb, Point point) {
+	public MaltePoint(Integer id, Time starttime, Time endtime, String service, String inoutgoing, Integer direction, String cella, String cellb, Integer constId, Point point) {
 		super(point);
 		
 		this.id = id;
@@ -26,6 +27,7 @@ public class MaltePoint extends GisPoint {
 		this.direction = direction;
 		this.cella = cella;
 		this.cellb = cellb;
+		this.constId = constId;
 	}
 
 	public Time getStarttime() {

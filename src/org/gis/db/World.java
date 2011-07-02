@@ -69,7 +69,8 @@ public class World {
 	public Integer getLargest(){
 		Database db = Database.getDatabase();
 		
-		ResultSet result = db.executeQuery("SELECT id, Area(GeomFromText(poly_geom, 4326))  FROM world ORDER BY area DESC");
+		// Ignores the Antartica as a country.
+		ResultSet result = db.executeQuery("SELECT id, name, Area(GeomFromText(poly_geom, 4326))  FROM world WHERE name != 'Antarctica' ORDER BY area DESC");
 		
 		
 		try {
@@ -147,7 +148,6 @@ public class World {
     	LinkedList<Integer> list = new LinkedList<Integer>();
     	Database db = Database.getDatabase();
     	
-    	// TODO Performance reduzieren.
     	ResultSet result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.world_id = world.id");
     	
     	try {
