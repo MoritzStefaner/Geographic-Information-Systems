@@ -21,38 +21,27 @@ import org.postgis.LinearRing;
  */
 public class MapMarkerPolygon extends Polygon {
 	private static final long serialVersionUID = -4607579477142781251L;
-	private Polygon polygon;
     private Color color;
-
-    public MapMarkerPolygon(LinearRing[] rings, Polygon polygon) {
-        this(rings, null, polygon);
-    }
     
     public MapMarkerPolygon(LinearRing[] rings) {
         super(rings);
     }
     
-    public MapMarkerPolygon(LinearRing[] rings, Polygon polygon, boolean random) {
+    public MapMarkerPolygon(LinearRing[] rings, boolean random) {
     	super(rings);
     	if (random) {
 	    	Random rand = new Random();
 			this.color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f);
-	    	this.polygon = polygon;
     	}
     }
     
-    public MapMarkerPolygon(LinearRing[] rings, Color color, Polygon polygon) {
+    public MapMarkerPolygon(LinearRing[] rings, Color color) {
     	super(rings);
     	if (color == null) {
     		this.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     	} else {
     		this.color = color;
     	}
-        this.polygon = polygon;
-    }
-    
-    public Polygon getPolygon() {
-    	return this.polygon;
     }
     
     public void setColor(Color color) {
@@ -96,8 +85,8 @@ public class MapMarkerPolygon extends Polygon {
         g.setColor(Color.BLACK);
         g.drawPolygon(xPoints, yPoints, points.size());
         
-        if (names && polygon.getText() != null && !polygon.getText().isEmpty()) {
-        	org.postgis.Point mass = polygon.getMass();
+        if (names && getText() != null && !getText().isEmpty()) {
+        	org.postgis.Point mass = getMass();
         	Point massCoord = viewer.getMapPosition(mass.x, mass.y);
         	
         	if (massCoord != null) {
@@ -106,7 +95,7 @@ public class MapMarkerPolygon extends Polygon {
         		Font font = new Font("Verdana", Font.PLAIN, 12);
         		g.setFont(font);
 	        	FontMetrics fm   = g.getFontMetrics(g.getFont());
-	        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(polygon.getText(), g);
+	        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(getText(), g);
 	
 	        	int textHeight = (int)(rect.getHeight()); 
 	        	int textWidth  = (int)(rect.getWidth());
@@ -115,7 +104,7 @@ public class MapMarkerPolygon extends Polygon {
 	        	int x = massCoord.x - textWidth / 2;
 	        	int y = massCoord.y - textHeight / 2  + fm.getAscent();
 	
-	        	g.drawString(polygon.getText(), x, y);  // Draw the string.
+	        	g.drawString(getText(), x, y);  // Draw the string.
         	}
         }
         

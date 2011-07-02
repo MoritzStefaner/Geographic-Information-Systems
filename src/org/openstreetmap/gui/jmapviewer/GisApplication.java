@@ -192,12 +192,13 @@ public class GisApplication extends JFrame {
             		else 
             			w.loadSelectedStorks(getStorkId());
         		} else if (displayStyleWorld.getSelectedIndex() == 1) {
-        			w.setColorByTravelThrough();
-        			
-        			if (storkSelection.getSelectedIndex() == 0)
+        			if (storkSelection.getSelectedIndex() == 0) {
+            			w.setColorByTravelThrough();
             			w.loadAllStorks();
-            		else 
+        			} else {
+        				w.setColorByTravelThrough(getStorkId());
             			w.loadSelectedStorks(getStorkId());
+        			}
         		} else if (displayStyleWorld.getSelectedIndex() == 2) {
         			
         			if (storkSelection.getSelectedIndex() == 0) {
@@ -308,7 +309,7 @@ public class GisApplication extends JFrame {
     	GisPoint p = new GisPoint(latitude, longitude);
     	MapMarkerPolygon pol = w.getCountries().get(w.compareToWorld(p));
     	if (pol != null)
-    		informationWorld.setText(pol.getPolygon().getText());
+    		informationWorld.setText(pol.getText());
     }
     
     private void drawStorks() {
@@ -322,8 +323,7 @@ public class GisApplication extends JFrame {
     
 	private void showWorld(boolean show) {
     	if (show) {
-    		map.mapMarkerPolygonList.clear();
-    		ew = null;
+    		displayMalte(false, null);
     		
     		w = new World();
     		w.loadAllStorks();
@@ -332,15 +332,16 @@ public class GisApplication extends JFrame {
     		drawStorks();
     	} else {
     		map.mapMarkerPolygonList.clear();
+    		map.mapMarkerList.clear();
     		w = null;
     	}
 }
     
     private void displayMalte(boolean show, displayStyleType style) {
     	if (show) {
-            Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();
-            w = null;
-            
+    		showWorld(false);
+    		
+            Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();            
             ew = new ElectionWorld();
             
             if (style == displayStyleType.GREEN_PARTY_NORMAL)
@@ -369,7 +370,7 @@ public class GisApplication extends JFrame {
     	} else {
     		map.mapMarkerPolygonList.clear();
     		map.mapMarkerList.clear();
-    		map.setZoom(map.getZoom()*2);
+    		//map.setZoom(map.getZoom()*2);
     		ew = null;
     	}
     }

@@ -192,7 +192,7 @@ public class ElectionWorld {
 		while (it.hasNext()) {
 			Constituency c = it.next();
 			Iterator<ConstPolygon> it2 = c.getPolygons().iterator();
-			float alpha = (float) Math.min(Math.max(c.getVoter() / (float) c.getElectorate() - 0.6, 0.0f) / 0.2, 1.0f);
+			float alpha = (float) Math.pow(Math.max(c.getVoter() / (float) c.getElectorate() - 0.6, 0.0f) / 0.2, 0.5);
 			
 			while (it2.hasNext()) {
 				ConstPolygon m = it2.next();
@@ -305,15 +305,20 @@ public class ElectionWorld {
 	}
 	
 	public void setColorByGreenPartyCorrMalte(Collection<MaltePoint> malte) {
-		Iterator<MaltePoint> it = malte.iterator();
-		
-		while (it.hasNext()) {
-			MaltePoint m = it.next();
-			Integer constituencyInt = m.compareToConstituencies();
-			if (constituencyInt != null) {
-				Constituency c = constituencyMap.get(constituencyInt);
-				c.addMalteOccurence();
+    	Database db = Database.getDatabase();
+		ResultSet result = db.executeQuery("SELECT constituencies.wkr_nr, COUNT(malte.id) FROM constituencies, malte WHERE constituencies.wkr_nr = malte.wkr_nr GROUP BY constituencies.wkr_nr");
+    	
+		try {
+			while(result.next()) {
+				try {
+					Constituency c = constituencyMap.get((Integer) result.getObject(1));
+					c.addMalteOccurence(((Long) result.getObject(2)).intValue());
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		
 		Iterator<Constituency> it2 = getConstituencyMap().values().iterator();
@@ -329,12 +334,11 @@ public class ElectionWorld {
 					if (expected > 1)
 						expected = 1;
 					float actual = ((p.getZweitstimmen() / (float) c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty));
-					float alpha = 1 - Math.abs((actual - expected));
-					float alpha2 = (float) Math.min(2*alpha, 1.0);
+					float alpha = (float) Math.pow(Math.abs((actual - expected)), 0.5);
 					
 					while (it4.hasNext()) {
 						ConstPolygon m = it4.next();
-						m.setColor(new Color(1 - alpha2, alpha2, 0.0f, 0.9f));
+						m.setColor(new Color(alpha, 1 - alpha, 0.0f, 0.9f));
 					}
 					
 					found = true;

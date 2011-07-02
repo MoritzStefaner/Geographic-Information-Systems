@@ -22,8 +22,8 @@ public class Constituency {
 		this.malteOccurence = 0;
 	}
 
-	public void addMalteOccurence() {
-		++malteOccurence;
+	public void addMalteOccurence(int add) {
+		malteOccurence += add;
 	}
 	
 	public int getMalteOccurences() {

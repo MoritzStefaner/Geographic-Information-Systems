@@ -863,7 +863,7 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		//it.importStorks();
-		it.newImportWorld();
+		//it.importWorld();
 		//it.importConstituencies();
 		//it.importMalte();
 		//it.importResults();
