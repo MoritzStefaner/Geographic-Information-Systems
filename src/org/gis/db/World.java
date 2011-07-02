@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import org.gis.tools.ExportObjectsTool;
 
 public class World {
-	private HashMap<Integer, WorldPolygon> countries;
+	private HashMap<Integer, Country> countries;
 	private HashMap<Integer, StorkPoint> storks;
 	
 	public World() {
@@ -29,12 +29,12 @@ public class World {
 		return storks;
 	}
 
-	public HashMap<Integer, WorldPolygon> getCountries() {
+	public HashMap<Integer, Country> getCountries() {
 		return countries;
 	}
     
-	public LinkedList<WorldPolygon> getWorldPolygons() {
-		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>(countries.values());
+	public LinkedList<Country> getCountryPolygons() {
+		LinkedList<Country> list = new LinkedList<Country>(countries.values());
 		return list;
 	}
 	
@@ -82,10 +82,10 @@ public class World {
 	}
 	
 	public void setColorByTravelThrough() {
-		Iterator<WorldPolygon> it = getCountries().values().iterator();
+		Iterator<Country> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
-			WorldPolygon mmp = it.next();
+			Country mmp = it.next();
 			mmp.setColor(Color.WHITE);
 		}
 		
@@ -105,14 +105,14 @@ public class World {
 	}
 	
 	private void setColorByTravelThroughPercentage(int id, boolean all) {
-		Iterator<WorldPolygon> it = getCountries().values().iterator();
+		Iterator<CountryPolygon> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
-			WorldPolygon mmp = it.next();
+			CountryPolygon mmp = it.next();
 			mmp.setColor(Color.WHITE);
 		}
 		
-		LinkedList<WorldPolygon> list = new LinkedList<WorldPolygon>();
+		LinkedList<CountryPolygon> list = new LinkedList<CountryPolygon>();
     	Database db = Database.getDatabase();
     	
     	ResultSet result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.world_id = world.id GROUP BY world.id");
@@ -120,7 +120,7 @@ public class World {
     	int max = 0;
     	try {
 			while(result.next()) {
-				WorldPolygon wp = getCountries().get((Integer) result.getObject(1));
+				CountryPolygon wp = getCountries().get((Integer) result.getObject(1));
 				int now = ((Long) result.getObject(2)).intValue();
 				wp.setAmountStorks(now);
 				list.add(wp);
@@ -132,9 +132,9 @@ public class World {
 		}
 		
 		System.out.println("Max: " + max);
-		Iterator<WorldPolygon> it2 = list.iterator();
+		Iterator<CountryPolygon> it2 = list.iterator();
 		while (it2.hasNext()) {
-			WorldPolygon wp = it2.next();
+			CountryPolygon wp = it2.next();
 			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 1 / (float)3);
 			System.out.println(wp.getAmountStorks());
 			wp.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));

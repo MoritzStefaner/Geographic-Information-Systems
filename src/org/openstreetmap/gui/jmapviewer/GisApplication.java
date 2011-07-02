@@ -327,7 +327,7 @@ public class GisApplication extends JFrame {
     		
     		w = new World();
     		w.loadAllStorks();
-    		map.addMapMarkerPolygonList(w.getWorldPolygons());
+    		map.addMapMarkerPolygonList(w.getCountryPolygons());
     		
     		drawStorks();
     	} else {

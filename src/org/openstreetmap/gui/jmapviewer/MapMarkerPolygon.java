@@ -125,7 +125,7 @@ public class MapMarkerPolygon extends Polygon {
     	return getRing();
     }
 
-    public String toString() {
+    public String getDescription() {
         /*
     	String description = "Polygon at ";
         Iterator<Point> it = this.polygon.iterator();
