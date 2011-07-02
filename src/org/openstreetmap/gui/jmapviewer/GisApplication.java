@@ -54,8 +54,9 @@ public class GisApplication extends JFrame {
     private PartyChart partyChart;
     private final JComboBox storkSelection;
     
-    private static enum displayStyleType { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
+    private static enum displayStyleTypeElection { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
     	TURNOUT, INFLUENCE }; 
+    private static enum displayStyleTypeStorks { RANDOM, TRAVEL_THROUGH, TRAVEL_THROUGH_PERCENTAGE };
     
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
@@ -113,19 +114,24 @@ public class GisApplication extends JFrame {
             public void stateChanged(ChangeEvent e) {
               if (tabs.getSelectedIndex() == 0) {
             	  if (displayStyle.getSelectedIndex() == 0)
-                  	displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+                  	displayMalte(true, displayStyleTypeElection.GREEN_PARTY_NORMAL);
                   else if (displayStyle.getSelectedIndex() == 1)
-                  	displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
+                  	displayMalte(true, displayStyleTypeElection.GREEN_PARTY_CORR_MALTE);
                   else if (displayStyle.getSelectedIndex() == 2)
-                    	displayMalte(true, displayStyleType.WINNER);
+                    	displayMalte(true, displayStyleTypeElection.WINNER);
                   else if (displayStyle.getSelectedIndex() == 3)
-                  		displayMalte(true, displayStyleType.DIFFERENCE);
+                  		displayMalte(true, displayStyleTypeElection.DIFFERENCE);
                   else if (displayStyle.getSelectedIndex() == 4)
-                    	displayMalte(true, displayStyleType.TURNOUT);
+                    	displayMalte(true, displayStyleTypeElection.TURNOUT);
                   else if (displayStyle.getSelectedIndex() == 5)
-                  		displayMalte(true, displayStyleType.INFLUENCE);
+                  		displayMalte(true, displayStyleTypeElection.INFLUENCE);
               } else if (tabs.getSelectedIndex() == 1) {
-            	  showWorld(true);
+	          		if (displayStyleWorld.getSelectedIndex() == 0)
+	                  	showWorld(true, displayStyleTypeStorks.RANDOM);
+	          		else if (displayStyleWorld.getSelectedIndex() == 1)
+	                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+	          		else if (displayStyleWorld.getSelectedIndex() == 2)
+	                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE); 
               }
             }
           });
@@ -144,17 +150,17 @@ public class GisApplication extends JFrame {
         displayStyle.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
                 if (displayStyle.getSelectedIndex() == 0)
-                	displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+                	displayMalte(true, displayStyleTypeElection.GREEN_PARTY_NORMAL);
                 else if (displayStyle.getSelectedIndex() == 1)
-                	displayMalte(true, displayStyleType.GREEN_PARTY_CORR_MALTE);
+                	displayMalte(true, displayStyleTypeElection.GREEN_PARTY_CORR_MALTE);
                 else if (displayStyle.getSelectedIndex() == 2)
-                	displayMalte(true, displayStyleType.WINNER);
+                	displayMalte(true, displayStyleTypeElection.WINNER);
                 else if (displayStyle.getSelectedIndex() == 3)
-                  	displayMalte(true, displayStyleType.DIFFERENCE);
+                  	displayMalte(true, displayStyleTypeElection.DIFFERENCE);
                 else if (displayStyle.getSelectedIndex() == 4)
-                	displayMalte(true, displayStyleType.TURNOUT);
+                	displayMalte(true, displayStyleTypeElection.TURNOUT);
                 else if (displayStyle.getSelectedIndex() == 5)
-                	displayMalte(true, displayStyleType.INFLUENCE);
+                	displayMalte(true, displayStyleTypeElection.INFLUENCE);
             }
         });
         electionTab.add(displayStyle);
@@ -174,43 +180,24 @@ public class GisApplication extends JFrame {
         /* Constructs Information panel for world*/
         storkSelection.addItemListener(new ItemListener() {
         	public void itemStateChanged(ItemEvent e) {
-        		if (storkSelection.getSelectedIndex() == 0)
-        			w.loadAllStorks();
-        		else 
-        			w.loadSelectedStorks(getStorkId());
-        		
-        		drawStorks();
+        		if (displayStyleWorld.getSelectedIndex() == 0)
+                	showWorld(true, displayStyleTypeStorks.RANDOM);
+        		else if (displayStyleWorld.getSelectedIndex() == 1)
+                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+        		else if (displayStyleWorld.getSelectedIndex() == 2)
+                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE); 
         	}
         });
         worldTab.add(storkSelection);
         
         displayStyleWorld.addItemListener(new ItemListener() {
         	public void itemStateChanged(ItemEvent e) {
-        		if (displayStyleWorld.getSelectedIndex() == 0) {
-        			if (storkSelection.getSelectedIndex() == 0)
-            			w.loadAllStorks();
-            		else 
-            			w.loadSelectedStorks(getStorkId());
-        		} else if (displayStyleWorld.getSelectedIndex() == 1) {
-        			if (storkSelection.getSelectedIndex() == 0) {
-            			w.setColorByTravelThrough();
-            			w.loadAllStorks();
-        			} else {
-        				w.setColorByTravelThrough(getStorkId());
-            			w.loadSelectedStorks(getStorkId());
-        			}
-        		} else if (displayStyleWorld.getSelectedIndex() == 2) {
-        			
-        			if (storkSelection.getSelectedIndex() == 0) {
-            			w.loadAllStorks();
-            			w.setColorByTravelThroughPercentage();
-        			}
-            		else {
-            			w.loadSelectedStorks(getStorkId());
-            			w.setColorByTravelThroughPercentage(getStorkId());
-            		}
-        		}
-        			
+        		if (displayStyleWorld.getSelectedIndex() == 0)
+                	showWorld(true, displayStyleTypeStorks.RANDOM);
+        		else if (displayStyleWorld.getSelectedIndex() == 1)
+                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+        		else if (displayStyleWorld.getSelectedIndex() == 2)
+                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE);      			
         	}
         });
         worldTab.add(displayStyleWorld);
@@ -237,7 +224,7 @@ public class GisApplication extends JFrame {
         map.setMapMarkerVisible(true);
         add(map, BorderLayout.CENTER);
         
-        displayMalte(true, displayStyleType.GREEN_PARTY_NORMAL);
+        displayMalte(true, displayStyleTypeElection.GREEN_PARTY_NORMAL);
     }
     
     private Integer getStorkId() {
@@ -321,14 +308,39 @@ public class GisApplication extends JFrame {
         }
     }
     
-	private void showWorld(boolean show) {
+	private void showWorld(boolean show, displayStyleTypeStorks displayStyle) {
     	if (show) {
     		displayMalte(false, null);
     		
     		w = new World();
-    		w.loadAllStorks();
-    		map.addMapMarkerPolygonList(w.getWorldPolygons());
     		
+    		if (displayStyle == displayStyleTypeStorks.RANDOM) {
+				w.setColorRandom();
+    			if (storkSelection.getSelectedIndex() == 0)
+        			w.loadAllStorks();
+        		else 
+        			w.loadSelectedStorks(getStorkId());
+    		} else if (displayStyle == displayStyleTypeStorks.TRAVEL_THROUGH) {
+    			if (storkSelection.getSelectedIndex() == 0) {
+        			w.setColorByTravelThrough();
+        			w.loadAllStorks();
+    			} else {
+    				w.setColorByTravelThrough(getStorkId());
+        			w.loadSelectedStorks(getStorkId());
+    			}
+    		} else if (displayStyle == displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE) {
+    			
+    			if (storkSelection.getSelectedIndex() == 0) {
+        			w.loadAllStorks();
+        			w.setColorByTravelThroughPercentage();
+    			}
+        		else {
+        			w.loadSelectedStorks(getStorkId());
+        			w.setColorByTravelThroughPercentage(getStorkId());
+        		}
+    		}
+
+    		map.addMapMarkerPolygonList(w.getWorldPolygons());
     		drawStorks();
     	} else {
     		map.mapMarkerPolygonList.clear();
@@ -337,29 +349,29 @@ public class GisApplication extends JFrame {
     	}
 }
     
-    private void displayMalte(boolean show, displayStyleType style) {
+    private void displayMalte(boolean show, displayStyleTypeElection style) {
     	if (show) {
-    		showWorld(false);
+    		showWorld(false, null);
     		
             Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();            
             ew = new ElectionWorld();
             
-            if (style == displayStyleType.GREEN_PARTY_NORMAL)
+            if (style == displayStyleTypeElection.GREEN_PARTY_NORMAL)
             	ew.setColorByGreenPartyLinear();
-            else if (style == displayStyleType.GREEN_PARTY_CORR_MALTE)
+            else if (style == displayStyleTypeElection.GREEN_PARTY_CORR_MALTE)
             	ew.setColorByGreenPartyCorrMalte(c);
-            else if (style == displayStyleType.WINNER)
+            else if (style == displayStyleTypeElection.WINNER)
             	ew.setColorByWinner();
-            else if (style == displayStyleType.DIFFERENCE)
+            else if (style == displayStyleTypeElection.DIFFERENCE)
             	ew.setColorByDifference();
-            else if (style == displayStyleType.TURNOUT)
+            else if (style == displayStyleTypeElection.TURNOUT)
             	ew.setColorByTurnout();
-            else if (style == displayStyleType.INFLUENCE)
+            else if (style == displayStyleTypeElection.INFLUENCE)
             	ew.setColorByInfluence();
             
             map.addMapMarkerPolygonList(ew.getDrawList());
             
-            if (style == displayStyleType.GREEN_PARTY_CORR_MALTE || style == displayStyleType.GREEN_PARTY_NORMAL) {
+            if (style == displayStyleTypeElection.GREEN_PARTY_CORR_MALTE || style == displayStyleTypeElection.GREEN_PARTY_NORMAL) {
 	            Iterator<MaltePoint> it = c.iterator();
 	            while (it.hasNext()) {
 	            	MaltePoint mp = it.next();

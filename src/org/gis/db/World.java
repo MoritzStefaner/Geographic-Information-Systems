@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Random;
 
 import org.gis.tools.ExportObjectsTool;
 
@@ -81,6 +82,17 @@ public class World {
 		return null;
 	}
 	
+	public void setColorRandom() {
+		Iterator<WorldPolygon> it = getCountries().values().iterator();
+		
+		while (it.hasNext()) {
+			WorldPolygon wp = it.next();
+			
+			Random rand = new Random();
+			wp.setColor(new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat(), 0.5f));
+		}
+	}
+	
 	public void setColorByTravelThrough() {
 		setColorByTravelThrough(0, true);
 	}
@@ -126,7 +138,7 @@ public class World {
     	if (all)
     		result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.world_id = world.id GROUP BY world.id");
     	else
-    		result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.id = " + id + " AND storks.world_id = world.id GROUP BY world.id");
+    		result = db.executeQuery("SELECT world.id, COUNT(storks.id) FROM world, storks WHERE storks.taglocalidentifier = " + id + " AND storks.world_id = world.id GROUP BY world.id");
     		
     	int max = 0;
     	try {
@@ -162,11 +174,10 @@ public class World {
     	Database db = Database.getDatabase();
     	
     	ResultSet result;
-    	System.out.println(all);
     	if (all)
     		result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.world_id = world.id");
     	else
-    		result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.id = " + id + " AND storks.world_id = world.id");
+    		result = db.executeQuery("SELECT DISTINCT world.id FROM world, storks WHERE storks.taglocalidentifier = " + id + " AND storks.world_id = world.id");
     	
     	try {
 			while(result.next()){
