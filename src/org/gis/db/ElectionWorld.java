@@ -90,6 +90,26 @@ public class ElectionWorld {
 		}
 	}
 	
+	public void setColorBySize(){
+		Database db = Database.getDatabase();
+		
+		ResultSet result = db.executeQuery("SELECT wkr_nr, SUM(ST_AREA(poly_geom)) as area FROM constituencies GROUP BY wkr_nr ORDER BY area DESC");
+		
+		double largestConstituencySize = 0;
+		try {
+			while (result.next()) {
+				Constituency c = getConstituencyMap().get((Integer) result.getObject(1));
+				double size = (Double) result.getObject(2);
+				if (largestConstituencySize == 0)
+					largestConstituencySize = size;
+				float alpha = (float) Math.pow(size / (float) largestConstituencySize, 0.33);
+				c.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public void setColorByGreenPartyLinear() {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
