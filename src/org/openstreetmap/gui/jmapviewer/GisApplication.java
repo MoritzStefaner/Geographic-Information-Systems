@@ -336,7 +336,7 @@ public class GisApplication extends JFrame {
         			} else {
 	        			//test for polygon
 	        			Constituency constituency = ew.getConstituency(c.getLon(), c.getLat());
-	        	    	if (c != null) {
+	        	    	if (constituency != null) {
 	        	    		informationElection.setText("Polygon ausgewählt!\n" + constituency.getInformation());
 	        	    		drawPartyResults(constituency.getElectionResult(), constituency.getVoter());
 	        	    		
@@ -351,11 +351,58 @@ public class GisApplication extends JFrame {
 	        				}
 	        	    	}
         			}
-        		} else {
-        			
         		}
         	} else if (w != null) {
-        		getCountry(c.getLon(), c.getLat());
+        		if (interaction == interactionType.NORMAL) {
+        			//test for point
+        			StorkPoint sp = w.getStorkPoint(c.getLon(), c.getLat());
+        			if (sp != null) {
+	        			Point p = map.getMapPosition(sp.getX(), sp.getY());
+	        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
+	        				informationWorld.setText(sp.getId().toString());
+	        			} else {
+		        			//test for polygon
+	                		Country country = w.getCountry(c.getLon(), c.getLat());
+	                		if (country != null) {
+	                			informationWorld.setText(country.getName());
+	                		}
+	        			}    
+        			}
+        		} else if (interaction == interactionType.TOPOLOGICAL) {
+        			//test for point
+        			StorkPoint sp = w.getStorkPoint(c.getLon(), c.getLat());
+        			if (sp != null) {
+	        			Point p = map.getMapPosition(sp.getX(), sp.getY());
+	        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
+	        				informationWorld.setText("Punkt ausgewählt!\n" + sp.getTimestamp().toString());
+	        				if (w.getLastPoint() != null) {
+	        					informationWorld.setText("Point-Point test");
+	        					w.setLastPoint(null);
+	        				} else if (w.getLastPolygon() != null) {
+	        					informationWorld.setText("Point-Polygon test");
+	        					w.setLastPolygon(null);
+	        				} else {
+	        					w.setLastPoint(sp);
+	        				}
+	        			} else {
+		        			//test for polygon
+	                		Country country = w.getCountry(c.getLon(), c.getLat());
+		        	    	if (country != null) {
+		        	    		informationWorld.setText("Polygon ausgewählt!\n" + country.getName());
+		        	    		
+		        	    		if (w.getLastPoint() != null) {
+		        	    			informationWorld.setText("Point-Polygon test");
+		        					w.setLastPoint(null);
+		        				} else if (w.getLastPolygon() != null) {
+		        					informationWorld.setText("Polygon-Polygon test");
+		        					w.setLastPolygon(null);
+		        				} else {
+			        	    		w.setLastPolygon(country);
+		        				}
+		        	    	}
+	        			}
+        			}
+        		}
         	}
         }
     }
@@ -364,17 +411,6 @@ public class GisApplication extends JFrame {
     	partyChart.setParties(parties);
     	partyChart.setVoter(voters);
     	partyChart.paint(partyChart.getGraphics());
-    }
-
-    private void getCountry(double longitude, double latitude) {
-    	GisPoint p = new GisPoint(latitude, longitude);
-    	Integer i = w.compareToWorld(p);
-    	System.out.println(latitude + ", " + longitude);
-    	if (i != null) {
-    		Country pol = w.getCountries().get(i);
-    		if (pol != null)
-    			informationWorld.setText(pol.getName());
-    	}
     }
     
     private void drawStorks() {

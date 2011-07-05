@@ -14,6 +14,24 @@ public class World {
 	private HashMap<Integer, Country> countries;
 	private HashMap<Integer, StorkPoint> storks;
 	private int largestCountrySize = 0;
+	private StorkPoint lastPoint;
+	private Country lastPolygon;
+	
+	public StorkPoint getLastPoint() {
+		return lastPoint;
+	}
+
+	public void setLastPoint(StorkPoint lastPoint) {
+		this.lastPoint = lastPoint;
+	}
+
+	public Country getLastPolygon() {
+		return lastPolygon;
+	}
+
+	public void setLastPolygon(Country lastPolygon) {
+		this.lastPolygon = lastPolygon;
+	}
 	
 	public World() {
 		this.countries = ExportObjectsTool.exportWorld();
@@ -44,6 +62,34 @@ public class World {
 		return list;
 	}
 	
+    public Country getCountry(double longitude, double latitude) {
+    	GisPoint p = new GisPoint(latitude, longitude);
+    	Integer i = compareToWorld(p);
+    	
+    	if (i != null) {
+    		Country c = getCountries().get(i);
+    		return c;
+    	}
+    	return null;
+    }
+    
+	public StorkPoint getStorkPoint(double longitude, double latitude) {
+		GisPoint p = new GisPoint(latitude, longitude);
+		Database db = Database.getDatabase();
+		
+		ResultSet result = db.executeQuery("SELECT id, DISTANCE(GeomFromText('" + p + "'), geometrycolumn) AS d FROM storks ORDER BY d LIMIT 1");
+		
+		try {
+			if (result.next())
+				return storks.get((Integer) result.getObject(1));
+			else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+    
 	/**
 	 * Relates a point to the countries in the world.
 	 * 
