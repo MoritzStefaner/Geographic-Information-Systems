@@ -3,6 +3,9 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -55,17 +58,22 @@ public class GisApplication extends JFrame {
     private JTextArea informationWorld;
     private PartyChart partyChart;
     private final JComboBox storkSelection;
+    private interactionType interaction;
     
     private static enum displayStyleTypeElection { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
     	TURNOUT, INFLUENCE, SIZE }; 
     private static enum displayStyleTypeStorks { RANDOM, SIZE, TRAVEL_THROUGH, TRAVEL_THROUGH_PERCENTAGE };
+    private static enum interactionType { NORMAL, TOPOLOGICAL };
     
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
         setSize(800, 800);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setVisible(true);
         map = new JMapViewer();
         w = null;
         ew = null;
+        interaction = interactionType.NORMAL;
         JPanel rightPanel = new JPanel();
         JPanel helpPanel = new JPanel();
         JPanel informationElectionPanel = new JPanel(new FlowLayout());
@@ -80,6 +88,9 @@ public class GisApplication extends JFrame {
         storkSelection = new JComboBox(storkSelectionOptions);
         String[] displayStyleWorldTypes = { "Normal", "Area Size", "Travel through", "Travel through percentage" };
         final JComboBox displayStyleWorld = new JComboBox(displayStyleWorldTypes);
+        String[] interactionTypesStrings = { "Information", "Topological" };
+        final JComboBox interactionBox = new JComboBox(interactionTypesStrings);
+        interaction = interactionType.NORMAL;
         partyChart = new PartyChart();
         partyChart.setPreferredSize(new Dimension(201, 200));
         
@@ -107,6 +118,17 @@ public class GisApplication extends JFrame {
             }
         });
         rightPanel.add(tileSourceSelector);
+        
+        /* Create the interaction combo box */
+        rightPanel.add(interactionBox);
+        interactionBox.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+            	if (interactionBox.getSelectedIndex() == 0)
+            		interaction = interactionType.NORMAL;
+            	else if (interactionBox.getSelectedIndex() == 1)
+            		interaction = interactionType.TOPOLOGICAL;
+            }
+        });
         
         /* Creates the tabs */
         tabs.setPreferredSize(new Dimension(250, 600));
@@ -282,7 +304,56 @@ public class GisApplication extends JFrame {
     		Coordinate c = map.getPosition(event.getX(), event.getY());
     		
         	if (ew != null) {
-        		getConstituency(c.getLon(), c.getLat());
+        		if (interaction == interactionType.NORMAL) {
+        			//test for point
+        			MaltePoint mp = ew.getMaltePoint(c.getLon(), c.getLat());
+        			Point p = map.getMapPosition(mp.getX(), mp.getY());
+        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
+        				informationElection.setText(mp.getStarttime().toString());
+        			} else {
+	        			//test for polygon
+	        			Constituency constituency = ew.getConstituency(c.getLon(), c.getLat());
+	        	    	if (c != null) {
+	        	    		informationElection.setText(constituency.getInformation());
+	        	    		drawPartyResults(constituency.getElectionResult(), constituency.getVoter());
+	        	    	}
+        			}        			
+        		} else if (interaction == interactionType.TOPOLOGICAL) {
+        			//test for point
+        			MaltePoint mp = ew.getMaltePoint(c.getLon(), c.getLat());
+        			Point p = map.getMapPosition(mp.getX(), mp.getY());
+        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
+        				informationElection.setText("Punkt ausgewählt!\n" + mp.getStarttime().toString());
+        				if (ew.getLastPoint() != null) {
+        					informationElection.setText("Point-Point test");
+        					ew.setLastPoint(null);
+        				} else if (ew.getLastPolygon() != null) {
+        					informationElection.setText("Point-Polygon test");
+        					ew.setLastPolygon(null);
+        				} else {
+        					ew.setLastPoint(mp);
+        				}
+        			} else {
+	        			//test for polygon
+	        			Constituency constituency = ew.getConstituency(c.getLon(), c.getLat());
+	        	    	if (c != null) {
+	        	    		informationElection.setText("Polygon ausgewählt!\n" + constituency.getInformation());
+	        	    		drawPartyResults(constituency.getElectionResult(), constituency.getVoter());
+	        	    		
+	        	    		if (ew.getLastPoint() != null) {
+	        					informationElection.setText("Point-Polygon test");
+	        					ew.setLastPoint(null);
+	        				} else if (ew.getLastPolygon() != null) {
+	        					informationElection.setText("Polygon-Polygon test");
+	        					ew.setLastPolygon(null);
+	        				} else {
+		        	    		ew.setLastPolygon(constituency);
+	        				}
+	        	    	}
+        			}
+        		} else {
+        			
+        		}
         	} else if (w != null) {
         		getCountry(c.getLon(), c.getLat());
         	}
@@ -294,16 +365,7 @@ public class GisApplication extends JFrame {
     	partyChart.setVoter(voters);
     	partyChart.paint(partyChart.getGraphics());
     }
-    
-    private void getConstituency(double longitude, double latitude) {
-    	GisPoint p = new GisPoint(latitude, longitude);
-    	Constituency c = ew.getConstituencyMap().get(ew.compareToGermany(p));
-    	if (c != null) {
-    		informationElection.setText(c.getInformation());
-    		drawPartyResults(c.getElectionResult(), c.getVoter());
-    	}
-    }
-    
+
     private void getCountry(double longitude, double latitude) {
     	GisPoint p = new GisPoint(latitude, longitude);
     	Integer i = w.compareToWorld(p);
@@ -382,14 +444,13 @@ public class GisApplication extends JFrame {
     private void displayMalte(boolean show, displayStyleTypeElection style) {
     	if (show) {
     		showWorld(false, null);
-    		
-            Collection<MaltePoint> c = ExportObjectsTool.exportMalte().values();            
+    		           
             ew = new ElectionWorld();
             
             if (style == displayStyleTypeElection.GREEN_PARTY_NORMAL)
             	ew.setColorByGreenPartyLinear();
             else if (style == displayStyleTypeElection.GREEN_PARTY_CORR_MALTE)
-            	ew.setColorByGreenPartyCorrMalte(c);
+            	ew.setColorByGreenPartyCorrMalte();
             else if (style == displayStyleTypeElection.WINNER)
             	ew.setColorByWinner();
             else if (style == displayStyleTypeElection.DIFFERENCE)
@@ -404,7 +465,7 @@ public class GisApplication extends JFrame {
             map.addMapMarkerPolygonList(ew.getDrawList());
             
             if (style == displayStyleTypeElection.GREEN_PARTY_CORR_MALTE || style == displayStyleTypeElection.GREEN_PARTY_NORMAL) {
-	            Iterator<MaltePoint> it = c.iterator();
+	            Iterator<MaltePoint> it = ew.getMaltePoints().values().iterator();
 	            while (it.hasNext()) {
 	            	MaltePoint mp = it.next();
 	                map.mapMarkerList.add(new MapMarkerDot(mp.getX(), mp.getY()));
@@ -414,7 +475,6 @@ public class GisApplication extends JFrame {
     	} else {
     		map.mapMarkerPolygonList.clear();
     		map.mapMarkerList.clear();
-    		//map.setZoom(map.getZoom()*2);
     		ew = null;
     	}
     }

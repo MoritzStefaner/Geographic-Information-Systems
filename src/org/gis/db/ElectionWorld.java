@@ -14,12 +14,32 @@ import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 public class ElectionWorld {
 	private HashMap<Integer, Constituency> constituencyMap;
 	private LinkedList<MapMarkerPolygon> drawList;
+	private HashMap<Integer, MaltePoint> maltePoints;
 	private float maxGreenParty;
 	private float minGreenParty;
+	private MaltePoint lastPoint;
+	private Constituency lastPolygon;
 	
+	public MaltePoint getLastPoint() {
+		return lastPoint;
+	}
+
+	public void setLastPoint(MaltePoint lastPoint) {
+		this.lastPoint = lastPoint;
+	}
+
+	public Constituency getLastPolygon() {
+		return lastPolygon;
+	}
+
+	public void setLastPolygon(Constituency lastPolygon) {
+		this.lastPolygon = lastPolygon;
+	}
+
 	public ElectionWorld() {
-		this.constituencyMap = ExportObjectsTool.exportElection2009();
-		this.drawList = getElectionPolygons(this.constituencyMap);
+		constituencyMap = ExportObjectsTool.exportElection2009();
+		drawList = getElectionPolygons(this.constituencyMap);
+		maltePoints = ExportObjectsTool.exportMalte(); 
 
 		setGreenPartyExtrema();
 	}
@@ -44,6 +64,33 @@ public class ElectionWorld {
 	public LinkedList<MapMarkerPolygon> getDrawList() {
 		return drawList;
 	}
+	
+	public HashMap<Integer, MaltePoint> getMaltePoints() {
+		return maltePoints;
+	}
+    
+	public MaltePoint getMaltePoint(double longitude, double latitude) {
+		GisPoint p = new GisPoint(latitude, longitude);
+		Database db = Database.getDatabase();
+		
+		ResultSet result = db.executeQuery("SELECT id, DISTANCE(GeomFromText('" + p + "'), geometrycolumn) AS d FROM malte ORDER BY d LIMIT 1");
+		
+		try {
+			if (result.next())
+				return maltePoints.get((Integer) result.getObject(1));
+			else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+    public Constituency getConstituency(double longitude, double latitude) {
+    	GisPoint p = new GisPoint(latitude, longitude);
+    	Constituency c = getConstituencyMap().get(compareToGermany(p));
+    	return c;
+    }
     
 	/**
 	 * Relates a point to the countries in the world.
@@ -324,7 +371,7 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
-	public void setColorByGreenPartyCorrMalte(Collection<MaltePoint> malte) {
+	public void setColorByGreenPartyCorrMalte() {
     	Database db = Database.getDatabase();
 		ResultSet result = db.executeQuery("SELECT constituencies.wkr_nr, COUNT(malte.id) FROM constituencies, malte WHERE constituencies.wkr_nr = malte.wkr_nr GROUP BY constituencies.wkr_nr");
     	
