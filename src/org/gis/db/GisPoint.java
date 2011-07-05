@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.postgis.Point;
+import org.postgresql.util.PSQLException;
 
 public class GisPoint extends Point {
 	
@@ -46,15 +47,17 @@ public class GisPoint extends Point {
 		double meter = 0;
 		Database db = Database.getDatabase();
 		
-		ResultSet result = db.executeQuery("SELECT ST_Distance(gg1, gg2) FROM (SELECT	ST_GeographyFromText('SRID=4326;"+this+"') As gg1, " +
-				"ST_GeographyFromText('SRID=4326;"+point+"') As gg2) As foo;");
-		
 		try {
-			result.next();
-			meter = (Double) result.getObject(1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			ResultSet result = db.executeQuery("SELECT Distance(GeomFromText('" + this + "', 4326), GeomFromText('" + point + "', 4326));");
+				result.next();
+				meter = (Double) result.getObject(1);
+				result.close();
+			
+		} catch (Exception e) {
+			System.out.println(this);
+			System.out.println(point);
 			e.printStackTrace();
+			System.exit(1);
 		}
 		
 		kilometer = meter/1000;
@@ -128,5 +131,4 @@ public class GisPoint extends Point {
 		return null;
 		
 	}
-	
 }
