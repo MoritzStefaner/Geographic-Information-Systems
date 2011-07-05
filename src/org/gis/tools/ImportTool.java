@@ -210,7 +210,7 @@ public class ImportTool {
 
 		try {
 			bufRdr = new BufferedReader(new InputStreamReader(
-					new FileInputStream(file), "UTF-16"));
+					new FileInputStream(file), "UTF-8"));
 		} catch (FileNotFoundException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -238,6 +238,8 @@ public class ImportTool {
 		String subregion = null;
 		String lon = null;
 		String lat = null;
+		Double maxDistance = 0.0;
+		GisPoint maxPoint = null;
 		
 		bufRdr.readLine();
 		while ((line = bufRdr.readLine()) != null) {
@@ -246,9 +248,13 @@ public class ImportTool {
 			
 			if (id == newid){				
 				GisPoint point = new GisPoint(Double.parseDouble(token[2]), Double.parseDouble(token[1]));
-				points.add(point);
+					points.add(point);
 	
 			}else{
+				
+//				if(newid == 24){
+//					System.out.println(maxPoint);
+//				}
 				
 				if (firstCountry) {
 					firstCountry = false;
@@ -267,9 +273,10 @@ public class ImportTool {
 					pst.setInt(12, Integer.parseInt(subregion));
 					pst.setDouble(13, Double.parseDouble(lon));
 					pst.setDouble(14, Double.parseDouble(lat));
-					String polygon = buildPolygon(points);
-					pst.setString(15, polygon);
+					String polygon = "";				
+					pst.setString(15, buildPolygon(points, id));
 					pst.executeUpdate();
+					System.out.println(id + ": " + name);
 				}
 				
 				points = new LinkedList<GisPoint>();
@@ -292,7 +299,6 @@ public class ImportTool {
 				lon = token[14];
 				lat = token[15];
 			}
-			
 			j++;
 		}
 		pst.setInt(1, id);
@@ -309,16 +315,17 @@ public class ImportTool {
 		pst.setInt(12, Integer.parseInt(subregion));
 		pst.setDouble(13, Double.parseDouble(lon));
 		pst.setDouble(14, Double.parseDouble(lat));
-		pst.setString(15, buildPolygon(points));
+		pst.setString(15, buildPolygon(points, id));	
 		pst.executeUpdate();
 		
 		System.out.print("World: " + j + " Lines eingelesen!");		
 	}
 	
-	private String buildPolygon(LinkedList<GisPoint> points){
+	private String buildPolygon(LinkedList<GisPoint> points, Integer id){
 		
 		String polygon = "POLYGON((";
 		boolean first = true;
+		LinkedList<GisPoint> rest = new LinkedList<GisPoint>();
 		
 		while (points.isEmpty() == false) {
 			GisPoint firstPoint = points.removeFirst();
@@ -341,7 +348,7 @@ public class ImportTool {
 				}
 				polygon = polygon + ")";
 			} else {
-				
+				rest.add(firstPoint);
 //				if(first){
 //					polygon = polygon + firstPoint.x + " " + firstPoint.y
 //					+ "," + firstPoint.x + " " + firstPoint.y + ")";
@@ -351,6 +358,35 @@ public class ImportTool {
 //							+ "," + firstPoint.x + " " + firstPoint.y + ")";
 //				}
 			}
+		}	
+		
+		Double maxDistance = 0.0;
+		GisPoint maxPoint = null;
+		GisPoint lastPoint = null;
+		
+//		if(id == 23){
+//			for(GisPoint point : rest){
+//				if(lastPoint != null){
+//					Double distance = point.compareTo(lastPoint);
+//					if(maxDistance < distance){
+//						maxDistance = distance;
+//						maxPoint = point;
+//					}
+//				}
+//			lastPoint = point;
+//			}
+//			System.out.println(maxPoint + ": " + maxDistance);
+//		}
+		
+		ListIterator<GisPoint> iterator2 = rest.listIterator();
+		if(rest.isEmpty() == false && iterator2.hasNext()){
+			GisPoint startPoint = rest.getFirst();
+			polygon = polygon + ",(" + startPoint.x + " " + startPoint.y;
+			while(iterator2.hasNext()){
+				GisPoint point = iterator2.next();
+				polygon = polygon + "," + point.x + " " + point.y;
+			}
+			polygon = polygon + "," + startPoint.x + " " + startPoint.y + ")";
 		}
 		
 		polygon = polygon + ")";
@@ -682,7 +718,7 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		it.importWorld();
-		it.importStorks();
+		//it.importStorks();
 		//it.importConstituencies();
 		//it.importMalte();
 		//it.importResults();
