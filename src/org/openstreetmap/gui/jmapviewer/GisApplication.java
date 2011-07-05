@@ -57,8 +57,8 @@ public class GisApplication extends JFrame {
     private final JComboBox storkSelection;
     
     private static enum displayStyleTypeElection { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
-    	TURNOUT, INFLUENCE }; 
-    private static enum displayStyleTypeStorks { RANDOM, TRAVEL_THROUGH, TRAVEL_THROUGH_PERCENTAGE };
+    	TURNOUT, INFLUENCE, SIZE }; 
+    private static enum displayStyleTypeStorks { RANDOM, SIZE, TRAVEL_THROUGH, TRAVEL_THROUGH_PERCENTAGE };
     
     public GisApplication() {
         super("Geographic Information Systems SS 2011 - Stephanie Marx, Dirk Kirsten");
@@ -74,11 +74,11 @@ public class GisApplication extends JFrame {
         JPanel worldTab = new JPanel(new FlowLayout());
         final JTabbedPane tabs = new JTabbedPane();
         String[] displayStyleTypes = { "Results Green Party", "Green Party <> Malte Spitz", 
-        		"Winner", "Difference", "Turnout", "Influence" };
+        		"Winner", "Difference", "Turnout", "Influence", "Area Size" };
         final JComboBox displayStyle = new JComboBox(displayStyleTypes);
         String[] storkSelectionOptions = { "All", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"};
         storkSelection = new JComboBox(storkSelectionOptions);
-        String[] displayStyleWorldTypes = { "Normal", "Travel through", "Travel through percentage" };
+        String[] displayStyleWorldTypes = { "Normal", "Area Size", "Travel through", "Travel through percentage" };
         final JComboBox displayStyleWorld = new JComboBox(displayStyleWorldTypes);
         partyChart = new PartyChart();
         partyChart.setPreferredSize(new Dimension(201, 200));
@@ -127,12 +127,16 @@ public class GisApplication extends JFrame {
                     	displayMalte(true, displayStyleTypeElection.TURNOUT);
                   else if (displayStyle.getSelectedIndex() == 5)
                   		displayMalte(true, displayStyleTypeElection.INFLUENCE);
+                  else if (displayStyle.getSelectedIndex() == 6)
+                		displayMalte(true, displayStyleTypeElection.SIZE);
               } else if (tabs.getSelectedIndex() == 1) {
 	          		if (displayStyleWorld.getSelectedIndex() == 0)
 	                  	showWorld(true, displayStyleTypeStorks.RANDOM);
 	          		else if (displayStyleWorld.getSelectedIndex() == 1)
-	                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+	                  	showWorld(true, displayStyleTypeStorks.SIZE);
 	          		else if (displayStyleWorld.getSelectedIndex() == 2)
+	                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+	          		else if (displayStyleWorld.getSelectedIndex() == 3)
 	                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE); 
               }
             }
@@ -163,6 +167,8 @@ public class GisApplication extends JFrame {
                 	displayMalte(true, displayStyleTypeElection.TURNOUT);
                 else if (displayStyle.getSelectedIndex() == 5)
                 	displayMalte(true, displayStyleTypeElection.INFLUENCE);
+                else if (displayStyle.getSelectedIndex() == 6)
+              		displayMalte(true, displayStyleTypeElection.SIZE);
             }
         });
         electionTab.add(displayStyle);
@@ -184,10 +190,12 @@ public class GisApplication extends JFrame {
         	public void itemStateChanged(ItemEvent e) {
         		if (displayStyleWorld.getSelectedIndex() == 0)
                 	showWorld(true, displayStyleTypeStorks.RANDOM);
-        		else if (displayStyleWorld.getSelectedIndex() == 1)
-                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
-        		else if (displayStyleWorld.getSelectedIndex() == 2)
-                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE); 
+          		else if (displayStyleWorld.getSelectedIndex() == 1)
+                  	showWorld(true, displayStyleTypeStorks.SIZE);
+          		else if (displayStyleWorld.getSelectedIndex() == 2)
+                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+          		else if (displayStyleWorld.getSelectedIndex() == 3)
+                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE); 
         	}
         });
         worldTab.add(storkSelection);
@@ -196,10 +204,12 @@ public class GisApplication extends JFrame {
         	public void itemStateChanged(ItemEvent e) {
         		if (displayStyleWorld.getSelectedIndex() == 0)
                 	showWorld(true, displayStyleTypeStorks.RANDOM);
-        		else if (displayStyleWorld.getSelectedIndex() == 1)
-                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
-        		else if (displayStyleWorld.getSelectedIndex() == 2)
-                	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE);      			
+          		else if (displayStyleWorld.getSelectedIndex() == 1)
+                  	showWorld(true, displayStyleTypeStorks.SIZE);
+          		else if (displayStyleWorld.getSelectedIndex() == 2)
+                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH);
+          		else if (displayStyleWorld.getSelectedIndex() == 3)
+                  	showWorld(true, displayStyleTypeStorks.TRAVEL_THROUGH_PERCENTAGE);      			
         	}
         });
         worldTab.add(displayStyleWorld);
@@ -296,18 +306,25 @@ public class GisApplication extends JFrame {
     
     private void getCountry(double longitude, double latitude) {
     	GisPoint p = new GisPoint(latitude, longitude);
-    	Country pol = w.getCountries().get(w.compareToWorld(p));
-    	if (pol != null)
-    		informationWorld.setText(pol.getName());
+    	Integer i = w.compareToWorld(p);
+    	System.out.println(latitude + ", " + longitude);
+    	if (i != null) {
+    		Country pol = w.getCountries().get(i);
+    		if (pol != null)
+    			informationWorld.setText(pol.getName());
+    	}
     }
     
     private void drawStorks() {
 		map.mapMarkerList.clear();
-    	Iterator<StorkPoint> it = w.getStorks().values().iterator();
-        while (it.hasNext()) {
-        	StorkPoint sp = it.next();
-            map.mapMarkerList.add(new MapMarkerDot(sp.getX(), sp.getY()));
-        }
+		
+		if (w.getStorks() != null) {
+	    	Iterator<StorkPoint> it = w.getStorks().values().iterator();
+	        while (it.hasNext()) {
+	        	StorkPoint sp = it.next();
+	            map.mapMarkerList.add(new MapMarkerDot(sp.getX(), sp.getY()));
+	        }
+		}
     }
     
 	private void showWorld(boolean show, displayStyleTypeStorks displayStyle) {
@@ -324,6 +341,9 @@ public class GisApplication extends JFrame {
         			w.loadAllStorks();
         		else 
         			w.loadSelectedStorks(getStorkId());
+    		} else if (displayStyle == displayStyleTypeStorks.SIZE) {
+    			w.setColorBySize();
+    			w.setStorks(null);
     		} else if (displayStyle == displayStyleTypeStorks.TRAVEL_THROUGH) {
     			if (storkSelection.getSelectedIndex() == 0) {
         			w.setColorByTravelThrough();
@@ -378,6 +398,8 @@ public class GisApplication extends JFrame {
             	ew.setColorByTurnout();
             else if (style == displayStyleTypeElection.INFLUENCE)
             	ew.setColorByInfluence();
+            else if (style == displayStyleTypeElection.SIZE)
+            	ew.setColorBySize();
             
             map.addMapMarkerPolygonList(ew.getDrawList());
             

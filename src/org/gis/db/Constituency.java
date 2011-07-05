@@ -1,6 +1,9 @@
 package org.gis.db;
 
+import java.awt.Color;
 import java.util.*;
+
+import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
 public class Constituency {
 	Integer number;
@@ -80,5 +83,13 @@ public class Constituency {
 		}
 		
 		return s;
+	}
+	
+	public void setColor(Color c) {
+		Iterator<ConstPolygon> it = getPolygons().iterator();
+		while (it.hasNext()) {
+			MapMarkerPolygon m = it.next();
+			m.setColor(c);
+		}
 	}
 }

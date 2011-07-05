@@ -13,6 +13,7 @@ import org.gis.tools.ExportObjectsTool;
 public class World {
 	private HashMap<Integer, Country> countries;
 	private HashMap<Integer, StorkPoint> storks;
+	private int largestCountrySize = 0;
 	
 	public World() {
 		this.countries = ExportObjectsTool.exportWorld();
@@ -24,6 +25,10 @@ public class World {
 	
 	public void loadSelectedStorks(int id) {
 		this.storks = ExportObjectsTool.exportStorkSelected(id);
+	}
+	
+	public void setStorks(HashMap<Integer, StorkPoint> s) {
+		this.storks = s;
 	}
 	
 	public HashMap<Integer, StorkPoint> getStorks() {
@@ -50,10 +55,11 @@ public class World {
 		ResultSet result = db.executeQuery("SELECT id FROM world WHERE Contains(poly_geom, GeomFromText('"+point+"'))");
 		
 		try {
-			result.next();
-			return (Integer) result.getObject(1);
+			if (result.next())
+				return (Integer) result.getObject(1);
+			
+			return null;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -62,19 +68,24 @@ public class World {
 	/**
 	 * Hard task d.
 	 * 
-	 * Searches for the largest country by area.
+	 * Searches for country by their size
 	 * 
 	 * @return The id of the country.
 	 */
-	public Integer getLargest(){
+	public LinkedList<Integer> getLargest(){
 		Database db = Database.getDatabase();
 		
 		// Ignores the Antartica as a country.
-		ResultSet result = db.executeQuery("SELECT id, name, Area(GeomFromText(poly_geom, 4326))  FROM world WHERE name != 'Antarctica' ORDER BY area DESC");
+		ResultSet result = db.executeQuery("SELECT id, name, area FROM world WHERE name != 'Antarctica' ORDER BY area DESC");
 		
+		LinkedList<Integer> list = new LinkedList<Integer>();
 		try {
-			result.next();
-			return (Integer) result.getObject(1);
+			while (result.next()) {
+				if (largestCountrySize == 0)
+					largestCountrySize = (Integer) result.getObject(3);
+				list.add((Integer) result.getObject(1));
+			}
+			return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -93,6 +104,17 @@ public class World {
 		}
 	}
 	
+	public void setColorBySize() {
+		Iterator<Integer> it = getLargest().iterator();
+		
+		
+		while (it.hasNext()) {
+			Country c = getCountries().get(it.next());
+			float alpha = (float) Math.pow(c.getArea() / (float) largestCountrySize, 0.33);
+			c.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
+		}
+	}
+	
 	public void setColorByTravelThrough() {
 		setColorByTravelThrough(0, true);
 	}
@@ -100,6 +122,7 @@ public class World {
 	public void setColorByTravelThrough(int id) {
 		setColorByTravelThrough(id, false);
 	}
+	
 	public void setColorByTravelThrough(int id, boolean all) {
 		Iterator<Country> it = getCountries().values().iterator();
 		
