@@ -16,7 +16,7 @@ public class ElectionWorld {
 	private HashMap<Integer, Constituency> constituencyMap;
 	private LinkedList<MapMarkerPolygon> drawList;
 	private HashMap<Integer, MaltePoint> maltePoints;
-	private float maxGreenParty;
+	private float maxGreenParty = 0;
 	private float minGreenParty;
 	private MaltePoint lastPoint;
 	private Constituency lastPolygon;
@@ -41,8 +41,6 @@ public class ElectionWorld {
 		constituencyMap = ExportObjectsTool.exportElection2009();
 		drawList = getElectionPolygons(this.constituencyMap);
 		maltePoints = ExportObjectsTool.exportMalte(); 
-
-		setGreenPartyExtrema();
 	}
 	
     private LinkedList<MapMarkerPolygon> getElectionPolygons(HashMap<Integer, Constituency> constituencies) {
@@ -115,22 +113,23 @@ public class ElectionWorld {
 	}
     
 	private void setGreenPartyExtrema() {
-		Iterator<Constituency> it = getConstituencyMap().values().iterator();
-		maxGreenParty = 0;
-		minGreenParty = 1;
-		
-		while (it.hasNext()) {
-			Constituency c = it.next();
-			HashMap<String, PartyResults> partyResults = c.getResult();
+		if (maxGreenParty == 0) {
+			Iterator<Constituency> it = getConstituencyMap().values().iterator();
+			minGreenParty = 1;
 			
-			if (partyResults != null) {
-				PartyResults greenPartyResults = partyResults.get("GRÜNE");
-				if (greenPartyResults != null) {
-					float percentage = greenPartyResults.getZweitstimmen() / (float)c.getVoter();
-					if (percentage > maxGreenParty) 
-						maxGreenParty = percentage;
-					if (percentage < minGreenParty)
-						minGreenParty = percentage;
+			while (it.hasNext()) {
+				Constituency c = it.next();
+				HashMap<String, PartyResults> partyResults = c.getResult();
+				
+				if (partyResults != null) {
+					PartyResults greenPartyResults = partyResults.get("GRÜNE");
+					if (greenPartyResults != null) {
+						float percentage = greenPartyResults.getZweitstimmen() / (float)c.getVoter();
+						if (percentage > maxGreenParty) 
+							maxGreenParty = percentage;
+						if (percentage < minGreenParty)
+							minGreenParty = percentage;
+					}
 				}
 			}
 		}
@@ -157,6 +156,7 @@ public class ElectionWorld {
 	}
 	
 	public void setColorByGreenPartyLinear() {
+		setGreenPartyExtrema();
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
 		while (it.hasNext()) {
@@ -334,6 +334,8 @@ public class ElectionWorld {
 	
 	public void setColorByGreenPartyCorrMalte() {
     	Database db = Database.getDatabase();
+    	setGreenPartyExtrema();
+    	
 		ResultSet result = db.executeQuery("SELECT constituencies.wkr_nr, COUNT(malte.id) FROM constituencies, malte WHERE constituencies.wkr_nr = malte.wkr_nr GROUP BY constituencies.wkr_nr");
     	
 		try {
