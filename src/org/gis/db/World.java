@@ -259,4 +259,34 @@ public class World {
     	
     	return list;
     }
+    
+    
+    public Integer getStorkId(int selected) {
+    	if (selected == 1)
+			return 91397;
+		else if (selected == 2)
+			return 77195;
+		else if (selected == 3)
+			return 91398;
+		else if (selected == 4)
+			return 91398;
+		else if (selected == 5)
+			return 93412;
+		else if (selected == 6)
+			return 93411;
+		else if (selected == 7)
+			return 54977;
+		else if (selected == 8)
+			return 14544;
+		else if (selected == 9)
+			return 40534;
+		else if (selected == 10)
+			return 54983;
+		else if (selected == 11)
+			return 54988;
+		else if (selected == 12)
+			return 14543;
+		else
+			return null;
+    }
 }
