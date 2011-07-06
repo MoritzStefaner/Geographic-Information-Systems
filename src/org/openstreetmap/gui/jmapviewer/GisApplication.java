@@ -30,6 +30,7 @@ import org.gis.db.Country;
 import org.gis.db.CountryPolygon;
 import org.gis.db.ElectionWorld;
 import org.gis.db.GisPoint;
+import org.gis.db.GisPoint.Relation;
 import org.gis.db.MaltePoint;
 import org.gis.db.Party;
 import org.gis.db.StorkPoint;
@@ -325,10 +326,12 @@ public class GisApplication extends JFrame {
         			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
         				informationElection.setText("Punkt ausgewählt!\n" + mp.getStarttime().toString());
         				if (ew.getLastPoint() != null) {
-        					informationElection.setText("Point-Point test");
+        					double dist = ew.getLastPoint().compareTo(mp);
+        					informationElection.setText(String.valueOf(dist));
         					ew.setLastPoint(null);
         				} else if (ew.getLastPolygon() != null) {
-        					informationElection.setText("Point-Polygon test");
+        					Relation r = ew.getLastPolygon().compareTo(mp);
+        					informationElection.setText(r.toString());
         					ew.setLastPolygon(null);
         				} else {
         					ew.setLastPoint(mp);
@@ -341,10 +344,12 @@ public class GisApplication extends JFrame {
 	        	    		drawPartyResults(constituency.getElectionResult(), constituency.getVoter());
 	        	    		
 	        	    		if (ew.getLastPoint() != null) {
-	        					informationElection.setText("Point-Polygon test");
+	        	    			Relation r = constituency.compareTo(ew.getLastPoint());
+	        	    			informationElection.setText(r.toString());
 	        					ew.setLastPoint(null);
 	        				} else if (ew.getLastPolygon() != null) {
-	        					informationElection.setText("Polygon-Polygon test");
+	        					String s = constituency.compareTo(ew.getLastPolygon());
+	        					informationElection.setText(s);
 	        					ew.setLastPolygon(null);
 	        				} else {
 		        	    		ew.setLastPolygon(constituency);
@@ -376,10 +381,12 @@ public class GisApplication extends JFrame {
 	        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
 	        				informationWorld.setText("Punkt ausgewählt!\n" + sp.getTimestamp().toString());
 	        				if (w.getLastPoint() != null) {
-	        					informationWorld.setText("Point-Point test");
+	        					double dist = w.getLastPoint().compareTo(sp);
+	        					informationWorld.setText(String.valueOf(dist));
 	        					w.setLastPoint(null);
 	        				} else if (w.getLastPolygon() != null) {
-	        					informationWorld.setText("Point-Polygon test");
+	        					Relation r = w.getLastPolygon().compareTo(sp);
+	        					informationWorld.setText(r.toString());
 	        					w.setLastPolygon(null);
 	        				} else {
 	        					w.setLastPoint(sp);
@@ -391,10 +398,12 @@ public class GisApplication extends JFrame {
 		        	    		informationWorld.setText("Polygon ausgewählt!\n" + country.getName());
 		        	    		
 		        	    		if (w.getLastPoint() != null) {
-		        	    			informationWorld.setText("Point-Polygon test");
+		        	    			Relation r = country.compareTo(w.getLastPoint());
+		        	    			informationWorld.setText(r.toString());
 		        					w.setLastPoint(null);
 		        				} else if (w.getLastPolygon() != null) {
-		        					informationWorld.setText("Polygon-Polygon test");
+		        					String s = country.compareTo(w.getLastPolygon());
+		        					informationWorld.setText(s);
 		        					w.setLastPolygon(null);
 		        				} else {
 			        	    		w.setLastPolygon(country);

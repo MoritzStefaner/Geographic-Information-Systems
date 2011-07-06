@@ -3,6 +3,7 @@ package org.gis.db;
 import java.awt.Color;
 import java.util.*;
 
+import org.gis.db.GisPoint.Relation;
 import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
 public class Constituency {
@@ -91,5 +92,34 @@ public class Constituency {
 			MapMarkerPolygon m = it.next();
 			m.setColor(c);
 		}
+	}
+	
+	public Relation compareTo(GisPoint p) {
+		Iterator<ConstPolygon> it = getPolygons().iterator();
+		Relation r = Relation.OUTSIDE;
+		
+		while (r == Relation.OUTSIDE && it.hasNext()) {
+			ConstPolygon cp = it.next();
+			r = cp.compareTo(p);
+		}
+		
+		return r;
+	}
+	
+	//TODO
+	public String compareTo(Constituency c) {
+		Iterator<ConstPolygon> it = c.getPolygons().iterator();
+		Iterator<ConstPolygon> it2 = getPolygons().iterator();
+		String r = null;
+		
+		while (it.hasNext()) {
+			ConstPolygon cp = it.next();
+			while (it2.hasNext()) {
+				ConstPolygon cp2 = it2.next();
+				r = cp.compareTo(cp2);
+			}
+		}
+		
+		return r;
 	}
 }

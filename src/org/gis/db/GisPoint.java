@@ -48,7 +48,7 @@ public class GisPoint extends Point {
 		Database db = Database.getDatabase();
 		
 		try {
-			ResultSet result = db.executeQuery("SELECT Distance(GeomFromText('" + this + "', 4326), GeomFromText('" + point + "', 4326));");
+			ResultSet result = db.executeQuery("SELECT Distance_Sphere(GeomFromText('" + this + "', 4326), GeomFromText('" + point + "', 4326));");
 				result.next();
 				meter = (Double) result.getObject(1);
 				result.close();

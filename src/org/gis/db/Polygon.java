@@ -12,7 +12,11 @@ public abstract class Polygon extends org.postgis.Polygon {
 	// The ring from org.postgis.Polygon as LinkedList.
 	private LinkedList<GisPoint> ring;
 	
-	public Polygon(LinearRing[] rings){
+	public Polygon() {
+		
+	}
+	
+	public Polygon(LinearRing[] rings) {
 		super(rings);
 		setRing(this.getRing(0).getPoints());
 	}

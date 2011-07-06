@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.gis.db.GisPoint.Relation;
+
 public class Country {
 	private String fips;
 	private String iso2;
@@ -91,4 +93,34 @@ public class Country {
 			cp.setColor(c);
 		}
 	}
+	
+	public Relation compareTo(GisPoint p) {
+		Iterator<CountryPolygon> it = getPolygons().iterator();
+		Relation r = Relation.OUTSIDE;
+		
+		while (r == Relation.OUTSIDE && it.hasNext()) {
+			CountryPolygon cp = it.next();
+			r = cp.compareTo(p);
+		}
+		
+		return r;
+	}
+	
+	//TODO
+	public String compareTo(Country c) {
+		Iterator<CountryPolygon> it = c.getPolygons().iterator();
+		Iterator<CountryPolygon> it2 = getPolygons().iterator();
+		String r = null;
+		
+		while (it.hasNext()) {
+			CountryPolygon cp = it.next();
+			while (it2.hasNext()) {
+				CountryPolygon cp2 = it2.next();
+				r = cp.compareTo(cp2);
+			}
+		}
+		
+		return r;
+	}
+
 }
