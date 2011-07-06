@@ -3,14 +3,11 @@ package org.openstreetmap.gui.jmapviewer;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -29,13 +26,11 @@ import org.gis.db.Constituency;
 import org.gis.db.Country;
 import org.gis.db.CountryPolygon;
 import org.gis.db.ElectionWorld;
-import org.gis.db.GisPoint;
 import org.gis.db.GisPoint.Relation;
 import org.gis.db.MaltePoint;
 import org.gis.db.Party;
 import org.gis.db.StorkPoint;
 import org.gis.db.World;
-import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.interfaces.PartyChart;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -92,7 +87,7 @@ public class GisApplication extends JFrame {
         String[] interactionTypesStrings = { "Information", "Topological" };
         final JComboBox interactionBox = new JComboBox(interactionTypesStrings);
         interaction = interactionType.NORMAL;
-        partyChart = new PartyChart();
+        partyChart = new PartyChart(200, 200);
         partyChart.setPreferredSize(new Dimension(201, 200));
         
         /* Set same Window standard operations */
