@@ -75,8 +75,14 @@ public class GisPoint extends Point {
 	public Relation compareTo(Polygon polygon){
 		boolean value = false;
 		Database db = Database.getDatabase();
+		ResultSet contains;
 		
-		ResultSet contains = db.executeQuery("SELECT Contains(GeomFromText('"+polygon+"'), GeomFromText('"+this+"')) AS contains");
+		if(polygon instanceof CountryPolygon){
+			contains = db.executeQuery("SELECT  Contains((SELECT Collect(a.the_geom) As the_geom FROM (SELECT (DumpRings( GeomFromText('"+polygon+"')).geom As the_geom) a),  GeomFromText('POINT(53.956 9.181)'))");
+		}else{
+			contains = db.executeQuery("SELECT Contains(GeomFromText('"+polygon+"'), GeomFromText('"+this+"')) AS contains");
+		}
+		
 		try {
 			contains.next();
 			value = (Boolean) contains.getObject(1);

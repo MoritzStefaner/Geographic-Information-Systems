@@ -68,7 +68,7 @@ public class ImportTool {
 				token = line.split(",");
 				
 				/* Get country where this point belongs to */
-				ResultSet result = db.executeQuery("SELECT id FROM world WHERE Contains(poly_geom, GeomFromText('POINT(" + token[2] + " " + token[1] + ")'))");
+				ResultSet result = db.executeQuery("SELECT DISTINCT new_world.id FROM (SELECT Collect(the_geom) As the_geom, bla.id FROM (SELECT (DumpRings(poly_geom)).geom As the_geom, id FROM world) As bla GROUP BY bla.id) As new_world WHERE Contains(new_world.the_geom,  GeomFromText('POINT(" + token[2] + " " + token[1] + ")'))");
 		    	
 				int world_id = 0;
 		    	try {
@@ -717,8 +717,8 @@ public class ImportTool {
 
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
-		it.importWorld();
-		//it.importStorks();
+		//it.importWorld();
+		it.importStorks();
 		//it.importConstituencies();
 		//it.importMalte();
 		//it.importResults();
