@@ -8,8 +8,8 @@ import java.awt.Point;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.gis.db.GisPoint;
-import org.gis.db.Polygon;
+import org.gis.data.GisPoint;
+import org.gis.data.Polygon;
 import org.postgis.LinearRing;
 
 /**

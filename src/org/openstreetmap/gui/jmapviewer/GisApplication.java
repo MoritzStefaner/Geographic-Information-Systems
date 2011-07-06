@@ -22,15 +22,15 @@ import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.gis.db.Constituency;
-import org.gis.db.Country;
-import org.gis.db.CountryPolygon;
-import org.gis.db.ElectionWorld;
-import org.gis.db.GisPoint.Relation;
-import org.gis.db.MaltePoint;
-import org.gis.db.PartyResults;
-import org.gis.db.StorkPoint;
-import org.gis.db.World;
+import org.gis.data.GisPoint.Relation;
+import org.gis.data.election.Constituency;
+import org.gis.data.election.ElectionWorld;
+import org.gis.data.election.MaltePoint;
+import org.gis.data.election.PartyResults;
+import org.gis.data.world.Country;
+import org.gis.data.world.CountryPolygon;
+import org.gis.data.world.StorkPoint;
+import org.gis.data.world.World;
 import org.openstreetmap.gui.jmapviewer.interfaces.PartyChart;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
@@ -45,7 +45,6 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  *
  */
 public class GisApplication extends JFrame {
-
     private static final long serialVersionUID = 1L;
     private final JMapViewer map;
     private World w;

@@ -16,7 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-import org.gis.db.*;
+import org.gis.data.*;
 
 public class ImportTool {
 	private Database db = null;

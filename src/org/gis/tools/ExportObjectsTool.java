@@ -5,7 +5,15 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.*;
 
-import org.gis.db.*;
+import org.gis.data.*;
+import org.gis.data.election.ConstPolygon;
+import org.gis.data.election.Constituency;
+import org.gis.data.election.FederalState;
+import org.gis.data.election.MaltePoint;
+import org.gis.data.election.PartyResults;
+import org.gis.data.world.Country;
+import org.gis.data.world.CountryPolygon;
+import org.gis.data.world.StorkPoint;
 import org.postgis.*;
 
 public class ExportObjectsTool {

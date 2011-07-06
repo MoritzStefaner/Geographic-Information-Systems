@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import org.gis.db.PartyResults;
+import org.gis.data.election.PartyResults;
 
 /**
  * Draws a visualization of the party results for one specific constituency. Draws a bar and
