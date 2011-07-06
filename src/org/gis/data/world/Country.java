@@ -124,4 +124,11 @@ public class Country {
 		return r;
 	}
 
+	public String getInformation() {
+		return "Name: " + getName() + "\n" +
+			   "Region: " + getRegion() + "\n" +
+			   "Subregion: " + getSubregion() + "\n" +
+			   "ISO 2:" + getIso2() + "\n" +
+			   "ISO 3:" + getIso3() + "\n";
+	}
 }

@@ -261,8 +261,7 @@ public class World {
     	
     	return list;
     }
-    
-    
+  
     public Integer getStorkId(int selected) {
     	if (selected == 1)
 			return 91397;

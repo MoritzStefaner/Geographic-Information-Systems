@@ -1,6 +1,7 @@
 package org.gis.data.world;
 
 import java.sql.Time;
+import java.text.DateFormat;
 
 import org.gis.data.GisPoint;
 import org.postgis.Point;
@@ -30,5 +31,13 @@ public class StorkPoint extends GisPoint {
 	
 	public Integer getLocalIdentifier(){
 		return this.localIdentifier;
+	}
+	
+	public String getInformation() {
+		DateFormat df;
+		df = DateFormat.getDateTimeInstance( DateFormat.FULL, DateFormat.MEDIUM );
+		return "ID: " + getId().toString() + "\n" +
+			   "Time: " + df.format(getTimestamp()) + "\n" +
+			   "LocalID: " + getLocalIdentifier();
 	}
 }

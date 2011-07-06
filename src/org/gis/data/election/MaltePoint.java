@@ -1,12 +1,13 @@
 package org.gis.data.election;
 
 import java.sql.Time;
+import java.text.DateFormat;
 
 import org.gis.data.GisPoint;
 import org.postgis.Point;
 
 public class MaltePoint extends GisPoint {
-	
+	private static final long serialVersionUID = -3135502834709755141L;
 	private Integer id;
 	private Time starttime;
 	private Time endtime;
@@ -55,12 +56,22 @@ public class MaltePoint extends GisPoint {
 		return cellb;
 	}
 
-
 	public Integer getDirection() {
 		return direction;
 	}
 	
 	public Integer getId(){
 		return id;
+	}
+	
+	public String getInformation() {
+		DateFormat df;
+		df = DateFormat.getDateTimeInstance( DateFormat.FULL, DateFormat.MEDIUM );
+		return "Start: " + df.format(getStarttime()) + "\n" +
+			   "End: " + df.format(getEndtime()) + "\n" +
+			   "Service: " + getService() + "\n" + 
+			   "In/Outgoing: " + getInoutgoing() + "\n" +
+			   "Cell A: " + getCella() + "\n" +
+			   "Cell B: " + getCellb() + "\n";
 	}
 }

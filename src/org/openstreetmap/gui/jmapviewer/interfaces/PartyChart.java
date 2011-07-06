@@ -40,6 +40,9 @@ public class PartyChart extends JPanel {
 		/* Clear the old drawing */
 		g.clearRect(0, 0, width + 1, height);
 		
+		if (parties == null)
+			return;
+		
 		/* Set a correct Font for drawing percentages */
 		Font font = new Font("Verdana", Font.PLAIN, 11);
 		g.setFont(font);
