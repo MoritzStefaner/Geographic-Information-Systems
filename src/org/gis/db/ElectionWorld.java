@@ -120,10 +120,10 @@ public class ElectionWorld {
 		
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			Iterator<Party> it2 = c.getResult().iterator();
+			Iterator<PartyResults> it2 = c.getResult().iterator();
 			boolean found = false;
 			while (it2.hasNext() && !found) {
-				Party p = it2.next();
+				PartyResults p = it2.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
 					float percentage = p.getZweitstimmen() / (float)c.getVoter();
 					if (percentage > maxGreenParty) 
@@ -162,10 +162,10 @@ public class ElectionWorld {
 		
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			Iterator<Party> it2 = c.getResult().iterator();
+			Iterator<PartyResults> it2 = c.getResult().iterator();
 			boolean found = false;
 			while (it2.hasNext() && !found) {
-				Party p = it2.next();
+				PartyResults p = it2.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
 					Iterator<ConstPolygon> it3 = c.getPolygons().iterator();
 					float alpha = (p.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty);
@@ -275,14 +275,14 @@ public class ElectionWorld {
 		
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			Iterator<Party> it2 = c.getResult().iterator();
+			Iterator<PartyResults> it2 = c.getResult().iterator();
 			
-			Party winner = null;
+			PartyResults winner = null;
 			float winnerPercentage = 0.0f;
 			float secondPercentage = 0.0f;
 			
-			Party p1 = it2.next();
-			Party p2 = it2.next();
+			PartyResults p1 = it2.next();
+			PartyResults p2 = it2.next();
 			if (p1.getZweitstimmen() / (float) c.getVoter() > p2.getZweitstimmen() / (float) c.getVoter()) {
 				winner = p1;
 				winnerPercentage = p1.getZweitstimmen() / (float) c.getVoter();
@@ -293,7 +293,7 @@ public class ElectionWorld {
 				secondPercentage = p1.getZweitstimmen() / (float) c.getVoter();
 			}
 			while (it2.hasNext()) {
-				Party p = it2.next();
+				PartyResults p = it2.next();
 				float percentage = p.getZweitstimmen() / (float) c.getVoter();
 				if (percentage > winnerPercentage) {
 					secondPercentage = winnerPercentage;
@@ -334,12 +334,12 @@ public class ElectionWorld {
 		
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			Iterator<Party> it2 = c.getResult().iterator();
+			Iterator<PartyResults> it2 = c.getResult().iterator();
 			
-			Party winner = null;
+			PartyResults winner = null;
 			float winnerPercentage = 0.0f;
 			while (it2.hasNext()) {
-				Party p = it2.next();
+				PartyResults p = it2.next();
 				float percentage = p.getZweitstimmen() / (float) c.getVoter();
 				if (percentage > winnerPercentage) {
 					winnerPercentage = percentage;
@@ -391,10 +391,10 @@ public class ElectionWorld {
 		Iterator<Constituency> it2 = getConstituencyMap().values().iterator();
 		while (it2.hasNext()) {
 			Constituency c = it2.next();
-			Iterator<Party> it3 = c.getResult().iterator();
+			Iterator<PartyResults> it3 = c.getResult().iterator();
 			boolean found = false;
 			while (it3.hasNext() && !found) {
-				Party p = it3.next();
+				PartyResults p = it3.next();
 				if (p.getName().equalsIgnoreCase("GRÜNE")) {
 					Iterator<ConstPolygon> it4 = c.getPolygons().iterator();
 					float expected = (maxGreenParty / 500) * c.getMalteOccurences();

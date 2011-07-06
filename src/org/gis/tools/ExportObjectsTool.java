@@ -225,7 +225,7 @@ public class ExportObjectsTool {
 	 */
 	static public FederalState newFederalState(Integer id, String name){
 		db = Database.getDatabase();
-		LinkedList<Party> parties = new LinkedList<Party>();
+		LinkedList<PartyResults> parties = new LinkedList<PartyResults>();
 		FederalState state = null;
 		
 		// The SQL-queries to get the information from database.
@@ -235,9 +235,9 @@ public class ExportObjectsTool {
 		try {
 			//Iterates over all lines of the ResultSet and generates the list of parties with their results.
 			while(federalVoteResult.next()){
-				Party party;
+				PartyResults party;
 				
-					party = new Party((String) federalVoteResult.getObject(1), (Integer) federalVoteResult.getObject(2), 
+					party = new PartyResults((String) federalVoteResult.getObject(1), (Integer) federalVoteResult.getObject(2), 
 							(Integer) federalVoteResult.getObject(3));
 				
 				parties.add(party);
@@ -261,9 +261,9 @@ public class ExportObjectsTool {
 	 * @param i the constituency
 	 * @return a LinkedList of parties
 	 */
-	static private LinkedList<Party> getParties(int i){
+	static private LinkedList<PartyResults> getParties(int i){
 		db = Database.getDatabase();
-		LinkedList<Party> parties = new LinkedList<Party>();
+		LinkedList<PartyResults> parties = new LinkedList<PartyResults>();
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.
 		ResultSet constVoteResult = db.executeQuery("select name, first_cur, second_cur " +
@@ -271,7 +271,7 @@ public class ExportObjectsTool {
 		try {
 			// Iterates over all lines of the ResulSet.
 			while(constVoteResult.next()){
-				Party curParty = new Party((String) constVoteResult.getObject(1), (Integer) constVoteResult.getObject(2), (Integer) constVoteResult.getObject(3));
+				PartyResults curParty = new PartyResults((String) constVoteResult.getObject(1), (Integer) constVoteResult.getObject(2), (Integer) constVoteResult.getObject(3));
 				parties.add(curParty);
 			}
 		} catch (SQLException e) {

@@ -28,7 +28,7 @@ import org.gis.db.CountryPolygon;
 import org.gis.db.ElectionWorld;
 import org.gis.db.GisPoint.Relation;
 import org.gis.db.MaltePoint;
-import org.gis.db.Party;
+import org.gis.db.PartyResults;
 import org.gis.db.StorkPoint;
 import org.gis.db.World;
 import org.openstreetmap.gui.jmapviewer.interfaces.PartyChart;
@@ -411,7 +411,7 @@ public class GisApplication extends JFrame {
         }
     }
     
-    private void drawPartyResults(LinkedList<Party> parties, int voters) {
+    private void drawPartyResults(LinkedList<PartyResults> parties, int voters) {
     	partyChart.setParties(parties);
     	partyChart.setVoter(voters);
     	partyChart.paint(partyChart.getGraphics());

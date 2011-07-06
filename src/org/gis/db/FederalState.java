@@ -8,10 +8,10 @@ public class FederalState {
 	private String name;
 	private Integer electorate;
 	private Integer voter;
-	private LinkedList<Party> result;
+	private LinkedList<PartyResults> result;
 	private LinkedList<Constituency> constituencies;
 	
-	public FederalState(Integer id, String name, Integer electorate, Integer voter, LinkedList<Party> result){
+	public FederalState(Integer id, String name, Integer electorate, Integer voter, LinkedList<PartyResults> result){
 		this.id = id;
 		this.name = name;
 		this.electorate = electorate;
@@ -40,7 +40,7 @@ public class FederalState {
 		return voter;
 	}
 
-	public LinkedList<Party> getElectionResult() {
+	public LinkedList<PartyResults> getElectionResult() {
 		return result;
 	}
 

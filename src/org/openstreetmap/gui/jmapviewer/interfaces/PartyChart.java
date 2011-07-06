@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
-import org.gis.db.Party;
+import org.gis.db.PartyResults;
 
 /**
  * Draws a visualization of the party results for one specific constituency. Draws a bar and
@@ -21,7 +21,7 @@ import org.gis.db.Party;
  */
 public class PartyChart extends JPanel {
 	private static final long serialVersionUID = 6007795415944736390L;
-	private LinkedList<Party> parties;
+	private LinkedList<PartyResults> parties;
 	private Integer voter;
 	
 	private int width;
@@ -45,10 +45,10 @@ public class PartyChart extends JPanel {
 		g.setFont(font);
     	FontMetrics fm   = g.getFontMetrics(g.getFont());
 		
-		Iterator<Party> it = parties.iterator();
+		Iterator<PartyResults> it = parties.iterator();
 		int i = 0;
 		while (it.hasNext()) {
-			Party p = it.next();
+			PartyResults p = it.next();
 			
 			if (p.getZweitstimmen() != 0) {
 				/* Calculate the result of one party based on the Zweitstimmen */
@@ -78,7 +78,7 @@ public class PartyChart extends JPanel {
 		}
 	}
 	
-	public void setParties(LinkedList<Party> p) {
+	public void setParties(LinkedList<PartyResults> p) {
 		parties = p;
 	}
 	

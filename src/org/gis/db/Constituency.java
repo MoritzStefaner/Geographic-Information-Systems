@@ -12,11 +12,11 @@ public class Constituency {
 	Integer electorate;
 	Integer voter;
 	private FederalState federalState;
-	private LinkedList<Party> result;
+	private LinkedList<PartyResults> result;
 	private LinkedList<ConstPolygon> polygons;
 	private int malteOccurence;
 	
-	public Constituency(Integer number, String name, Integer electorate, Integer voter, FederalState federalState, LinkedList<Party> result) {
+	public Constituency(Integer number, String name, Integer electorate, Integer voter, FederalState federalState, LinkedList<PartyResults> result) {
 		this.number = number;
 		this.name = name;
 		this.electorate = electorate;
@@ -46,7 +46,7 @@ public class Constituency {
 		return voter;
 	}
 
-	public LinkedList<Party> getResult() {
+	public LinkedList<PartyResults> getResult() {
 		return result;
 	}
 
@@ -58,7 +58,7 @@ public class Constituency {
 		return federalState;
 	}
 
-	public LinkedList<Party> getElectionResult() {
+	public LinkedList<PartyResults> getElectionResult() {
 		return result;
 	}
 
@@ -77,9 +77,9 @@ public class Constituency {
 		s = s + "Wahlberechtigte: " + getElectorate() + "\n";
 		s = s + "Wähler: " + getVoter() + "\n\n";
 		
-		Iterator<Party> it = getResult().iterator();
+		Iterator<PartyResults> it = getResult().iterator();
 		while (it.hasNext()) {
-			Party p = it.next();
+			PartyResults p = it.next();
 			s = s + p.getName() + ": " + p.getZweitstimmen() + "\n";
 		}
 		
