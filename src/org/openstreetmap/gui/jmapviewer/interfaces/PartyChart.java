@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedList;
 
 import javax.swing.JPanel;
 
@@ -21,7 +21,7 @@ import org.gis.data.election.PartyResults;
  */
 public class PartyChart extends JPanel {
 	private static final long serialVersionUID = 6007795415944736390L;
-	private LinkedList<PartyResults> parties;
+	private Collection<PartyResults> parties;
 	private Integer voter;
 	
 	private int width;
@@ -81,7 +81,7 @@ public class PartyChart extends JPanel {
 		}
 	}
 	
-	public void setParties(LinkedList<PartyResults> p) {
+	public void setParties(Collection<PartyResults> p) {
 		parties = p;
 	}
 	

@@ -8,6 +8,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -277,7 +278,7 @@ public class GisApplication extends JFrame {
 	        			Constituency constituency = ew.getConstituency(c.getLon(), c.getLat());
 	        	    	if (c != null) {
 	        	    		informationElection.setText(constituency.getInformation());
-	        	    		drawPartyResults(constituency.getElectionResult(), constituency.getVoter());
+	        	    		drawPartyResults(constituency.getResult().values(), constituency.getVoter());
 	        	    	}
         			}
         		} else if (interaction == interactionType.TOPOLOGICAL) {
@@ -301,7 +302,7 @@ public class GisApplication extends JFrame {
 	        			//test for polygon
 	        			Constituency constituency = ew.getConstituency(c.getLon(), c.getLat());
 	        	    	if (constituency != null) {
-	        	    		drawPartyResults(constituency.getElectionResult(), constituency.getVoter());
+	        	    		drawPartyResults(constituency.getResult().values(), constituency.getVoter());
 	        	    		
 	        	    		if (ew.getLastPoint() != null) {
 	        	    			Relation r = constituency.compareTo(ew.getLastPoint());
@@ -376,7 +377,7 @@ public class GisApplication extends JFrame {
         }
     }
     
-    private void drawPartyResults(LinkedList<PartyResults> parties, int voters) {
+    private void drawPartyResults(Collection<PartyResults> parties, int voters) {
     	partyChart.setParties(parties);
     	partyChart.setVoter(voters);
     	partyChart.paint(partyChart.getGraphics());

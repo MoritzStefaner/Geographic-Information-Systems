@@ -269,9 +269,9 @@ public class ExportObjectsTool {
 	 * @param i the constituency
 	 * @return a LinkedList of parties
 	 */
-	static private LinkedList<PartyResults> getParties(int i){
+	static private HashMap<String, PartyResults> getParties(int i){
 		db = Database.getDatabase();
-		LinkedList<PartyResults> parties = new LinkedList<PartyResults>();
+		HashMap<String, PartyResults> parties = new HashMap<String, PartyResults>();
 		
 		// The SQL-Query to get the informations from the database by joining results_const with parties.
 		ResultSet constVoteResult = db.executeQuery("select name, first_cur, second_cur " +
@@ -280,7 +280,7 @@ public class ExportObjectsTool {
 			// Iterates over all lines of the ResulSet.
 			while(constVoteResult.next()){
 				PartyResults curParty = new PartyResults((String) constVoteResult.getObject(1), (Integer) constVoteResult.getObject(2), (Integer) constVoteResult.getObject(3));
-				parties.add(curParty);
+				parties.put((String) constVoteResult.getObject(1), curParty);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
