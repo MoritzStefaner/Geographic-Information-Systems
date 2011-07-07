@@ -36,6 +36,11 @@ public class PartyResults {
 		return name;
 	}
 	
+	/**
+	 * Returns the typical color of the main partys.
+	 * 
+	 * @return Color of this party.
+	 */
 	public Color getColor() {
 		if (getName().equalsIgnoreCase("CDU") || getName().equalsIgnoreCase("CSU"))
 			return Color.BLACK;

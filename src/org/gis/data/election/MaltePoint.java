@@ -5,6 +5,14 @@ import java.text.DateFormat;
 import org.gis.data.GisPoint;
 import org.postgis.Point;
 
+/**
+ * This represents a point of the mobile phone data of Malte Spitz, a German
+ * politican of the green party.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class MaltePoint extends GisPoint {
 	private static final long serialVersionUID = -3135502834709755141L;
 	private Integer id;
@@ -15,7 +23,6 @@ public class MaltePoint extends GisPoint {
 	private Integer direction;
 	private String cella;
 	private String cellb;
-	private Integer constId;
 
 	public MaltePoint(Integer id, Time starttime, Time endtime, String service, String inoutgoing, Integer direction, String cella, String cellb, Integer constId, Point point) {
 		super(point);
@@ -28,7 +35,6 @@ public class MaltePoint extends GisPoint {
 		this.direction = direction;
 		this.cella = cella;
 		this.cellb = cellb;
-		this.constId = constId;
 	}
 
 	public Time getStarttime() {
@@ -63,6 +69,11 @@ public class MaltePoint extends GisPoint {
 		return id;
 	}
 	
+	/**
+	 * Returns data information belonging to this point as text.
+	 * 
+	 * @return String with textual information.
+	 */
 	public String getInformation() {
 		DateFormat df;
 		df = DateFormat.getTimeInstance(DateFormat.SHORT);

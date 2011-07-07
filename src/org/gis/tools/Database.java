@@ -6,6 +6,13 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import org.postgresql.PGConnection;;
 
+/**
+ * A singleton Database class to connect to the Postgis/PostgreSQL database.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class Database {
 	private static Database db = null;
 	private Connection conn = null;

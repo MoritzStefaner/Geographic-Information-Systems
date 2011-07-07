@@ -8,6 +8,13 @@ import org.gis.data.GisPoint.PointRelation;
 import org.gis.tools.Database;
 import org.postgis.*;
 
+/**
+ * A Polygon, which can be extended by our MapMarkerPolygon
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public abstract class Polygon extends org.postgis.Polygon {
 	
 	public enum PolygonRelation{
@@ -43,6 +50,11 @@ public abstract class Polygon extends org.postgis.Polygon {
 		getRing().add(point);
 	}
 	
+	/**
+	 * Determines the mass point of the polygon.
+	 * 
+	 * @return The mass point of the polygon
+	 */
 	public Point getMass() {
 		Point pNow;
 		Point pNext;

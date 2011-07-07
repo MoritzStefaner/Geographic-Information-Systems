@@ -2,7 +2,13 @@ package org.gis.data.election;
 
 import java.util.LinkedList;
 
-
+/**
+ * A federal state of Germany. Each federal state can have several constituencies.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class FederalState {
 
 	private Integer id;

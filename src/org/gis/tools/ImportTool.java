@@ -16,6 +16,14 @@ import java.util.ListIterator;
 
 import org.gis.data.*;
 
+/**
+ * Reads in the several input files and stores all information
+ * into the PostgreSQL/PostGIS database.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class ImportTool {
 	private Database db = null;
 

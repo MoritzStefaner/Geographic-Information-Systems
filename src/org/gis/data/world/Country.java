@@ -11,6 +11,13 @@ import org.gis.data.Polygon.PolygonRelation;
 import org.postgis.LinearRing;
 import org.postgis.Point;
 
+/**
+ * This is a country.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class Country {
 	private String fips;
 	private String iso2;
@@ -116,7 +123,13 @@ public class Country {
 		return p.compareToCountry(polygons);
 	}
 	
-	//TODO
+	/**
+	 * Returns the relationship between the Point and the 
+	 * Country regarding to the 9-cut model
+	 * 
+	 * @param c Country to compare to
+	 * @return PolygonRelationship between the Point and the Country
+	 */
 	public PolygonRelation compareToCountry(Country c) {
 		Iterator<CountryPolygon> it = c.getPolygons().iterator();
 		Iterator<CountryPolygon> it2 = getPolygons().iterator();
@@ -133,6 +146,11 @@ public class Country {
 		return r;
 	}
 
+	/**
+	 * Returns an information string about this country.
+	 * 
+	 * @return Textual Information about this country
+	 */
 	public String getInformation() {
 		return "Name: " + getName() + "\n" +
 			   "Region: " + getRegion() + "\n" +
@@ -167,23 +185,5 @@ public class Country {
 		CountryPolygon polygon = new CountryPolygon(this, rings);
 		
 		return polygon;
-		
-//		Database db = Database.getDatabase();
-//		ResultSet result = db.executeQuery("Select ST_BuildArea(ST_Union(mygeom, ST_Startpoint(mygeom))) as unioned FROM ( SELECT ST_ExteriorRing(poly_geom) as mygeom FROM world WHERE world.un = "+un+" ) AS ring");
-//		
-//		CountryPolygon polygon = null;
-//		
-//		try {
-//			result.next();
-//			PGgeometry geom = (PGgeometry) result.getObject(1);
-//			org.postgis.Polygon ngeom = (org.postgis.Polygon) geom.getGeometry();
-//			LinearRing[] ring = {ngeom.getRing(0)};
-//			polygon = new CountryPolygon(this, ring);
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		
-//		return polygon;
 	}
 }

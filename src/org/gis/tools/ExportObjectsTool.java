@@ -15,6 +15,13 @@ import org.gis.data.world.CountryPolygon;
 import org.gis.data.world.StorkPoint;
 import org.postgis.*;
 
+/**
+ * Export all the GIS data from the database into objects.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class ExportObjectsTool {
 	static private Database db;
 	

@@ -12,6 +12,15 @@ import org.gis.tools.Database;
 import org.gis.tools.ExportObjectsTool;
 import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
+/**
+ * The Election 2009 (<i>Bundestagswahl</i>) container class. Does 
+ * contain all constituencys of Germany and the accompanying election
+ * results.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class ElectionWorld {
 	private HashMap<Integer, Constituency> constituencyMap;
 	private LinkedList<MapMarkerPolygon> drawList;

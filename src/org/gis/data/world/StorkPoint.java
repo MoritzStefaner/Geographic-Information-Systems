@@ -6,19 +6,24 @@ import java.text.DateFormat;
 import org.gis.data.GisPoint;
 import org.postgis.Point;
 
+/**
+ * Represent the location of a stork at a given time.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class StorkPoint extends GisPoint {
 	private static final long serialVersionUID = -3905001789779713514L;
 	private Integer id;
 	private Time timestamp;
 	private Integer localIdentifier;
-	private Integer worldId;
 	
 	public StorkPoint(Integer id, Time stamp, Integer localIdentifier, Point point, Integer worldId) {
 		super(point);
 		this.id = id;
 		this.timestamp = stamp;
 		this.localIdentifier = localIdentifier;
-		this.worldId = worldId;
 	}
 	
 	public Time getTimestamp(){

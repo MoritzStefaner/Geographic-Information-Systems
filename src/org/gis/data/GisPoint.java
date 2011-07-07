@@ -8,6 +8,14 @@ import org.gis.data.world.CountryPolygon;
 import org.gis.tools.Database;
 import org.postgis.Point;
 
+/**
+ * Represents a simple point and provides the possibility to
+ * do same topological comparisons.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class GisPoint extends Point {
 	private static final long serialVersionUID = -1601394576802344349L;
 

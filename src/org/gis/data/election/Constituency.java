@@ -8,6 +8,13 @@ import org.gis.data.GisPoint.PointRelation;
 import org.gis.data.Polygon.PolygonRelation;
 import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
+/**
+ * A constituency at the time of the election 2009.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class Constituency {
 	Integer number;
 	String name;
@@ -68,6 +75,11 @@ public class Constituency {
 		return name;
 	}
 
+	/**
+	 * Returns an information string about the constituency.
+	 * 
+	 * @return Textual Information about the constituency
+	 */
 	public String getInformation() {
 		String s = getName() + "\n";
 		s = s + getFederalState().getName() + "\n\n";
@@ -84,6 +96,11 @@ public class Constituency {
 		return s;
 	}
 	
+	/**
+	 * Sets the color for all polygons belonging to this constituency.
+	 * 
+	 * @param c new Color
+	 */
 	public void setColor(Color c) {
 		Iterator<ConstPolygon> it = getPolygons().iterator();
 		while (it.hasNext()) {
@@ -92,6 +109,13 @@ public class Constituency {
 		}
 	}
 	
+	/**
+	 * Returns the relationship between the Point and the 
+	 * Constituency (INSIDE, BORDER or OUTSIDE)
+	 * 
+	 * @param p Point to compare to
+	 * @return Relationship between the Point and the Constituency (INSIDE, BORDER or OUTSIDE)
+	 */
 	public PointRelation compareTo(GisPoint p) {
 		Iterator<ConstPolygon> it = getPolygons().iterator();
 		PointRelation r = PointRelation.OUTSIDE;
@@ -104,7 +128,13 @@ public class Constituency {
 		return r;
 	}
 	
-	//TODO
+	/**
+	 * Returns the relationship between the Point and the 
+	 * Constituency regarding to the 9-cut model
+	 * 
+	 * @param c Constituency to compare to
+	 * @return PolygonRelationship between the Point and the Constituency
+	 */
 	public PolygonRelation compareTo(Constituency c) {
 		Iterator<ConstPolygon> it = c.getPolygons().iterator();
 		Iterator<ConstPolygon> it2 = getPolygons().iterator();
