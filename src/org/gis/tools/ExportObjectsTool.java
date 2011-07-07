@@ -203,8 +203,13 @@ public class ExportObjectsTool {
 
 				// Creates the constituency-object and adds it to its state and the map of all constituencies.
 				constElecResult.next();
+				
+				ResultSet voterResults = db.executeQuery("select second_cur from results_const r join parties p on r.partie_id = p.id where name = 'Gültige' and constituency_id ="+i);
+				voterResults.next();
+				int voter = (Integer) voterResults.getObject(1);
+				
 				Constituency constituency = new Constituency(i, constituencyName, (Integer) constElecResult.getObject(1), 
-						(Integer) constElecResult.getObject(2), curState, getParties(i));
+						voter, curState, getParties(i));
 				
 				// Iterates over the ResultSet with all polygons of a constituency from database.
 				while(isFirst || constGeoResult.next()){

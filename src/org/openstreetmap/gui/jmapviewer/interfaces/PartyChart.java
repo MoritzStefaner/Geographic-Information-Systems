@@ -43,7 +43,7 @@ public class PartyChart extends JPanel {
 		if (parties == null)
 			return;
 		
-		/* Set a correct Font for drawing percentages */
+		/* Set a correct Font for drawing percentages and name */
 		Font font = new Font("Verdana", Font.PLAIN, 11);
 		g.setFont(font);
     	FontMetrics fm   = g.getFontMetrics(g.getFont());
@@ -62,17 +62,29 @@ public class PartyChart extends JPanel {
 				g.fillRect(i * (width / 5), (int) (height - 50 - result*width), (width / 5), (int) (result*height));
 				g.setColor(Color.BLACK);
 				g.drawRect(i * (width / 5), (int) (height - 50 - result*width), (width / 5), (int) (result*height));
-				
-				/* Print the percentage below the bar */
+		
+				/* Print the name below the bar */
 				/* Gets the bounding rectangle the text will need */
-				String percentageString = String.format("%.1f", result*100)+"%";
-	        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(percentageString, g);
+	        	java.awt.geom.Rectangle2D rect = fm.getStringBounds(p.getName(), g);
 	
 	        	int textHeight = (int)(rect.getHeight()); 
 	        	int textWidth  = (int)(rect.getWidth());
 	        	
 				int x = i * (width / 5) + (width / 10) - textWidth / 2;
-	        	int y = width - 20 - textHeight / 2  + fm.getAscent();
+	        	int y = width - 40 - textHeight / 2  + fm.getAscent();
+	        	
+	        	g.drawString(p.getName(), x, y);
+	        	
+				/* Print the percentage below the name of the party */
+				/* Gets the bounding rectangle the text will need */
+				String percentageString = String.format("%.1f", result*100)+"%";
+	        	rect = fm.getStringBounds(percentageString, g);
+	
+	        	textHeight = (int)(rect.getHeight()); 
+	        	textWidth  = (int)(rect.getWidth());
+	        	
+				x = i * (width / 5) + (width / 10) - textWidth / 2;
+	        	y = width - 20 - textHeight / 2  + fm.getAscent();
 	
 	        	g.drawString(percentageString, x, y);
 				

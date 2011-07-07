@@ -33,6 +33,9 @@ public class PartyResults {
 	}
 
 	public String getName() {
+		if (name.equalsIgnoreCase("DIE LINKE"))
+			return "LINKE";
+		
 		return name;
 	}
 	
@@ -48,7 +51,7 @@ public class PartyResults {
 			return Color.RED;
 		else if (getName().equalsIgnoreCase("GRÜNE"))
 			return Color.GREEN;
-		else if (getName().equalsIgnoreCase("DIE LINKE"))
+		else if (getName().equalsIgnoreCase("LINKE"))
 			return Color.MAGENTA;
 		else if (getName().equalsIgnoreCase("FDP"))
 			return Color.YELLOW;
