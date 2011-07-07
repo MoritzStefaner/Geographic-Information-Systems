@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 import org.gis.data.GisPoint;
+import org.gis.data.GisPoint.PointRelation;
 import org.gis.tools.Database;
 import org.gis.tools.ExportObjectsTool;
 
@@ -98,18 +99,18 @@ public class World {
 	 * @return The position of the point as country id.
 	 */
 	public Integer compareToWorld(GisPoint point){
-		Database db = Database.getDatabase();
 		
-		ResultSet result = db.executeQuery("SELECT id FROM world WHERE Contains(poly_geom, GeomFromText('"+point+"'))");
+		Iterator<Country> countryIterator = countries.values().iterator();
 		
-		try {
-			if (result.next())
-				return (Integer) result.getObject(1);
+		while(countryIterator.hasNext()){
+			Country country = countryIterator.next();
+			CountryPolygon polygon = country.getPolygon();
 			
-			return null;
-		} catch (SQLException e) {
-			e.printStackTrace();
+			if(polygon.compareToPoint(point) == PointRelation.INSIDE){
+				return country.getId();
+			}
 		}
+		
 		return null;
 	}
 	

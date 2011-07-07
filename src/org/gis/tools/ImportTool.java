@@ -716,10 +716,10 @@ public class ImportTool {
 	public static void main(String[] args) throws Exception {
 		ImportTool it = new ImportTool();
 		//it.importWorld();
-		it.importStorks();
-		//it.importConstituencies();
-		//it.importMalte();
-		//it.importResults();
+		//it.importStorks();
+		it.importConstituencies();
+		it.importMalte();
+		it.importResults();
 	}
 
 }

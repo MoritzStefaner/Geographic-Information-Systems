@@ -24,6 +24,7 @@ public class Country {
 	private String iso3;
 	private String name;
 	
+	private Integer id;
 	private Integer un;
 	private Integer area;
 	private Integer pop2005;
@@ -34,11 +35,13 @@ public class Country {
 	
 	private int amountStorks;
 	
-	public Country(String fips, String iso2, String iso3, Integer un, String name, Integer area, Integer pop2005, Integer region, Integer subregion){
+	public Country(Integer id, String fips, String iso2, String iso3, Integer un, String name, Integer area, Integer pop2005, Integer region, Integer subregion){
 		this.fips = fips;
 		this.iso2 = iso2;
 		this.iso3 = iso3;
 		this.name = name;
+		
+		this.id = id;
 		this.un = un;
 		this.area = area;
 		this.pop2005 = pop2005;
@@ -72,6 +75,10 @@ public class Country {
 	
 	public void setAmountStorks(int a) {
 		amountStorks = a;
+	}
+	
+	public Integer getId(){
+		return this.id;
 	}
 	
 	public Integer getUn() {
