@@ -39,9 +39,20 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
+/*
+* ----------------------------------------------------------------------------
+* "THE BEVERAGE-WARE LICENSE" (Revision 42):
+* <stephanie.marx@uni-konstanz.de> and <dirk.kirsten@uni-konstanz.de> wrote this 
+* file. As long as you retain this notice you can do whatever you want with this 
+* stuff. If we meet some day, and you think this stuff is worth it, you can buy 
+* us a nice beverage in return.
+* ----------------------------------------------------------------------------
+*/
+
 /**
  *
- * Display map data using {@link JMapViewer}.
+ * Display map data using {@link JMapViewer}. This is a programm for the course
+ * "Geographic Information Systems" in the year 2011 at the University of Konstanz.
  *
  * @author Dirk Kirsten
  * @author Stephanie Marx
