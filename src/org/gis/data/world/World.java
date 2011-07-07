@@ -13,6 +13,14 @@ import org.gis.data.GisPoint.PointRelation;
 import org.gis.tools.Database;
 import org.gis.tools.ExportObjectsTool;
 
+/**
+ * The World containment class. Does contain all countries in the world
+ * and also all of our stork data.
+ * 
+ * @author Stephanie Marx
+ * @author Dirk Kirsten
+ *
+ */
 public class World {
 	private HashMap<Integer, Country> countries;
 	private HashMap<Integer, StorkPoint> storks;
@@ -65,6 +73,13 @@ public class World {
 		return list;
 	}
 	
+	/**
+	 * Returns a country where the given point (defined by langitude and latitude) is in.
+	 * 
+	 * @param longitude Longitude
+	 * @param latitude Latitude
+	 * @return The County where the point is in
+	 */
     public Country getCountry(double longitude, double latitude) {
     	GisPoint p = new GisPoint(latitude, longitude);
     	Integer i = compareToWorld(p);
@@ -76,6 +91,14 @@ public class World {
     	return null;
     }
     
+    /**
+     * Returns the Stork point which is shortest away from the given point.
+     * The point is given by longitude and latitude values.
+     * 
+     * @param longitude Longitude of the point
+     * @param latitude Latitude of the point
+     * @return The nearest stork point to the given point
+     */
 	public StorkPoint getStorkPoint(double longitude, double latitude) {
 		GisPoint p = new GisPoint(latitude, longitude);
 		Database db = Database.getDatabase();
@@ -93,6 +116,16 @@ public class World {
 		return null;
 	}
 	
+    /**
+     * Returns the Stork point which is shortest away from the given point. Does
+     * just care about the given stork, identified by storkId.
+     * The point is given by longitude and latitude values.
+     * 
+     * @param longitude Longitude of the point
+     * @param latitude Latitude of the point
+     * @param storkId ID of the stork we are using
+     * @return The nearest stork point to the given point
+     */
 	public StorkPoint getStorkPoint(double longitude, double latitude, int storkId) {
 		GisPoint p = new GisPoint(latitude, longitude);
 		Database db = Database.getDatabase();
@@ -170,6 +203,11 @@ public class World {
 		}
 	}
 	
+	/**
+	 * Visualization, whereby each country is colored regarding to its size.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorBySize(int coefficient) {
 		Iterator<Integer> it = getLargest().iterator();
 		
@@ -189,6 +227,13 @@ public class World {
 		setColorByTravelThrough(id, false);
 	}
 	
+	/**
+	 * Visualization, whereby each country is colored whether a stork travels
+	 * through or not. It can be specified if just a single stork is selected.
+	 * 
+	 * @param id ID of the selected stork
+	 * @param bool All storks should be regarded
+	 */
 	public void setColorByTravelThrough(int id, boolean all) {
 		Iterator<Country> it = getCountries().values().iterator();
 		
@@ -212,6 +257,14 @@ public class World {
 		setColorByTravelThroughPercentage(coefficient, id, false);
 	}
 	
+	/**
+	 * Visualization, whereby each country is colored regarding to how many storks
+	 * travel through. It can be specified if just a single stork is selected.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 * @param id ID of the selected stork
+	 * @param bool All storks should be regarded
+	 */
 	private void setColorByTravelThroughPercentage(int coefficient, int id, boolean all) {
 		Iterator<Country> it = getCountries().values().iterator();
 		
@@ -280,6 +333,12 @@ public class World {
     	return list;
     }
   
+    /**
+     * Returns the localIdentifier of a stork, given by the selecting combo box index.
+     * 
+     * @param selected Selection index of the stork
+     * @return ID of the stork
+     */
     public Integer getStorkId(int selected) {
     	if (selected == 1)
 			return 91397;
