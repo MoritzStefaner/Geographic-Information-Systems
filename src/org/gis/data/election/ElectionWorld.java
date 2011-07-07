@@ -63,6 +63,12 @@ public class ElectionWorld {
 		malteVisible = b;
 	}
 	
+	/**
+	 * Provides a linked List of all polygons of a given constituency.
+	 * 
+	 * @param constituencies
+	 * @return A linked list of all territories.
+	 */
     private LinkedList<MapMarkerPolygon> getElectionPolygons(HashMap<Integer, Constituency> constituencies) {
     	LinkedList<MapMarkerPolygon> drawList = new LinkedList<MapMarkerPolygon>();
     	Iterator<Constituency> it = constituencies.values().iterator();
@@ -88,6 +94,14 @@ public class ElectionWorld {
 		return maltePoints;
 	}
     
+	/**
+	 * Returns the nearest point to the given one. The point is given
+	 * by longitude and latitude values.
+	 * 
+	 * @param longitude Longitude
+	 * @param latitude Latitude
+	 * @return MaltePoint The nearest point to the given one.
+	 */
 	public MaltePoint getMaltePoint(double longitude, double latitude) {
 		GisPoint p = new GisPoint(latitude, longitude);
 		Database db = Database.getDatabase();
@@ -105,6 +119,13 @@ public class ElectionWorld {
 		return null;
 	}
 	
+	/**
+	 * Returns the constituency where the given point (defined by langitude and latitude) is in.
+	 * 
+	 * @param longitude Longitude
+	 * @param latitude Latitude
+	 * @return Constituency The constituency where the point is in
+	 */
     public Constituency getConstituency(double longitude, double latitude) {
     	GisPoint p = new GisPoint(latitude, longitude);
     	Constituency c = getConstituencyMap().get(compareToGermany(p));
@@ -132,6 +153,10 @@ public class ElectionWorld {
 		return null;
 	}
     
+	/**
+	 * Sets one time the minimal and maximal percentage in each constituency
+	 * for the green party.
+	 */
 	private void setGreenPartyExtrema() {
 		if (maxGreenParty == 0) {
 			Iterator<Constituency> it = getConstituencyMap().values().iterator();
@@ -155,6 +180,12 @@ public class ElectionWorld {
 		}
 	}
 	
+	/**
+	 * Visualization, whereby each constituency is colored more intense if it is
+	 * bigger.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorBySize(int coefficient){
 		Database db = Database.getDatabase();
 		
@@ -175,6 +206,12 @@ public class ElectionWorld {
 		}
 	}
 	
+	/**
+	 * Set the color of the constituency regarding to the result of
+	 * the green party in this constituency
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorByGreenParty(int coefficient) {
 		setGreenPartyExtrema();
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
@@ -200,6 +237,11 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
+	/**
+	 * Set color by the number of votes for the parliament.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorByInfluence(int coefficient) {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
@@ -230,6 +272,11 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
+	/**
+	 * Set color based on the turnout of the constituencies.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorByTurnout(int coefficient) {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
@@ -243,6 +290,14 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}	
 	
+	/**
+	 * Draw each constituency with the color of the winning party. If the 
+	 * decision was very close, make it almost transparent. The more
+	 * distance is to the second party, the less transparent the constituency
+	 * will be drawn.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorByDifference(int coefficient) {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
@@ -286,6 +341,11 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
+	/**
+	 * Color each constituency based on the color of the party with the
+	 * highest number of votes.
+	 * 
+	 */
 	public void setColorByWinner() {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
@@ -312,6 +372,15 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
+	/**
+	 * Relates the results of the green party with the location of Malte
+	 * Spitz. When he was highly present and the results was high, it will be green.
+	 * When he was seldom present and the result is low, it will be green as well.
+	 * Otherwise, if he was highly present and the results is low or he was seldom
+	 * present and the result is high, it will be colored red.
+	 * 
+	 * @param coefficient Determines the mapping curve
+	 */
 	public void setColorByGreenPartyCorrMalte(int coefficient) {
     	Database db = Database.getDatabase();
     	setGreenPartyExtrema();
@@ -377,6 +446,14 @@ public class ElectionWorld {
     	return list;
     }
     
+    /**
+     * Returns a new color based on the given color without alpha and
+     * the given alpha value.
+     * 
+     * @param c The old color
+     * @param newAlpha the new Alpha
+     * @return The new color with new alpha
+     */
     private Color getColorAlpha(Color c, byte newAlpha) {
     	return new Color((c.getRGB() & ((newAlpha << 24) | 0x00ffffff)), true);
     }
