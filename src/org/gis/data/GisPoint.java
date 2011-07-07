@@ -2,6 +2,7 @@ package org.gis.data;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
 
 import org.gis.data.world.CountryPolygon;
 import org.gis.tools.Database;
@@ -11,7 +12,7 @@ import org.postgresql.util.PSQLException;
 public class GisPoint extends Point {
 	
 	// The enumeration for the relation between a point and a polygon.
-	public enum Relation{
+	public enum PointRelation{
 		INSIDE, OUTSIDE, BORDER
 	}
 	
@@ -44,7 +45,7 @@ public class GisPoint extends Point {
 	 * @param point
 	 * @return The distance in kilometers.
 	 */
-	public Double compareTo(GisPoint point){
+	public Double compareToPoint(GisPoint point){
 		double kilometer = 0;
 		double meter = 0;
 		Database db = Database.getDatabase();
@@ -74,16 +75,10 @@ public class GisPoint extends Point {
 	 * @param polygon
 	 * @return The enumeration value of the relation.
 	 */
-	public Relation compareTo(Polygon polygon){
+	private PointRelation compareToPolygon(Polygon polygon){
 		boolean value = false;
 		Database db = Database.getDatabase();
-		ResultSet contains;
-		
-		if(polygon instanceof CountryPolygon){
-			contains = db.executeQuery("SELECT  Contains((SELECT Collect(a.the_geom) As the_geom FROM (SELECT (DumpRings( GeomFromText('"+polygon+"')).geom As the_geom) a),  GeomFromText('POINT(53.956 9.181)'))");
-		}else{
-			contains = db.executeQuery("SELECT Contains(GeomFromText('"+polygon+"'), GeomFromText('"+this+"')) AS contains");
-		}
+		ResultSet contains = db.executeQuery("SELECT Contains(GeomFromText('"+polygon+"'), GeomFromText('"+this+"')) AS contains");
 		
 		try {
 			contains.next();
@@ -96,7 +91,7 @@ public class GisPoint extends Point {
 		
 		// If this point isn't inside the polygon test if the point touches it.
 		if(value){
-			return Relation.INSIDE;
+			return PointRelation.INSIDE;
 		}else{
 			ResultSet touches = db.executeQuery("SELECT ST_Touches('"+polygon+"'::geometry, '"+this+"'::geometry);");
 			
@@ -109,11 +104,11 @@ public class GisPoint extends Point {
 			}
 			
 			if(value){
-				return Relation.BORDER;
+				return PointRelation.BORDER;
 			}	
 		}
 		
-		return Relation.OUTSIDE;
+		return PointRelation.OUTSIDE;
 	}
 	
 	/**
@@ -138,5 +133,24 @@ public class GisPoint extends Point {
 		
 		return null;
 		
+	}
+	
+	/**
+	 * Relates this point to a country.
+	 * 
+	 * @return The relation to this point as enumeration.
+	 */
+	
+	public PointRelation compareToCountry(LinkedList<CountryPolygon> polygons){
+				
+		for(CountryPolygon polygon : polygons){
+			PointRelation relation = compareToPolygon(polygon);
+			
+			if(relation == PointRelation.INSIDE || relation == PointRelation.BORDER){
+				return relation;
+			}
+		}
+		
+		return PointRelation.OUTSIDE;
 	}
 }

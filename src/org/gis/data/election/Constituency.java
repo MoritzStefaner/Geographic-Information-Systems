@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.util.*;
 
 import org.gis.data.GisPoint;
-import org.gis.data.GisPoint.Relation;
+import org.gis.data.GisPoint.PointRelation;
+import org.gis.data.Polygon.PolygonRelation;
 import org.openstreetmap.gui.jmapviewer.MapMarkerPolygon;
 
 public class Constituency {
@@ -91,29 +92,29 @@ public class Constituency {
 		}
 	}
 	
-	public Relation compareTo(GisPoint p) {
+	public PointRelation compareTo(GisPoint p) {
 		Iterator<ConstPolygon> it = getPolygons().iterator();
-		Relation r = Relation.OUTSIDE;
+		PointRelation r = PointRelation.OUTSIDE;
 		
-		while (r == Relation.OUTSIDE && it.hasNext()) {
+		while (r == PointRelation.OUTSIDE && it.hasNext()) {
 			ConstPolygon cp = it.next();
-			r = cp.compareTo(p);
+			r = cp.compareToPoint(p);
 		}
 		
 		return r;
 	}
 	
 	//TODO
-	public String compareTo(Constituency c) {
+	public PolygonRelation compareTo(Constituency c) {
 		Iterator<ConstPolygon> it = c.getPolygons().iterator();
 		Iterator<ConstPolygon> it2 = getPolygons().iterator();
-		String r = null;
+		PolygonRelation r = PolygonRelation.DISJOINT;
 		
 		while (it.hasNext()) {
 			ConstPolygon cp = it.next();
 			while (it2.hasNext()) {
 				ConstPolygon cp2 = it2.next();
-				r = cp.compareTo(cp2);
+				r = cp.compareToPolygon(cp2);
 			}
 		}
 		

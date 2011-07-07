@@ -23,7 +23,8 @@ import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.gis.data.GisPoint.Relation;
+import org.gis.data.GisPoint.PointRelation;
+import org.gis.data.Polygon.PolygonRelation;
 import org.gis.data.election.Constituency;
 import org.gis.data.election.ElectionWorld;
 import org.gis.data.election.MaltePoint;
@@ -287,11 +288,11 @@ public class GisApplication extends JFrame {
         			Point p = map.getMapPosition(mp.getX(), mp.getY());
         			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {	
         				if (ew.getLastPoint() != null) {
-        					double dist = ew.getLastPoint().compareTo(mp);
+        					double dist = ew.getLastPoint().compareToPoint(mp);
         					informationElection.setText(String.valueOf(dist));
         					ew.setLastPoint(null);
         				} else if (ew.getLastPolygon() != null) {
-        					Relation r = ew.getLastPolygon().compareTo(mp);
+        					PointRelation r = ew.getLastPolygon().compareTo(mp);
         					informationElection.setText(r.toString());
         					ew.setLastPolygon(null);
         				} else {
@@ -305,12 +306,21 @@ public class GisApplication extends JFrame {
 	        	    		drawPartyResults(constituency.getResult().values(), constituency.getVoter());
 	        	    		
 	        	    		if (ew.getLastPoint() != null) {
-	        	    			Relation r = constituency.compareTo(ew.getLastPoint());
+	        	    			PointRelation r = constituency.compareTo(ew.getLastPoint());
 	        	    			informationElection.setText(r.toString());
 	        					ew.setLastPoint(null);
 	        				} else if (ew.getLastPolygon() != null) {
-	        					String s = constituency.compareTo(ew.getLastPolygon());
-	        					informationElection.setText(s);
+	        					PolygonRelation s = constituency.compareTo(ew.getLastPolygon());
+	        					switch(s){
+	        						case INSIDE: informationElection.setText("Inside"); break;
+	        						case DISJOINT: informationElection.setText("Disjoint"); break;
+	        						case MEET: informationElection.setText("Meet"); break;
+	        						case OVERLAPS: informationElection.setText("Overlaps"); break;
+	        						case COVERS: informationElection.setText("Covers"); break;
+	        						case CONTAINS: informationElection.setText("Contains"); break;
+	        						case COVEREDBY: informationElection.setText("Coveredby"); break;
+	        						case EQUAL: informationElection.setText("Equals"); break;
+	        					}
 	        					ew.setLastPolygon(null);
 	        				} else {
 	        					informationElection.setText("Selected polygon " + constituency.getName());
@@ -342,11 +352,11 @@ public class GisApplication extends JFrame {
 	        			Point p = map.getMapPosition(sp.getX(), sp.getY());
 	        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
 	        				if (w.getLastPoint() != null) {
-	        					double dist = w.getLastPoint().compareTo(sp);
+	        					double dist = w.getLastPoint().compareToPoint(sp);
 	        					informationWorld.setText(String.valueOf(dist));
 	        					w.setLastPoint(null);
 	        				} else if (w.getLastPolygon() != null) {
-	        					Relation r = w.getLastPolygon().compareTo(sp);
+	        					PointRelation r = w.getLastPolygon().compareToPoint(sp);
 	        					informationWorld.setText(r.toString());
 	        					w.setLastPolygon(null);
 	        				} else {
@@ -358,12 +368,21 @@ public class GisApplication extends JFrame {
 	                		Country country = w.getCountry(c.getLon(), c.getLat());
 		        	    	if (country != null) {
 		        	    		if (w.getLastPoint() != null) {
-		        	    			Relation r = country.compareTo(w.getLastPoint());
+		        	    			PointRelation r = country.compareToPoint(w.getLastPoint());
 		        	    			informationWorld.setText(r.toString());
 		        					w.setLastPoint(null);
 		        				} else if (w.getLastPolygon() != null) {
-		        					String s = country.compareTo(w.getLastPolygon());
-		        					informationWorld.setText(s);
+		        					PolygonRelation s = country.compareToCountry(w.getLastPolygon());
+		        					switch(s){
+		        						case INSIDE: informationWorld.setText("Inside"); break;
+		        						case DISJOINT: informationWorld.setText("Disjoint"); break;
+		        						case MEET: informationWorld.setText("Meet"); break;
+		        						case OVERLAPS: informationWorld.setText("Overlaps"); break;
+		        						case COVERS: informationWorld.setText("Covers"); break;
+		        						case CONTAINS: informationWorld.setText("Contains"); break;
+		        						case COVEREDBY: informationWorld.setText("Coveredby"); break;
+		        						case EQUAL: informationWorld.setText("Equals"); break;
+		        					}
 		        					w.setLastPolygon(null);
 		        				} else {
 		        					informationWorld.setText("Selected polygon " + country.getName());

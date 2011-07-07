@@ -13,6 +13,11 @@ public class CountryPolygon extends MapMarkerPolygon {
 		this.country = country;
 	}
 	
+	public Country getCountry(){
+		
+		return this.country;
+	}
+	
 
 	@Override
 	public String getText() {

@@ -4,11 +4,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-import org.gis.data.GisPoint.Relation;
+import org.gis.data.GisPoint.PointRelation;
 import org.gis.tools.Database;
 import org.postgis.*;
 
 public abstract class Polygon extends org.postgis.Polygon {
+	
+	public enum PolygonRelation{
+		DISJOINT, MEET, OVERLAPS, COVERS, CONTAINS, COVEREDBY, INSIDE, EQUAL
+	}
+	
 	private static final long serialVersionUID = -5307565671537188424L;
 	// The ring from org.postgis.Polygon as LinkedList.
 	private LinkedList<GisPoint> ring;
@@ -97,7 +102,7 @@ public abstract class Polygon extends org.postgis.Polygon {
 	 * @param point
 	 * @return The enumeration value of the relation.
 	 */
-	public Relation compareTo(GisPoint point){
+	public PointRelation compareToPoint(GisPoint point){
 		boolean value = false;
 		Database db = Database.getDatabase();
 		
@@ -114,7 +119,7 @@ public abstract class Polygon extends org.postgis.Polygon {
 		
 		// If the point isn't in the this polygon test if the point touches it.
 		if(value){
-			return Relation.INSIDE;
+			return PointRelation.INSIDE;
 		}else{
 			ResultSet touches = db.executeQuery("SELECT ST_Touches('"+this+"'::geometry, '"+point+"'::geometry);");
 			
@@ -127,11 +132,11 @@ public abstract class Polygon extends org.postgis.Polygon {
 			}
 			
 			if(value){
-				return Relation.BORDER;
+				return PointRelation.BORDER;
 			}	
 		}
 		
-		return Relation.OUTSIDE;
+		return PointRelation.OUTSIDE;
 	}
 	
 	/**
@@ -144,22 +149,51 @@ public abstract class Polygon extends org.postgis.Polygon {
 	 * @param polygon
 	 * @return the DE-9IM matrix as String
 	 */
-	public String compareTo(Polygon polygon){
+	public PolygonRelation compareToPolygon(Polygon polygon){
 		
-		Database db = Database.getDatabase();
-		String matrix = "";
-		
-		ResultSet result = db.executeQuery("SELECT Relate(GeometryFromText('"+this+"'), GeometryFromText('"+polygon+"'))");
-		
-		try {
-			result.next();
-			matrix = (String) result.getObject(1);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(polygon.equals(this)){
+			return PolygonRelation.EQUAL;
+		}else{
+			Integer[] convert = {4, 3, 5, 1, 0, 2, 7, 6, 8};
+			boolean[] matrixArray = new boolean[9];
+			boolean[] disjoint = {false, false, true, false, false, true, true, true, true};
+			boolean[] meet = {true, false, true, false, false, true, true, true, true};
+			boolean[] overlaps = {true, true, true, true, true, true, true, true, true};
+			boolean[] covers = {true, false, true, true, true, true, false, false, true};
+			boolean[] contains = {false, false, true, true, true, true, false, false, true};
+			boolean[] inside = {false, true, false, false, true, false, true, true, true};
+			boolean[] coveredby = {true, true, false, false, true, false, true, true, true};
+			
+			Database db = Database.getDatabase();
+			String matrix = "";
+			
+			ResultSet result = db.executeQuery("SELECT Relate(GeometryFromText('"+this+"'), GeometryFromText('"+polygon+"'))");
+			
+			try {
+				result.next();
+				matrix = (String) result.getObject(1);
+				char[] tmpArray = matrix.toCharArray();
+				
+				for(int i = 0; i < tmpArray.length; i++){
+					// Converts the matrix from postgis to gis-lecture.
+					// F is false; 0, 1, 2 are true.
+					matrixArray[i] = tmpArray[convert[i]] != 'F' && tmpArray[convert[i]] != '0';
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if(Arrays.equals(matrixArray, coveredby)) return PolygonRelation.COVEREDBY;
+			if(Arrays.equals(matrixArray, disjoint)) return PolygonRelation.DISJOINT;
+			if(Arrays.equals(matrixArray, meet)) return PolygonRelation.MEET;
+			if(Arrays.equals(matrixArray, overlaps)) return PolygonRelation.OVERLAPS;
+			if(Arrays.equals(matrixArray, covers)) return PolygonRelation.COVERS;
+			if(Arrays.equals(matrixArray, contains)) return PolygonRelation.CONTAINS;
+			if(Arrays.equals(matrixArray, inside)) return PolygonRelation.INSIDE;
+			
+			return PolygonRelation.DISJOINT;
 		}
-		
-		return matrix;	
 	}
 	
 	public abstract String getText();
