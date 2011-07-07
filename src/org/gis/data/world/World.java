@@ -91,6 +91,23 @@ public class World {
 		}
 		return null;
 	}
+	
+	public StorkPoint getStorkPoint(double longitude, double latitude, int storkId) {
+		GisPoint p = new GisPoint(latitude, longitude);
+		Database db = Database.getDatabase();
+		
+		ResultSet result = db.executeQuery("SELECT id, DISTANCE(GeomFromText('" + p + "'), geometrycolumn) AS d FROM storks WHERE storks.taglocalidentifier = " + storkId + " ORDER BY d LIMIT 1");
+		
+		try {
+			if (result.next())
+				return storks.get((Integer) result.getObject(1));
+			else
+				return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
     
 	/**
 	 * Relates a point to the countries in the world.

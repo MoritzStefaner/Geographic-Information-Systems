@@ -332,7 +332,12 @@ public class GisApplication extends JFrame {
         	} else if (w != null) {
         		if (interaction == interactionType.NORMAL) {
         			//test for point
-        			StorkPoint sp = w.getStorkPoint(c.getLon(), c.getLat());
+        			StorkPoint sp;
+        			if (storkSelection.getSelectedIndex() == 0)
+        				sp = w.getStorkPoint(c.getLon(), c.getLat());
+            		else 
+            			sp = w.getStorkPoint(c.getLon(), c.getLat(), w.getStorkId(storkSelection.getSelectedIndex()));
+        			
         			if (sp != null) {
 	        			Point p = map.getMapPosition(sp.getX(), sp.getY());
 	        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
