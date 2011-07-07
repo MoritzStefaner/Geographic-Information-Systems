@@ -123,7 +123,7 @@ public class World {
 			Country country = countryIterator.next();
 			CountryPolygon polygon = country.getPolygon();
 			
-			if(polygon.compareToPoint(point) == PointRelation.INSIDE){
+			if(polygon.compareToPoint(point) == PointRelation.INSIDE) {
 				return country.getId();
 			}
 		}

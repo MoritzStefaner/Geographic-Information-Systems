@@ -57,7 +57,7 @@ public class GisApplication extends JFrame {
     private PartyChart partyChart;
     private final JComboBox storkSelection;
     private interactionType interaction;
-    private final JComboBox displayStyle;
+    private final JComboBox displayStyleElection;
     private final JComboBox displayStyleWorld;
     private final JTabbedPane tabs;
     private final JSlider mappingCoefficient;
@@ -102,9 +102,10 @@ public class GisApplication extends JFrame {
         mappingCoefficient.setMajorTickSpacing(1);
         mappingCoefficient.setSnapToTicks(true);
         mappingCoefficient.setPaintLabels(true);
+        mappingCoefficient.setPaintTicks(true);
         mappingCoefficient.addChangeListener(new VisualizationEventListener());
         
-        displayStyle = new JComboBox(displayStyleTypes);
+        displayStyleElection = new JComboBox(displayStyleTypes);
         storkSelection = new JComboBox(storkSelectionOptions);
         displayStyleWorld = new JComboBox(displayStyleWorldTypes);
         final JComboBox interactionBox = new JComboBox(interactionTypesStrings);
@@ -169,8 +170,8 @@ public class GisApplication extends JFrame {
         electionTab.add(renderNames);
         
         /* Set listener and place combo box for election */
-        displayStyle.addItemListener(new VisualizationEventListener());
-        electionTab.add(displayStyle);
+        displayStyleElection.addItemListener(new VisualizationEventListener());
+        electionTab.add(displayStyleElection);
         
         /* Creates the information text box for election */
         informationElection = new JTextArea();
@@ -221,19 +222,19 @@ public class GisApplication extends JFrame {
     
     private class VisualizationEventListener implements ChangeListener, ItemListener {
         private void displayVisualizationElection() {
-      	  	if (displayStyle.getSelectedIndex() == 0)
+      	  	if (displayStyleElection.getSelectedIndex() == 0)
             	drawElection(true, displayStyleTypeElection.GREEN_PARTY_NORMAL);
-            else if (displayStyle.getSelectedIndex() == 1)
+            else if (displayStyleElection.getSelectedIndex() == 1)
             	drawElection(true, displayStyleTypeElection.GREEN_PARTY_CORR_MALTE);
-            else if (displayStyle.getSelectedIndex() == 2)
+            else if (displayStyleElection.getSelectedIndex() == 2)
               	drawElection(true, displayStyleTypeElection.WINNER);
-            else if (displayStyle.getSelectedIndex() == 3)
+            else if (displayStyleElection.getSelectedIndex() == 3)
             		drawElection(true, displayStyleTypeElection.DIFFERENCE);
-            else if (displayStyle.getSelectedIndex() == 4)
+            else if (displayStyleElection.getSelectedIndex() == 4)
               	drawElection(true, displayStyleTypeElection.TURNOUT);
-            else if (displayStyle.getSelectedIndex() == 5)
+            else if (displayStyleElection.getSelectedIndex() == 5)
             		drawElection(true, displayStyleTypeElection.INFLUENCE);
-            else if (displayStyle.getSelectedIndex() == 6)
+            else if (displayStyleElection.getSelectedIndex() == 6)
           		drawElection(true, displayStyleTypeElection.SIZE);
         }
         
@@ -286,7 +287,8 @@ public class GisApplication extends JFrame {
         			//test for point
         			MaltePoint mp = ew.getMaltePoint(c.getLon(), c.getLat());
         			Point p = map.getMapPosition(mp.getX(), mp.getY());
-        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
+        			if (ew.isMalteVisible() && p != null && 
+        					Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {
         				informationElection.setText(mp.getInformation());
         				partyChart.setParties(null);
         				partyChart.paint(getGraphics());
@@ -302,7 +304,7 @@ public class GisApplication extends JFrame {
         			//test for point
         			MaltePoint mp = ew.getMaltePoint(c.getLon(), c.getLat());
         			Point p = map.getMapPosition(mp.getX(), mp.getY());
-        			if (p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {	
+        			if (ew.isMalteVisible() && p != null && Math.sqrt((event.getX() - p.getX())*(event.getX() - p.getX()) + (event.getY() - p.getY())*(event.getY() - p.getY())) <= 6) {	
         				if (ew.getLastPoint() != null) {
         					double dist = ew.getLastPoint().compareToPoint(mp);
         					informationElection.setText(String.valueOf(dist));
@@ -362,9 +364,7 @@ public class GisApplication extends JFrame {
 		        			//test for polygon
 	                		Country country = w.getCountry(c.getLon(), c.getLat());
 	                		if (country != null) {
-	                			//informationWorld.setText(country.getInformation());
-	                			informationWorld.setText("blablubb");
-	                			informationWorld.repaint();
+	                			informationWorld.setText(country.getInformation());
 	                		}
 	        			}    
         			}
@@ -524,8 +524,11 @@ public class GisApplication extends JFrame {
 	            	MaltePoint mp = it.next();
 	                map.mapMarkerList.add(new MapMarkerDot(mp.getX(), mp.getY()));
 	            }
-            } else
+	            ew.setMalteVisible(true);
+            } else {
             	map.mapMarkerList.clear();
+            	ew.setMalteVisible(false);
+            }
     	} else {
     		map.mapMarkerPolygonList.clear();
     		map.mapMarkerList.clear();

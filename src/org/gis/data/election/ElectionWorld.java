@@ -20,6 +20,7 @@ public class ElectionWorld {
 	private float minGreenParty;
 	private MaltePoint lastPoint;
 	private Constituency lastPolygon;
+	private boolean malteVisible;
 	
 	public MaltePoint getLastPoint() {
 		return lastPoint;
@@ -40,7 +41,17 @@ public class ElectionWorld {
 	public ElectionWorld() {
 		constituencyMap = ExportObjectsTool.exportElection2009();
 		drawList = getElectionPolygons(this.constituencyMap);
-		maltePoints = ExportObjectsTool.exportMalte(); 
+		maltePoints = ExportObjectsTool.exportMalte();
+		
+		malteVisible = true;
+	}
+	
+	public boolean isMalteVisible() {
+		return malteVisible;
+	}
+	
+	public void setMalteVisible(boolean b) {
+		malteVisible = b;
 	}
 	
     private LinkedList<MapMarkerPolygon> getElectionPolygons(HashMap<Integer, Constituency> constituencies) {
