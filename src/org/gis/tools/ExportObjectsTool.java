@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.util.*;
 
-import org.gis.data.*;
 import org.gis.data.election.ConstPolygon;
 import org.gis.data.election.Constituency;
 import org.gis.data.election.FederalState;
