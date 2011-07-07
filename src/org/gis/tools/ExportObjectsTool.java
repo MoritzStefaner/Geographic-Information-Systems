@@ -132,7 +132,7 @@ public class ExportObjectsTool {
 			while(result.next()){
 				
 				// Creates a new country. 
-				Country country = new Country((String) result.getObject(2), (String) result.getObject(3), 
+				Country country = new Country((Integer) result.getObject(1), (String) result.getObject(2), (String) result.getObject(3), 
 						(String) result.getObject(4), (Integer) result.getObject(5), (String) result.getObject(6), (Integer) result.getObject(7),
 						(Integer) result.getObject(8), (Integer) result.getObject(9), (Integer) result.getObject(10));
 				

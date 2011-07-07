@@ -122,7 +122,7 @@ public class ElectionWorld {
 				HashMap<String, PartyResults> partyResults = c.getResult();
 				
 				if (partyResults != null) {
-					PartyResults greenPartyResults = partyResults.get("GRÃœNE");
+					PartyResults greenPartyResults = partyResults.get("GRÜNE");
 					if (greenPartyResults != null) {
 						float percentage = greenPartyResults.getZweitstimmen() / (float)c.getVoter();
 						if (percentage > maxGreenParty) 
@@ -164,7 +164,7 @@ public class ElectionWorld {
 			HashMap<String, PartyResults> partyResults = c.getResult();
 
 			if (partyResults != null) {
-				PartyResults resultGreenParty = partyResults.get("GRÃœNE");
+				PartyResults resultGreenParty = partyResults.get("GRÜNE");
 				if (resultGreenParty != null) {
 					Iterator<ConstPolygon> it3 = c.getPolygons().iterator();
 					float alpha = (resultGreenParty.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty);
@@ -201,7 +201,7 @@ public class ElectionWorld {
 			boolean found = false;
 			while (it3.hasNext() && !found) {
 				Party p = it3.next();
-				if (p.getName().equalsIgnoreCase("GRÃœNE")) {
+				if (p.getName().equalsIgnoreCase("GRÜNE")) {
 					if (topGreen.size() < 5) {
 						topGreen.add(c);
 					} else {
@@ -357,7 +357,7 @@ public class ElectionWorld {
 			HashMap<String, PartyResults> partyResults = c.getResult();
 
 			if (partyResults != null) {
-				PartyResults greenPartyResult = partyResults.get("GRÃœNE");
+				PartyResults greenPartyResult = partyResults.get("GRÜNE");
 				if (greenPartyResult != null) {
 					float expected = (maxGreenParty / 500) * c.getMalteOccurences();
 					if (expected > 1)
