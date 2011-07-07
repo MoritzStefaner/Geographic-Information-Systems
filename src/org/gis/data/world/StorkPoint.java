@@ -35,7 +35,7 @@ public class StorkPoint extends GisPoint {
 	
 	public String getInformation() {
 		DateFormat df;
-		df = DateFormat.getDateTimeInstance( DateFormat.FULL, DateFormat.MEDIUM );
+		df = DateFormat.getTimeInstance(DateFormat.SHORT);
 		return "ID: " + getId().toString() + "\n" +
 			   "Time: " + df.format(getTimestamp()) + "\n" +
 			   "LocalID: " + getLocalIdentifier();

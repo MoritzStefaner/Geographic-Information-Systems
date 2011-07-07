@@ -7,10 +7,10 @@ import java.util.LinkedList;
 import org.gis.data.world.CountryPolygon;
 import org.gis.tools.Database;
 import org.postgis.Point;
-import org.postgresql.util.PSQLException;
 
 public class GisPoint extends Point {
-	
+	private static final long serialVersionUID = -1601394576802344349L;
+
 	// The enumeration for the relation between a point and a polygon.
 	public enum PointRelation{
 		INSIDE, OUTSIDE, BORDER
@@ -46,7 +46,6 @@ public class GisPoint extends Point {
 	 * @return The distance in kilometers.
 	 */
 	public Double compareToPoint(GisPoint point){
-		double kilometer = 0;
 		double meter = 0;
 		Database db = Database.getDatabase();
 		
@@ -63,8 +62,7 @@ public class GisPoint extends Point {
 			System.exit(1);
 		}
 		
-		kilometer = meter/1000;
-		return kilometer;
+		return meter/1000;
 	}
 	
 	/**

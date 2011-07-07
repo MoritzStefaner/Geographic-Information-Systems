@@ -72,7 +72,7 @@ public class ElectionWorld {
 		GisPoint p = new GisPoint(latitude, longitude);
 		Database db = Database.getDatabase();
 		
-		ResultSet result = db.executeQuery("SELECT id, DISTANCE(GeomFromText('" + p + "'), geometrycolumn) AS d FROM malte ORDER BY d LIMIT 1");
+		ResultSet result = db.executeQuery("SELECT id FROM malte ORDER BY DISTANCE(GeomFromText('" + p + "'), geometrycolumn) LIMIT 1");
 		
 		try {
 			if (result.next())
@@ -122,7 +122,7 @@ public class ElectionWorld {
 				HashMap<String, PartyResults> partyResults = c.getResult();
 				
 				if (partyResults != null) {
-					PartyResults greenPartyResults = partyResults.get("GRÜNE");
+					PartyResults greenPartyResults = partyResults.get("GRÃœNE");
 					if (greenPartyResults != null) {
 						float percentage = greenPartyResults.getZweitstimmen() / (float)c.getVoter();
 						if (percentage > maxGreenParty) 
@@ -135,7 +135,7 @@ public class ElectionWorld {
 		}
 	}
 	
-	public void setColorBySize(){
+	public void setColorBySize(int coefficient){
 		Database db = Database.getDatabase();
 		
 		ResultSet result = db.executeQuery("SELECT wkr_nr, SUM(ST_AREA(poly_geom)) as area FROM constituencies GROUP BY wkr_nr ORDER BY area DESC");
@@ -147,7 +147,7 @@ public class ElectionWorld {
 				double size = (Double) result.getObject(2);
 				if (largestConstituencySize == 0)
 					largestConstituencySize = size;
-				float alpha = (float) Math.pow(size / (float) largestConstituencySize, 0.33);
+				float alpha = (float) Math.pow(size / (float) largestConstituencySize, 1 / (float) coefficient);
 				c.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 			}
 		} catch (SQLException e) {
@@ -155,7 +155,7 @@ public class ElectionWorld {
 		}
 	}
 	
-	public void setColorByGreenPartyLinear() {
+	public void setColorByGreenParty(int coefficient) {
 		setGreenPartyExtrema();
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
@@ -164,10 +164,10 @@ public class ElectionWorld {
 			HashMap<String, PartyResults> partyResults = c.getResult();
 
 			if (partyResults != null) {
-				PartyResults resultGreenParty = partyResults.get("GRÜNE");
+				PartyResults resultGreenParty = partyResults.get("GRÃœNE");
 				if (resultGreenParty != null) {
 					Iterator<ConstPolygon> it3 = c.getPolygons().iterator();
-					float alpha = (resultGreenParty.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty);
+					float alpha = (float) Math.pow((resultGreenParty.getZweitstimmen() / (float)c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty), 1 / (float) coefficient);
 					
 					while (it3.hasNext()) {
 						MapMarkerPolygon m = it3.next();
@@ -179,48 +179,8 @@ public class ElectionWorld {
 		
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
-	/*
-	private void setColorByGreenPartyAndMalteExtrema(Collection<MaltePoint> malte) {
-		Iterator<MaltePoint> it = malte.iterator();
-		
-		while (it.hasNext()) {
-			MaltePoint m = it.next();
-			Integer constituencyInt = m.compareToConstituencies();
-			if (constituencyInt != null) {
-				Constituency c = constituencyMap.get(constituencyInt);
-				c.addMalteOccurence();
-			}
-		}
-		
-		Iterator<Constituency> it2 = getConstituencyMap().values().iterator();
-		LinkedList<Constituency> topGreen = new LinkedList<Constituency>();
-		
-		while (it2.hasNext()) {
-			Constituency c = it2.next();
-			Iterator<Party> it3 = c.getResult().iterator();
-			boolean found = false;
-			while (it3.hasNext() && !found) {
-				Party p = it3.next();
-				if (p.getName().equalsIgnoreCase("GRÜNE")) {
-					if (topGreen.size() < 5) {
-						topGreen.add(c);
-					} else {
-						Iterator<Constituency> it4 = topGreen.iterator();
-						boolean found2 = false;
-						
-						while (it4.hasNext() && !found2) {
-							Constituency c2 = it4.next();
-							if (c2.)
-						}
-					}
-					
-					found = true;
-				}
-			}
-		}
-	}*/
 	
-	public void setColorByInfluence() {
+	public void setColorByInfluence(int coefficient) {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
 		int maxVoter = 0;
@@ -239,7 +199,7 @@ public class ElectionWorld {
 		while (it.hasNext()) {
 			Constituency c = it.next();
 			Iterator<ConstPolygon> it2 = c.getPolygons().iterator();
-			float alpha = (c.getVoter() - minVoter) / (float) (maxVoter - minVoter);
+			float alpha = (float) Math.pow((c.getVoter() - minVoter) / (float) (maxVoter - minVoter), 1 / (float) coefficient);
 			
 			while (it2.hasNext()) {
 				ConstPolygon m = it2.next();
@@ -250,12 +210,12 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
-	public void setColorByTurnout() {
+	public void setColorByTurnout(int coefficient) {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
 		while (it.hasNext()) {
 			Constituency c = it.next();
-			float alpha = (float) Math.pow(Math.max(c.getVoter() / (float) c.getElectorate() - 0.6, 0.0f) / 0.2, 0.5);
+			float alpha = (float) Math.pow(Math.max(c.getVoter() / (float) c.getElectorate() - 0.6, 0.0f) / 0.2, 1 / (float) coefficient);
 			
 			c.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
@@ -263,7 +223,7 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}	
 	
-	public void setColorByDifference() {
+	public void setColorByDifference(int coefficient) {
 		Iterator<Constituency> it = getConstituencyMap().values().iterator();
 		
 		while (it.hasNext()) {
@@ -298,7 +258,7 @@ public class ElectionWorld {
 			}
 			
 			/* Set color */
-			float alpha = Math.min((winnerPercentage - secondPercentage) * 10, 1.0f) * 0.8f;
+			float alpha = (float) Math.pow(Math.min((winnerPercentage - secondPercentage) * 10, 1.0f) * 0.8f, 1 / (float) coefficient);
 			Color col = getColorAlpha(winner.getColor(), (byte) (alpha*255));
 			c.setColor(col);
 		}
@@ -332,7 +292,7 @@ public class ElectionWorld {
 		this.drawList = getElectionPolygons(this.constituencyMap);
 	}
 	
-	public void setColorByGreenPartyCorrMalte() {
+	public void setColorByGreenPartyCorrMalte(int coefficient) {
     	Database db = Database.getDatabase();
     	setGreenPartyExtrema();
     	
@@ -357,13 +317,13 @@ public class ElectionWorld {
 			HashMap<String, PartyResults> partyResults = c.getResult();
 
 			if (partyResults != null) {
-				PartyResults greenPartyResult = partyResults.get("GRÜNE");
+				PartyResults greenPartyResult = partyResults.get("GRÃœNE");
 				if (greenPartyResult != null) {
 					float expected = (maxGreenParty / 500) * c.getMalteOccurences();
 					if (expected > 1)
 						expected = 1;
 					float actual = ((greenPartyResult.getZweitstimmen() / (float) c.getVoter() - minGreenParty) / (maxGreenParty - minGreenParty));
-					float alpha = (float) Math.pow(Math.abs((actual - expected)), 0.5);
+					float alpha = (float) Math.pow(Math.abs((actual - expected)), 1 / (float) coefficient);
 					
 					c.setColor(new Color(alpha, 1 - alpha, 0.0f, 0.9f));
 				}
@@ -391,7 +351,6 @@ public class ElectionWorld {
 				list.add((Integer) result.getObject(1));
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	

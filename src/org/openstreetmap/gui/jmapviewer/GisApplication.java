@@ -18,6 +18,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ChangeEvent;
@@ -59,6 +60,7 @@ public class GisApplication extends JFrame {
     private final JComboBox displayStyle;
     private final JComboBox displayStyleWorld;
     private final JTabbedPane tabs;
+    private final JSlider mappingCoefficient;
     
     private static enum displayStyleTypeElection { GREEN_PARTY_NORMAL, GREEN_PARTY_CORR_MALTE, WINNER, DIFFERENCE,
     	TURNOUT, INFLUENCE, SIZE }; 
@@ -80,6 +82,7 @@ public class GisApplication extends JFrame {
         
         /* Initializes all variables */
         map = new JMapViewer();
+        map.setZoom(6);
         w = null;
         ew = null;
         interaction = interactionType.NORMAL;
@@ -90,6 +93,16 @@ public class GisApplication extends JFrame {
         JPanel electionTab = new JPanel(new FlowLayout());
         JPanel worldTab = new JPanel(new FlowLayout());
         tabs = new JTabbedPane();
+        
+        /* Set up Slider */
+        mappingCoefficient = new JSlider();
+        mappingCoefficient.setMinimum(1);
+        mappingCoefficient.setMaximum(8);
+        mappingCoefficient.setValue(2);
+        mappingCoefficient.setMajorTickSpacing(1);
+        mappingCoefficient.setSnapToTicks(true);
+        mappingCoefficient.setPaintLabels(true);
+        mappingCoefficient.addChangeListener(new VisualizationEventListener());
         
         displayStyle = new JComboBox(displayStyleTypes);
         storkSelection = new JComboBox(storkSelectionOptions);
@@ -135,7 +148,10 @@ public class GisApplication extends JFrame {
             }
         });
         
-        /* Creates the tabs */
+        /* Add coefficient slider */
+        rightPanel.add(mappingCoefficient);
+        
+        /* Create the tabs */
         tabs.setPreferredSize(new Dimension(250, 600));
         tabs.addTab("Election", electionTab);
         tabs.addTab("World", worldTab);
@@ -346,7 +362,9 @@ public class GisApplication extends JFrame {
 		        			//test for polygon
 	                		Country country = w.getCountry(c.getLon(), c.getLat());
 	                		if (country != null) {
-	                			informationWorld.setText(country.getInformation());
+	                			//informationWorld.setText(country.getInformation());
+	                			informationWorld.setText("blablubb");
+	                			informationWorld.repaint();
 	                		}
 	        			}    
         			}
@@ -378,7 +396,7 @@ public class GisApplication extends JFrame {
 		        					w.setLastPoint(null);
 		        				} else if (w.getLastPolygon() != null) {
 		        					PolygonRelation s = country.compareToCountry(w.getLastPolygon());
-		        					switch(s){
+		        					switch (s) {
 		        						case INSIDE: informationWorld.setText("Inside"); break;
 		        						case DISJOINT: informationWorld.setText("Disjoint"); break;
 		        						case MEET: informationWorld.setText("Meet"); break;
@@ -427,6 +445,7 @@ public class GisApplication extends JFrame {
     		w = new World();
     		w.loadAllStorks();
     		
+    		int coefficient = mappingCoefficient.getValue();
     		/* Draw the selected visualization and take in account the selected storks */
     		if (displayStyle == displayStyleTypeStorks.RANDOM) {
 				w.setColorRandom();
@@ -435,7 +454,7 @@ public class GisApplication extends JFrame {
         		else 
         			w.loadSelectedStorks(w.getStorkId(storkSelection.getSelectedIndex()));
     		} else if (displayStyle == displayStyleTypeStorks.SIZE) {
-    			w.setColorBySize();
+    			w.setColorBySize(coefficient);
     			w.setStorks(null);
     		} else if (displayStyle == displayStyleTypeStorks.TRAVEL_THROUGH) {
     			if (storkSelection.getSelectedIndex() == 0) {
@@ -449,7 +468,7 @@ public class GisApplication extends JFrame {
     			
     			if (storkSelection.getSelectedIndex() == 0) {
         			w.loadAllStorks();
-        			w.setColorByTravelThroughPercentage();
+        			w.setColorByTravelThroughPercentage(coefficient);
     			}
         		else {
         			w.loadSelectedStorks(w.getStorkId(storkSelection.getSelectedIndex()));
@@ -480,20 +499,21 @@ public class GisApplication extends JFrame {
             ew = new ElectionWorld();
             
             /* Draw the selected visualization */
+            int coefficient = mappingCoefficient.getValue();
             if (style == displayStyleTypeElection.GREEN_PARTY_NORMAL)
-            	ew.setColorByGreenPartyLinear();
+            	ew.setColorByGreenParty(coefficient);
             else if (style == displayStyleTypeElection.GREEN_PARTY_CORR_MALTE)
-            	ew.setColorByGreenPartyCorrMalte();
+            	ew.setColorByGreenPartyCorrMalte(coefficient);
             else if (style == displayStyleTypeElection.WINNER)
             	ew.setColorByWinner();
             else if (style == displayStyleTypeElection.DIFFERENCE)
-            	ew.setColorByDifference();
+            	ew.setColorByDifference(coefficient);
             else if (style == displayStyleTypeElection.TURNOUT)
-            	ew.setColorByTurnout();
+            	ew.setColorByTurnout(coefficient);
             else if (style == displayStyleTypeElection.INFLUENCE)
-            	ew.setColorByInfluence();
+            	ew.setColorByInfluence(coefficient);
             else if (style == displayStyleTypeElection.SIZE)
-            	ew.setColorBySize();
+            	ew.setColorBySize(coefficient);
             
             map.addMapMarkerPolygonList(ew.getDrawList());
             

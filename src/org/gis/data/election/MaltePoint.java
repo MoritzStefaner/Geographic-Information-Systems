@@ -2,7 +2,6 @@ package org.gis.data.election;
 
 import java.sql.Time;
 import java.text.DateFormat;
-
 import org.gis.data.GisPoint;
 import org.postgis.Point;
 
@@ -66,7 +65,8 @@ public class MaltePoint extends GisPoint {
 	
 	public String getInformation() {
 		DateFormat df;
-		df = DateFormat.getDateTimeInstance( DateFormat.FULL, DateFormat.MEDIUM );
+		df = DateFormat.getTimeInstance(DateFormat.SHORT);
+
 		return "Start: " + df.format(getStarttime()) + "\n" +
 			   "End: " + df.format(getEndtime()) + "\n" +
 			   "Service: " + getService() + "\n" + 

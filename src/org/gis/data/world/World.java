@@ -170,13 +170,13 @@ public class World {
 		}
 	}
 	
-	public void setColorBySize() {
+	public void setColorBySize(int coefficient) {
 		Iterator<Integer> it = getLargest().iterator();
 		
 		
 		while (it.hasNext()) {
 			Country c = getCountries().get(it.next());
-			float alpha = (float) Math.pow(c.getArea() / (float) largestCountrySize, 0.33);
+			float alpha = (float) Math.pow(c.getArea() / (float) largestCountrySize, 1 / (float) coefficient);
 			c.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
 	}
@@ -194,7 +194,7 @@ public class World {
 		
 		while (it.hasNext()) {
 			Country mmp = it.next();
-			mmp.setColor(Color.WHITE);
+			mmp.setColor(new Color(1.0f, 1.0f, 1.0f, 0.8f));
 		}
 		
 		Iterator<Integer> it2 = getStorkTravel(id, all).iterator();	
@@ -204,15 +204,15 @@ public class World {
 		}
 	}
 	
-	public void setColorByTravelThroughPercentage() {
-		setColorByTravelThroughPercentage(0, true);
+	public void setColorByTravelThroughPercentage(int coefficient) {
+		setColorByTravelThroughPercentage(coefficient, 0, true);
 	}
 
-	public void setColorByTravelThroughPercentage(int id) {
-		setColorByTravelThroughPercentage(id, false);
+	public void setColorByTravelThroughPercentage(int coefficient, int id) {
+		setColorByTravelThroughPercentage(coefficient, id, false);
 	}
 	
-	private void setColorByTravelThroughPercentage(int id, boolean all) {
+	private void setColorByTravelThroughPercentage(int coefficient, int id, boolean all) {
 		Iterator<Country> it = getCountries().values().iterator();
 		
 		while (it.hasNext()) {
@@ -246,7 +246,7 @@ public class World {
 		Iterator<Country> it2 = list.iterator();
 		while (it2.hasNext()) {
 			Country wp = it2.next();
-			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 0.33);
+			float alpha = (float) Math.pow((wp.getAmountStorks() / (float) max), 1 / (float) coefficient);
 			wp.setColor(new Color(1.0f, (float) ((1 - alpha)*0.6 + 0.4), 1 - alpha, 0.8f));
 		}
 	}

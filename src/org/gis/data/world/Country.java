@@ -1,21 +1,14 @@
 package org.gis.data.world;
 
 import java.awt.Color;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.gis.data.GisPoint;
 import org.gis.data.GisPoint.PointRelation;
-import org.gis.data.Polygon;
 import org.gis.data.Polygon.PolygonRelation;
-import org.gis.tools.Database;
-import org.postgis.Geometry;
-import org.postgis.GeometryCollection;
 import org.postgis.LinearRing;
-import org.postgis.PGgeometry;
 import org.postgis.Point;
 
 public class Country {
